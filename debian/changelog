@@ -1,6 +1,14 @@
+python3.6 (3.6.8-1) unstable; urgency=medium
+
+  * Python 3.6.8 release.
+  * Revert the link optimization changes which appeared after the
+    release candidate.
+
+ -- Matthias Klose <doko@debian.org>  Thu, 03 Jan 2019 04:42:36 +0100
+
 python3.6 (3.6.8~rc1-1) unstable; urgency=medium
 
-  * Python 3.6.7 release candidate 1.
+  * Python 3.6.8 release candidate 1.
   * Update symbols files.
 
  -- Matthias Klose <doko@debian.org>  Wed, 12 Dec 2018 07:12:40 +0100
