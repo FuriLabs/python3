@@ -1,4 +1,4 @@
-python3.7 (3.7.2-1) UNRELEASED; urgency=medium
+python3.7 (3.7.2-1) unstable; urgency=medium
 
   * Python 3.7.2 release.
   * Revert the link optimization changes which appeared after the
