@@ -1,9 +1,12 @@
-python3.7 (3.7.2~rc1-2) UNRELEASED; urgency=medium
+python3.7 (3.7.2-1) UNRELEASED; urgency=medium
 
+  * Python 3.7.2 release.
+  * Revert the link optimization changes which appeared after the
+    release candidate.
   * Make the build compatible with sphinx 1.6.x.
   * Loosen the pyzo break. Closes: #916548.
 
- -- Matthias Klose <doko@debian.org>  Tue, 18 Dec 2018 02:21:04 +0100
+ -- Matthias Klose <doko@debian.org>  Thu, 03 Jan 2019 03:55:40 +0100
 
 python3.7 (3.7.2~rc1-1) unstable; urgency=medium
 

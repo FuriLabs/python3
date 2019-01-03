@@ -1,7 +1,5 @@
 # DP: Don't include /usr/local/include and /usr/local/lib as gcc search paths
 
-Index: b/setup.py
-===================================================================
 --- a/setup.py
 +++ b/setup.py
 @@ -298,8 +298,10 @@ class PyBuildExt(build_ext):
