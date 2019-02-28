@@ -334,8 +334,10 @@ stamps/stamp-build-debug: stamps/stamp-configure-debug
 	$(MAKE) $(NJOBS) -C $(buildd_debug) \
 		EXTRA_CFLAGS="$(DEBUG_CFLAGS)"
 
+ifeq ($(DEB_HOST_GNU_TYPE),$(DEB_BUILD_GNU_TYPE))
 	cd $(buildd_static) && ./python -c 'import _decimal'
 	cd $(buildd_debug) && ./python -c 'import math, cmath'
+endif
 
 	touch stamps/stamp-build-debug
 
@@ -1026,6 +1028,7 @@ endif
 	: # The test framework into $(p_lbase)
 	$(dh_compat2) dh_movefiles -p$(p_lbase) --sourcedir=$(d) \
 		$(scriptdir)/test/{libregrtest,support} \
+		$(scriptdir)/test/{ann_module,ann_module2,ann_module3}.py \
 		$(scriptdir)/test/{regrtest,test_support,__init__,__main__}.py
 
 	: # The complete testsuite into $(p_lbase)

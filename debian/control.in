@@ -61,8 +61,8 @@ Pre-Depends: ${misc:Pre-Depends}
 Depends: lib@PVER@-minimal (= ${binary:Version}), mime-support, ${shlibs:Depends}, ${misc:Depends}
 Breaks: python3-tk (<< 3.6.4~rc1-2), libmpdec2 (<< 2.4.2),
   python3-distutils (<< 3.6.5~rc1-2),
-  libpython3.7-testsuite (<< 3.7.0-4),
-Replaces: python3-distutils (<< 3.6.5~rc1-2), libpython3.7-testsuite (<< 3.7.0-4),
+  libpython3.7-testsuite (<< 3.7.2-3),
+Replaces: python3-distutils (<< 3.6.5~rc1-2), libpython3.7-testsuite (<< 3.7.2-3),
 Description: Interactive high-level object-oriented language (standard library, version @VER@)
  Python is a high-level, interactive, object-oriented language. Its @VER@ version
  includes an extensive class library with lots of goodies for
