@@ -5,25 +5,23 @@
  import os
  import os.path
  import pkgutil
-@@ -8,14 +9,11 @@ import tempfile
+@@ -8,13 +9,10 @@ import tempfile
  __all__ = ["version", "bootstrap"]
  
  
--_SETUPTOOLS_VERSION = "40.6.2"
+-_SETUPTOOLS_VERSION = "40.8.0"
 -
--_PIP_VERSION = "18.1"
+-_PIP_VERSION = "19.0.3"
 -
  _PROJECTS = [
 -    ("setuptools", _SETUPTOOLS_VERSION),
 -    ("pip", _PIP_VERSION),
--]
 +    "setuptools",
 +    "pip",
 +    "pkg_resources",
-+ ]
+ ]
  
  
- def _run_pip(args, additional_paths=None):
 @@ -24,15 +22,22 @@ def _run_pip(args, additional_paths=None
          sys.path = additional_paths + sys.path
  

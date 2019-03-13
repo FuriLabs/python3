@@ -1,11 +1,11 @@
-python3.7 (3.7.3~rc1-1) UNRELEASED; urgency=medium
+python3.7 (3.7.3~rc1-1) unstable; urgency=medium
 
   * Python 3.7.3 release candidate 1.
   * CVE-2019-9636. Fix issue #36216: Add check for characters in netloc that
     normalize to separators. Closes: #924072.
   * Use a build profile for libbluetooth-dev (<!pkg.python3.7.nobluetooth>).
 
- -- Matthias Klose <doko@x1>  Sat, 09 Mar 2019 19:53:21 +0100
+ -- Matthias Klose <doko@debian.org>  Wed, 13 Mar 2019 12:01:15 +0100
 
 python3.7 (3.7.2-3) unstable; urgency=medium
 
