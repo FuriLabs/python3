@@ -1,3 +1,11 @@
+python3.7 (3.7.3-1) unstable; urgency=medium
+
+  * Python 3.7.3 release.
+  * Work around issue #35988, reducing the payload size for the asyncio/ssl
+    tests.
+
+ -- Matthias Klose <doko@debian.org>  Tue, 26 Mar 2019 08:25:18 +0100
+
 python3.7 (3.7.3~rc1-1) unstable; urgency=medium
 
   * Python 3.7.3 release candidate 1.

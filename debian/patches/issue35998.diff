@@ -1,0 +1,11 @@
+--- a/Lib/test/test_asyncio/test_sslproto.py
++++ b/Lib/test/test_asyncio/test_sslproto.py
+@@ -158,6 +158,8 @@ class SslProtoHandshakeTests(test_utils.
+ class BaseStartTLS(func_tests.FunctionalTestCaseMixin):
+ 
+     PAYLOAD_SIZE = 1024 * 100
++    # see https://bugs.python.org/issue35998
++    PAYLOAD_SIZE = 1024 * 90
+     TIMEOUT = 60
+ 
+     def new_loop(self):
