@@ -36,3 +36,4 @@ local-doc-references.diff
 doc-build-texinfo.diff
 build-math-object.diff
 issue35998.diff
+arm-alignment.diff
