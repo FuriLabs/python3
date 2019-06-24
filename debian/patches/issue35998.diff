@@ -1,10 +1,6 @@
 --- a/Lib/test/test_asyncio/test_sslproto.py
 +++ b/Lib/test/test_asyncio/test_sslproto.py
-<<<<<<< Updated upstream
-@@ -163,7 +163,9 @@ class SslProtoHandshakeTests(test_utils.
-=======
 @@ -159,7 +159,9 @@ class SslProtoHandshakeTests(test_utils.
->>>>>>> Stashed changes
  class BaseStartTLS(func_tests.FunctionalTestCaseMixin):
  
      PAYLOAD_SIZE = 1024 * 100
