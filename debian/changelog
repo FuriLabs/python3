@@ -1,3 +1,9 @@
+python3.7 (3.7.4~rc2-1) experimental; urgency=medium
+
+  * Python 3.7.4 release candidate 2.
+
+ -- Matthias Klose <doko@debian.org>  Wed, 03 Jul 2019 09:09:05 +0200
+
 python3.7 (3.7.4~rc1-1) experimental; urgency=medium
 
   * Python 3.7.4 release candidate 1.
