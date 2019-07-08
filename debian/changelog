@@ -1,3 +1,9 @@
+python3.7 (3.7.4~rc2-2) unstable; urgency=medium
+
+  * Bump standards version.
+
+ -- Matthias Klose <doko@debian.org>  Mon, 08 Jul 2019 12:07:13 +0200
+
 python3.7 (3.7.4~rc2-1) experimental; urgency=medium
 
   * Python 3.7.4 release candidate 2.
