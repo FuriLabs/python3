@@ -24,7 +24,7 @@ DEB_HOST_MULTIARCH	?= $(call vafilt,$(DPKG_VARS),DEB_HOST_MULTIARCH)
 ifeq ($(DEB_HOST_ARCH_OS),linux)
   PLAT = linux
 else ifeq ($(DEB_HOST_ARCH_OS),kfreebsd)
-  PLAT = gnukfreebsd10
+  PLAT = gnukfreebsd11
 else ifeq ($(DEB_HOST_ARCH_OS),hurd)
   PLAT = gnu0
 else
