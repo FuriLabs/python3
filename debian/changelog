@@ -1,4 +1,4 @@
-python3.7 (3.7.4-3) UNRELEASED; urgency=medium
+python3.7 (3.7.4-3) unstable; urgency=medium
 
   * Enable pgo/lto builds on arm64. Closes: #934812.
   * Don't propagate lto flags to the _sysconfigdata module. Closes: #934771.
@@ -6,7 +6,7 @@ python3.7 (3.7.4-3) UNRELEASED; urgency=medium
     rather than just reducing the payload size (Michael Hudson-Doyle).
   * Annote build dependencies used for tests. Closes: #928513.
 
- -- Matthias Klose <doko@debian.org>  Wed, 21 Aug 2019 16:19:50 +0200
+ -- Matthias Klose <doko@debian.org>  Wed, 21 Aug 2019 18:01:23 +0200
 
 python3.7 (3.7.4-2) unstable; urgency=medium
 
