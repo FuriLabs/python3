@@ -1,3 +1,10 @@
+python3.7 (3.7.5~rc1-1) unstable; urgency=medium
+
+  * Python 3.7.5 release candidate 1.
+  * Bump standards version.
+
+ -- Matthias Klose <doko@debian.org>  Wed, 02 Oct 2019 06:19:31 +0200
+
 python3.7 (3.7.4-4) unstable; urgency=medium
 
   * Update to 20190904 from the 3.7 branch.
