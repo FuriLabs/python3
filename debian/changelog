@@ -1,3 +1,15 @@
+python3.7 (3.7.6-1) unstable; urgency=medium
+
+  * Python 3.7.6 release.
+
+ -- Matthias Klose <doko@debian.org>  Thu, 19 Dec 2019 10:25:23 +0100
+
+python3.7 (3.7.6~rc1-1) unstable; urgency=medium
+
+  * Python 3.7.6 release candidate 1.
+
+ -- Matthias Klose <doko@debian.org>  Tue, 17 Dec 2019 15:33:24 +0100
+
 python3.7 (3.7.5-2) unstable; urgency=medium
 
   * python3.7-dev: Depend on zlib1g-dev, needed to link as an
