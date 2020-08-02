@@ -1,8 +1,24 @@
-python3.8 (3.8.4~rc1-2) UNRELEASED; urgency=medium
+python3.8 (3.8.5-2) unstable; urgency=medium
 
+  * Don't build with system mpdecimal, which will be updated to 2.5,
+    not compatible with Python 3.8.
+
+ -- Matthias Klose <doko@debian.org>  Sun, 02 Aug 2020 17:09:07 +0200
+
+python3.8 (3.8.5-1) unstable; urgency=medium
+
+  * Python 3.8.5 release.
+    - Fix issue 41295, regression on __setattr__ in multiinheritance with
+       metaclasses. Closes: #965069.
+
+ -- Matthias Klose <doko@debian.org>  Mon, 20 Jul 2020 20:32:44 +0200
+
+python3.8 (3.8.4-1) unstable; urgency=medium
+
+  * Python 3.8.4 release.
   * Update VCS attributes in the control file.
 
- -- Matthias Klose <doko@debian.org>  Mon, 06 Jul 2020 20:01:50 +0200
+ -- Matthias Klose <doko@debian.org>  Mon, 13 Jul 2020 23:16:07 +0200
 
 python3.8 (3.8.4~rc1-1) unstable; urgency=medium
 
