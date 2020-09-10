@@ -1,3 +1,9 @@
+python3.8 (3.8.6~rc1-1) unstable; urgency=medium
+
+  * Python 3.8.6 release candidate 1.
+
+ -- Matthias Klose <doko@debian.org>  Thu, 10 Sep 2020 11:37:32 +0200
+
 python3.8 (3.8.5-2) unstable; urgency=medium
 
   * Don't build with system mpdecimal, which will be updated to 2.5,
