@@ -61,7 +61,8 @@ Architecture: any
 Multi-Arch: same
 Priority: @PRIO@
 Pre-Depends: ${misc:Pre-Depends}
-Depends: lib@PVER@-minimal (= ${binary:Version}), mime-support,
+Depends: lib@PVER@-minimal (= ${binary:Version}),
+  media-types | mime-support,
   tzdata,
   ${shlibs:Depends}, ${misc:Depends}
 Recommends: ca-certificates
