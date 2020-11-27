@@ -1,6 +1,7 @@
 python3.9 (3.9.1~rc1-1) unstable; urgency=medium
 
   * Python 3.9.1 release candidate 1.
+  * libpython3.9-stdlib: Depend on tzdata, recommend ca-certificates.
   * Update VCS attributes.
   * Add python3-tk test dependency for the failing-tests* autopkg tests.
   * Bump standards version.
