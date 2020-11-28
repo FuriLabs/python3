@@ -1,3 +1,9 @@
+python3.9 (3.9.1~rc1-2) unstable; urgency=medium
+
+  * Don't expect the test_ttk_textonly test to pass.
+
+ -- Matthias Klose <doko@debian.org>  Fri, 27 Nov 2020 20:38:39 +0100
+
 python3.9 (3.9.1~rc1-1) unstable; urgency=medium
 
   * Python 3.9.1 release candidate 1.
