@@ -1,8 +1,14 @@
-python3.8 (3.8.6~rc1-2) unstable; urgency=medium
+python3.8 (3.8.6-2) unstable; urgency=medium
 
   * Work around issue #41760, build the docs with sphinx 3.2.1.
 
  -- Matthias Klose <doko@debian.org>  Mon, 14 Sep 2020 12:42:51 +0200
+
+python3.8 (3.8.6-1) unstable; urgency=medium
+
+  * Python 3.8.6 release.
+
+ -- Matthias Klose <doko@debian.org>  Fri, 25 Sep 2020 11:36:53 +0200
 
 python3.8 (3.8.6~rc1-1) unstable; urgency=medium
 
