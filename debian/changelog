@@ -1,8 +1,12 @@
-python3.8 (3.8.6-2) unstable; urgency=medium
+python3.8 (3.8.7~rc1-1) unstable; urgency=medium
 
-  * Work around issue #41760, build the docs with sphinx 3.2.1.
+  * Python 3.8.7 release candidate 1.
+  * Bump standards and debhelper versions.
+  * Don't expect the test_ttk_textonly test to pass.
+  * Add python3-tk test dependency for the failing-tests* autopkg tests.
+  * Update symbols files.
 
- -- Matthias Klose <doko@debian.org>  Mon, 14 Sep 2020 12:42:51 +0200
+ -- Matthias Klose <doko@debian.org>  Tue, 08 Dec 2020 13:38:52 +0100
 
 python3.8 (3.8.6-1) unstable; urgency=medium
 
