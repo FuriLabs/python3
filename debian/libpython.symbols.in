@@ -1068,6 +1068,7 @@
  Py_Finalize@Base @SVER@
  Py_FinalizeEx@Base @SVER@
  Py_FrozenFlag@Base @SVER@
+ Py_FrozenMain@Base @SVER@
  Py_GenericAlias@Base @SVER@
  Py_GenericAliasType@Base @SVER@
  Py_GetArgcArgv@Base @SVER@
