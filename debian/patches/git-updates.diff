@@ -1,6 +1,6 @@
-# DP: updates from the 3.9 branch (until 2021-01-10).
+# DP: updates from the 3.9 branch (until 2021-01-20).
 
-# git diff --no-renames 1e5d33e9b9b8631b36f061103a30208b206fd03a 799f8489d418b7f9207d333eac38214931bd7dcc | filterdiff -x ?/.hgignore -x ?/.hgeol -x ?/.hgtags -x ?/.hgtouch -x ?/.gitignore -x ?/.gitattributes -x '?/.github/*' -x '?/.git*' -x ?/.codecov.yml -x ?/.travis.yml -x ?/configure --remove-timestamps
+# git diff --no-renames 1e5d33e9b9b8631b36f061103a30208b206fd03a 0654c4c4cc54a325e878154f8b117159d0105cf7 | filterdiff -x ?/.hgignore -x ?/.hgeol -x ?/.hgtags -x ?/.hgtouch -x ?/.gitignore -x ?/.gitattributes -x '?/.github/*' -x '?/.git*' -x ?/.codecov.yml -x ?/.travis.yml -x ?/configure --remove-timestamps
 
 diff --git a/Doc/c-api/bool.rst b/Doc/c-api/bool.rst
 index ce8de6e22f..c197d447e9 100644
@@ -284,6 +284,19 @@ index 74410927bf..0eb5922f6d 100644
  
  
  .. c:function:: PyObject* PyGen_New(PyFrameObject *frame)
+diff --git a/Doc/c-api/init.rst b/Doc/c-api/init.rst
+index 7f06648bcb..eb0bd14587 100644
+--- a/Doc/c-api/init.rst
++++ b/Doc/c-api/init.rst
+@@ -1155,7 +1155,7 @@ All of the following functions must be called after :c:func:`Py_Initialize`.
+ 
+    .. versionadded:: 3.9
+ 
+-.. c:function:: void _PyInterpreterState_SetEvalFrameFunc(PyInterpreterState *interp, _PyFrameEvalFunction eval_frame);
++.. c:function:: void _PyInterpreterState_SetEvalFrameFunc(PyInterpreterState *interp, _PyFrameEvalFunction eval_frame)
+ 
+    Set the frame evaluation function.
+ 
 diff --git a/Doc/c-api/iter.rst b/Doc/c-api/iter.rst
 index a2992b3452..189f80b9b8 100644
 --- a/Doc/c-api/iter.rst
@@ -2708,6 +2721,24 @@ index a28109f8a7..ec3823b724 100755
          _b85chars = [bytes((i,)) for i in _b85alphabet]
          _b85chars2 = [(a + b) for a in _b85chars for b in _b85chars]
      return _85encode(b, _b85chars, _b85chars2, pad)
+diff --git a/Lib/cProfile.py b/Lib/cProfile.py
+index 59b4699feb..22a7d0aade 100755
+--- a/Lib/cProfile.py
++++ b/Lib/cProfile.py
+@@ -175,7 +175,12 @@ def main():
+                 '__package__': None,
+                 '__cached__': None,
+             }
+-        runctx(code, globs, None, options.outfile, options.sort)
++        try:
++            runctx(code, globs, None, options.outfile, options.sort)
++        except BrokenPipeError as exc:
++            # Prevent "Exception ignored" during interpreter shutdown.
++            sys.stdout = None
++            sys.exit(exc.errno)
+     else:
+         parser.print_usage()
+     return parser
 diff --git a/Lib/codecs.py b/Lib/codecs.py
 index 7f23e9775d..d2edd148a2 100644
 --- a/Lib/codecs.py
@@ -2738,6 +2769,60 @@ index 891600d16b..86ca8b8a84 100644
  from _collections_abc import *
  from _collections_abc import __all__
 +from _collections_abc import _CallableGenericAlias
+diff --git a/Lib/ctypes/test/test_parameters.py b/Lib/ctypes/test/test_parameters.py
+index e4c25fd880..531894fdec 100644
+--- a/Lib/ctypes/test/test_parameters.py
++++ b/Lib/ctypes/test/test_parameters.py
+@@ -201,6 +201,49 @@ class SimpleTypesTestCase(unittest.TestCase):
+         with self.assertRaises(ZeroDivisionError):
+             WorseStruct().__setstate__({}, b'foo')
+ 
++    def test_parameter_repr(self):
++        from ctypes import (
++            c_bool,
++            c_char,
++            c_wchar,
++            c_byte,
++            c_ubyte,
++            c_short,
++            c_ushort,
++            c_int,
++            c_uint,
++            c_long,
++            c_ulong,
++            c_longlong,
++            c_ulonglong,
++            c_float,
++            c_double,
++            c_longdouble,
++            c_char_p,
++            c_wchar_p,
++            c_void_p,
++        )
++        self.assertRegex(repr(c_bool.from_param(True)), r"^<cparam '\?' at 0x[A-Fa-f0-9]+>$")
++        self.assertEqual(repr(c_char.from_param(97)), "<cparam 'c' ('a')>")
++        self.assertRegex(repr(c_wchar.from_param('a')), r"^<cparam 'u' at 0x[A-Fa-f0-9]+>$")
++        self.assertEqual(repr(c_byte.from_param(98)), "<cparam 'b' (98)>")
++        self.assertEqual(repr(c_ubyte.from_param(98)), "<cparam 'B' (98)>")
++        self.assertEqual(repr(c_short.from_param(511)), "<cparam 'h' (511)>")
++        self.assertEqual(repr(c_ushort.from_param(511)), "<cparam 'H' (511)>")
++        self.assertRegex(repr(c_int.from_param(20000)), r"^<cparam '[li]' \(20000\)>$")
++        self.assertRegex(repr(c_uint.from_param(20000)), r"^<cparam '[LI]' \(20000\)>$")
++        self.assertRegex(repr(c_long.from_param(20000)), r"^<cparam '[li]' \(20000\)>$")
++        self.assertRegex(repr(c_ulong.from_param(20000)), r"^<cparam '[LI]' \(20000\)>$")
++        self.assertRegex(repr(c_longlong.from_param(20000)), r"^<cparam '[liq]' \(20000\)>$")
++        self.assertRegex(repr(c_ulonglong.from_param(20000)), r"^<cparam '[LIQ]' \(20000\)>$")
++        self.assertEqual(repr(c_float.from_param(1.5)), "<cparam 'f' (1.5)>")
++        self.assertEqual(repr(c_double.from_param(1.5)), "<cparam 'd' (1.5)>")
++        self.assertEqual(repr(c_double.from_param(1e300)), "<cparam 'd' (1e+300)>")
++        self.assertRegex(repr(c_longdouble.from_param(1.5)), r"^<cparam ('d' \(1.5\)|'g' at 0x[A-Fa-f0-9]+)>$")
++        self.assertRegex(repr(c_char_p.from_param(b'hihi')), "^<cparam 'z' \(0x[A-Fa-f0-9]+\)>$")
++        self.assertRegex(repr(c_wchar_p.from_param('hihi')), "^<cparam 'Z' \(0x[A-Fa-f0-9]+\)>$")
++        self.assertRegex(repr(c_void_p.from_param(0x12)), r"^<cparam 'P' \(0x0*12\)>$")
++
+ ################################################################
+ 
+ if __name__ == '__main__':
 diff --git a/Lib/enum.py b/Lib/enum.py
 index ebadd9f662..1fddb1c75e 100644
 --- a/Lib/enum.py
@@ -3895,6 +3980,85 @@ index 7b169a16fb..6920a7b654 100644
      def getLogger(self, name):
          """
          Get a logger with the specified name (channel name), creating it
+diff --git a/Lib/platform.py b/Lib/platform.py
+index e9f50ab622..6258827d0e 100755
+--- a/Lib/platform.py
++++ b/Lib/platform.py
+@@ -782,7 +782,7 @@ class uname_result(
+         ):
+     """
+     A uname_result that's largely compatible with a
+-    simple namedtuple except that 'platform' is
++    simple namedtuple except that 'processor' is
+     resolved late and cached to avoid calling "uname"
+     except when needed.
+     """
+@@ -797,12 +797,25 @@ class uname_result(
+             (self.processor,)
+         )
+ 
++    @classmethod
++    def _make(cls, iterable):
++        # override factory to affect length check
++        num_fields = len(cls._fields)
++        result = cls.__new__(cls, *iterable)
++        if len(result) != num_fields + 1:
++            msg = f'Expected {num_fields} arguments, got {len(result)}'
++            raise TypeError(msg)
++        return result
++
+     def __getitem__(self, key):
+-        return tuple(iter(self))[key]
++        return tuple(self)[key]
+ 
+     def __len__(self):
+         return len(tuple(iter(self)))
+ 
++    def __reduce__(self):
++        return uname_result, tuple(self)[:len(self._fields)]
++
+ 
+ _uname_cache = None
+ 
+diff --git a/Lib/profile.py b/Lib/profile.py
+index 5cb017ed83..d8599fb4ee 100755
+--- a/Lib/profile.py
++++ b/Lib/profile.py
+@@ -595,7 +595,12 @@ def main():
+                 '__package__': None,
+                 '__cached__': None,
+             }
+-        runctx(code, globs, None, options.outfile, options.sort)
++        try:
++            runctx(code, globs, None, options.outfile, options.sort)
++        except BrokenPipeError as exc:
++            # Prevent "Exception ignored" during interpreter shutdown.
++            sys.stdout = None
++            sys.exit(exc.errno)
+     else:
+         parser.print_usage()
+     return parser
+diff --git a/Lib/random.py b/Lib/random.py
+index a6454f520d..36e16a9063 100644
+--- a/Lib/random.py
++++ b/Lib/random.py
+@@ -77,6 +77,7 @@ __all__ = [
+     "lognormvariate",
+     "normalvariate",
+     "paretovariate",
++    "randbytes",
+     "randint",
+     "random",
+     "randrange",
+@@ -441,7 +442,7 @@ class Random(_random.Random):
+                 raise TypeError('Counts must be integers')
+             if total <= 0:
+                 raise ValueError('Total of counts must be greater than zero')
+-            selections = sample(range(total), k=k)
++            selections = self.sample(range(total), k=k)
+             bisect = _bisect
+             return [population[bisect(cum_counts, s)] for s in selections]
+         randbelow = self._randbelow
 diff --git a/Lib/smtplib.py b/Lib/smtplib.py
 index 7808ba01cb..f0472317de 100755
 --- a/Lib/smtplib.py
@@ -5550,6 +5714,128 @@ index fdea44e4d8..9df4efbfff 100644
  
  class PurePythonOrderedDictTests(OrderedDictTests, unittest.TestCase):
  
+diff --git a/Lib/test/test_platform.py b/Lib/test/test_platform.py
+index a3b06feb65..9f04c79e09 100644
+--- a/Lib/test/test_platform.py
++++ b/Lib/test/test_platform.py
+@@ -1,4 +1,6 @@
+ import os
++import copy
++import pickle
+ import platform
+ import subprocess
+ import sys
+@@ -175,6 +177,38 @@ class PlatformTest(unittest.TestCase):
+         )
+         self.assertEqual(tuple(res), expected)
+ 
++    def test_uname_replace(self):
++        res = platform.uname()
++        new = res._replace(
++            system='system', node='node', release='release',
++            version='version', machine='machine')
++        self.assertEqual(new.system, 'system')
++        self.assertEqual(new.node, 'node')
++        self.assertEqual(new.release, 'release')
++        self.assertEqual(new.version, 'version')
++        self.assertEqual(new.machine, 'machine')
++        # processor cannot be replaced
++        self.assertEqual(new.processor, res.processor)
++
++    def test_uname_copy(self):
++        uname = platform.uname()
++        self.assertEqual(copy.copy(uname), uname)
++        self.assertEqual(copy.deepcopy(uname), uname)
++
++    def test_uname_pickle(self):
++        orig = platform.uname()
++        for proto in range(pickle.HIGHEST_PROTOCOL + 1):
++            with self.subTest(protocol=proto):
++                pickled = pickle.dumps(orig, proto)
++                restored = pickle.loads(pickled)
++                self.assertEqual(restored, orig)
++
++    def test_uname_slices(self):
++        res = platform.uname()
++        expected = tuple(res)
++        self.assertEqual(res[:], expected)
++        self.assertEqual(res[:5], expected[:5])
++
+     @unittest.skipIf(sys.platform in ['win32', 'OpenVMS'], "uname -p not used")
+     def test_uname_processor(self):
+         """
+diff --git a/Lib/test/test_random.py b/Lib/test/test_random.py
+index a80e71e67e..15a68418bd 100644
+--- a/Lib/test/test_random.py
++++ b/Lib/test/test_random.py
+@@ -207,33 +207,6 @@ class TestBasicOps:
+         with self.assertRaises(ValueError):
+             sample(['red', 'green', 'blue'], counts=[1, 2, 3, 4], k=2)      # too many counts
+ 
+-    def test_sample_counts_equivalence(self):
+-        # Test the documented strong equivalence to a sample with repeated elements.
+-        # We run this test on random.Random() which makes deterministic selections
+-        # for a given seed value.
+-        sample = random.sample
+-        seed = random.seed
+-
+-        colors =  ['red', 'green', 'blue', 'orange', 'black', 'amber']
+-        counts = [500,      200,     20,       10,       5,       1 ]
+-        k = 700
+-        seed(8675309)
+-        s1 = sample(colors, counts=counts, k=k)
+-        seed(8675309)
+-        expanded = [color for (color, count) in zip(colors, counts) for i in range(count)]
+-        self.assertEqual(len(expanded), sum(counts))
+-        s2 = sample(expanded, k=k)
+-        self.assertEqual(s1, s2)
+-
+-        pop = 'abcdefghi'
+-        counts = [10, 9, 8, 7, 6, 5, 4, 3, 2]
+-        seed(8675309)
+-        s1 = ''.join(sample(pop, counts=counts, k=30))
+-        expanded = ''.join([letter for (letter, count) in zip(pop, counts) for i in range(count)])
+-        seed(8675309)
+-        s2 = ''.join(sample(expanded, k=30))
+-        self.assertEqual(s1, s2)
+-
+     def test_choices(self):
+         choices = self.gen.choices
+         data = ['red', 'green', 'blue', 'yellow']
+@@ -888,6 +861,33 @@ class MersenneTwister_TestBasicOps(TestBasicOps, unittest.TestCase):
+             self.assertEqual(self.gen.randbytes(n),
+                              gen2.getrandbits(n * 8).to_bytes(n, 'little'))
+ 
++    def test_sample_counts_equivalence(self):
++        # Test the documented strong equivalence to a sample with repeated elements.
++        # We run this test on random.Random() which makes deterministic selections
++        # for a given seed value.
++        sample = self.gen.sample
++        seed = self.gen.seed
++
++        colors =  ['red', 'green', 'blue', 'orange', 'black', 'amber']
++        counts = [500,      200,     20,       10,       5,       1 ]
++        k = 700
++        seed(8675309)
++        s1 = sample(colors, counts=counts, k=k)
++        seed(8675309)
++        expanded = [color for (color, count) in zip(colors, counts) for i in range(count)]
++        self.assertEqual(len(expanded), sum(counts))
++        s2 = sample(expanded, k=k)
++        self.assertEqual(s1, s2)
++
++        pop = 'abcdefghi'
++        counts = [10, 9, 8, 7, 6, 5, 4, 3, 2]
++        seed(8675309)
++        s1 = ''.join(sample(pop, counts=counts, k=30))
++        expanded = ''.join([letter for (letter, count) in zip(pop, counts) for i in range(count)])
++        seed(8675309)
++        s2 = ''.join(sample(expanded, k=30))
++        self.assertEqual(s1, s2)
++
+ 
+ def gamma(z, sqrt2pi=(2.0*pi)**0.5):
+     # Reflection to right half of complex plane
 diff --git a/Lib/test/test_smtplib.py b/Lib/test/test_smtplib.py
 index 5762999003..3451f3a411 100644
 --- a/Lib/test/test_smtplib.py
@@ -8619,6 +8905,111 @@ index 12a5ac1410..58a4accd13 100644
  David Watson
  Aaron Watters
  Henrik Weber
+diff --git a/Modules/_ctypes/callproc.c b/Modules/_ctypes/callproc.c
+index b0a36a3024..f2506de544 100644
+--- a/Modules/_ctypes/callproc.c
++++ b/Modules/_ctypes/callproc.c
+@@ -489,58 +489,47 @@ is_literal_char(unsigned char c)
+ static PyObject *
+ PyCArg_repr(PyCArgObject *self)
+ {
+-    char buffer[256];
+     switch(self->tag) {
+     case 'b':
+     case 'B':
+-        sprintf(buffer, "<cparam '%c' (%d)>",
++        return PyUnicode_FromFormat("<cparam '%c' (%d)>",
+             self->tag, self->value.b);
+-        break;
+     case 'h':
+     case 'H':
+-        sprintf(buffer, "<cparam '%c' (%d)>",
++        return PyUnicode_FromFormat("<cparam '%c' (%d)>",
+             self->tag, self->value.h);
+-        break;
+     case 'i':
+     case 'I':
+-        sprintf(buffer, "<cparam '%c' (%d)>",
++        return PyUnicode_FromFormat("<cparam '%c' (%d)>",
+             self->tag, self->value.i);
+-        break;
+     case 'l':
+     case 'L':
+-        sprintf(buffer, "<cparam '%c' (%ld)>",
++        return PyUnicode_FromFormat("<cparam '%c' (%ld)>",
+             self->tag, self->value.l);
+-        break;
+ 
+     case 'q':
+     case 'Q':
+-        sprintf(buffer,
+-#ifdef MS_WIN32
+-            "<cparam '%c' (%I64d)>",
+-#else
+-            "<cparam '%c' (%lld)>",
+-#endif
++        return PyUnicode_FromFormat("<cparam '%c' (%lld)>",
+             self->tag, self->value.q);
+-        break;
+     case 'd':
+-        sprintf(buffer, "<cparam '%c' (%f)>",
+-            self->tag, self->value.d);
+-        break;
+-    case 'f':
+-        sprintf(buffer, "<cparam '%c' (%f)>",
+-            self->tag, self->value.f);
+-        break;
+-
++    case 'f': {
++        PyObject *f = PyFloat_FromDouble((self->tag == 'f') ? self->value.f : self->value.d);
++        if (f == NULL) {
++            return NULL;
++        }
++        PyObject *result = PyUnicode_FromFormat("<cparam '%c' (%R)>", self->tag, f);
++        Py_DECREF(f);
++        return result;
++    }
+     case 'c':
+         if (is_literal_char((unsigned char)self->value.c)) {
+-            sprintf(buffer, "<cparam '%c' ('%c')>",
++            return PyUnicode_FromFormat("<cparam '%c' ('%c')>",
+                 self->tag, self->value.c);
+         }
+         else {
+-            sprintf(buffer, "<cparam '%c' ('\\x%02x')>",
++            return PyUnicode_FromFormat("<cparam '%c' ('\\x%02x')>",
+                 self->tag, (unsigned char)self->value.c);
+         }
+-        break;
+ 
+ /* Hm, are these 'z' and 'Z' codes useful at all?
+    Shouldn't they be replaced by the functionality of c_string
+@@ -549,22 +538,20 @@ PyCArg_repr(PyCArgObject *self)
+     case 'z':
+     case 'Z':
+     case 'P':
+-        sprintf(buffer, "<cparam '%c' (%p)>",
++        return PyUnicode_FromFormat("<cparam '%c' (%p)>",
+             self->tag, self->value.p);
+         break;
+ 
+     default:
+         if (is_literal_char((unsigned char)self->tag)) {
+-            sprintf(buffer, "<cparam '%c' at %p>",
++            return PyUnicode_FromFormat("<cparam '%c' at %p>",
+                 (unsigned char)self->tag, (void *)self);
+         }
+         else {
+-            sprintf(buffer, "<cparam 0x%02x at %p>",
++            return PyUnicode_FromFormat("<cparam 0x%02x at %p>",
+                 (unsigned char)self->tag, (void *)self);
+         }
+-        break;
+     }
+-    return PyUnicode_FromString(buffer);
+ }
+ 
+ static PyMemberDef PyCArgType_members[] = {
 diff --git a/Modules/_cursesmodule.c b/Modules/_cursesmodule.c
 index c70b0e2a19..d129248e36 100644
 --- a/Modules/_cursesmodule.c
@@ -8940,7 +9331,7 @@ index 793c5e7154..b30141d449 100644
  }
  
 diff --git a/Modules/_zoneinfo.c b/Modules/_zoneinfo.c
-index 2cee65fac6..fafb6b01df 100644
+index 2cee65fac6..d87a20100a 100644
 --- a/Modules/_zoneinfo.c
 +++ b/Modules/_zoneinfo.c
 @@ -171,7 +171,7 @@ static void
@@ -8952,7 +9343,41 @@ index 2cee65fac6..fafb6b01df 100644
  
  static PyObject *
  zoneinfo_new_instance(PyTypeObject *type, PyObject *key)
-@@ -1219,15 +1219,9 @@ calendarrule_new(uint8_t month, uint8_t week, uint8_t day, int8_t hour,
+@@ -909,7 +909,13 @@ load_data(PyZoneInfo_ZoneInfo *self, PyObject *file_obj)
+     // Load the transition indices and list
+     self->trans_list_utc =
+         PyMem_Malloc(self->num_transitions * sizeof(int64_t));
++    if (self->trans_list_utc == NULL) {
++        goto error;
++    }
+     trans_idx = PyMem_Malloc(self->num_transitions * sizeof(Py_ssize_t));
++    if (trans_idx == NULL) {
++        goto error;
++    }
+ 
+     for (size_t i = 0; i < self->num_transitions; ++i) {
+         PyObject *num = PyTuple_GetItem(trans_utc, i);
+@@ -991,6 +997,9 @@ load_data(PyZoneInfo_ZoneInfo *self, PyObject *file_obj)
+ 
+     // Build _ttinfo objects from utcoff, dstoff and abbr
+     self->_ttinfos = PyMem_Malloc(self->num_ttinfos * sizeof(_ttinfo));
++    if (self->_ttinfos == NULL) {
++        goto error;
++    }
+     for (size_t i = 0; i < self->num_ttinfos; ++i) {
+         PyObject *tzname = PyTuple_GetItem(abbr, i);
+         if (tzname == NULL) {
+@@ -1006,6 +1015,9 @@ load_data(PyZoneInfo_ZoneInfo *self, PyObject *file_obj)
+     // Build our mapping from transition to the ttinfo that applies
+     self->trans_ttinfos =
+         PyMem_Calloc(self->num_transitions, sizeof(_ttinfo *));
++    if (self->trans_ttinfos == NULL) {
++        goto error;
++    }
+     for (size_t i = 0; i < self->num_transitions; ++i) {
+         size_t ttinfo_idx = trans_idx[i];
+         assert(ttinfo_idx < self->num_ttinfos);
+@@ -1219,15 +1231,9 @@ calendarrule_new(uint8_t month, uint8_t week, uint8_t day, int8_t hour,
          return -1;
      }
  
@@ -12988,9 +13413,9 @@ index c968d149c2..972287a9c4 100644
  
  int main()
  {
---- a/Misc/NEWS
-+++ b/Misc/NEWS
-@@ -2,6 +2,231 @@
+--- a/Misc/NEWS	2021-01-10 16:46:26.107360742 +0100
++++ b/Misc/NEWS	2021-01-20 15:37:49.110848532 +0100
+@@ -2,6 +2,248 @@
  Python News
  +++++++++++
  
@@ -12998,6 +13423,12 @@ index c968d149c2..972287a9c4 100644
 +==========================
 +
 +*Release date: XXXX-XX-XX*
++
++Security
++--------
++
++- bpo-42938: Avoid static buffers when computing the repr of
++  :class:`ctypes.c_double` and :class:`ctypes.c_longdouble` values.
 +
 +Core and Builtins
 +-----------------
@@ -13055,6 +13486,11 @@ index c968d149c2..972287a9c4 100644
 +Library
 +-------
 +
++- bpo-42944: Fix ``random.Random.sample`` when ``counts`` argument is not
++  ``None``.
++
++- bpo-42931: Add :func:`randbytes` to ``random.__all__``.
++
 +- bpo-42851: remove __init_subclass__ support for Enum members
 +
 +- bpo-42759: Fixed equality comparison of :class:`tkinter.Variable` and
@@ -13110,6 +13546,9 @@ index c968d149c2..972287a9c4 100644
 +
 +- bpo-42318: Fixed support of non-BMP characters in :mod:`tkinter` on macOS.
 +
++- bpo-42163: Restore compatibility for ``uname_result`` around deepcopy and
++  _replace.
++
 +- bpo-39825: Windows: Change ``sysconfig.get_config_var('EXT_SUFFIX')`` to
 +  the expected full ``platform_tag.extension`` format. Previously it was
 +  hard-coded to ``.pyd``, now it is compatible with ``distutils.sysconfig``
@@ -13123,6 +13562,9 @@ index c968d149c2..972287a9c4 100644
 +
 +- bpo-39101: Fixed tests using IsolatedAsyncioTestCase from hanging on
 +  BaseExceptions.
++
++- bpo-42005: Fix CLI of :mod:`cProfile` and :mod:`profile` to catch
++  :exc:`BrokenPipeError`.
 +
 +- bpo-41907: fix `format()` behavior for `IntFlag`
 +
@@ -13222,3 +13664,30 @@ index c968d149c2..972287a9c4 100644
  What's New in Python 3.9.1 final?
  =================================
  
+@@ -148,8 +390,6 @@
+   rules that only generate better error messages to gain performance. If
+   there's a parse failure, run the parser a second time with those enabled.
+ 
+-- bpo-41910: Document the default implementation of `object.__eq__`.
+-
+ - bpo-42057: Fix peephole optimizer misoptimize conditional jump +
+   JUMP_IF_NOT_EXC_MATCH pair.
+ 
+@@ -265,7 +505,7 @@
+ - bpo-41316: Fix the :mod:`tarfile` module to write only basename of TAR
+   file to GZIP compression header.
+ 
+-- bpo-16936: Allow ``ctypes.wintypes`` to be imported on non-Windows
++- bpo-16396: Allow ``ctypes.wintypes`` to be imported on non-Windows
+   systems.
+ 
+ - bpo-40592: :func:`shutil.which` now ignores empty entries in
+@@ -291,6 +531,8 @@
+ 
+ - bpo-42061: Document __format__ functionality for IP addresses.
+ 
++- bpo-41910: Document the default implementation of `object.__eq__`.
++
+ - bpo-42010: Clarify that subscription expressions are also valid for
+   certain :term:`classes <class>` and :term:`types <type>` in the standard
+   library, and for user-defined classes and types if the classmethod
