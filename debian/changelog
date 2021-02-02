@@ -1,6 +1,7 @@
 python3.9 (3.9.1-4) UNRELEASED; urgency=medium
 
   * Depend on media-types instead of mime-support. Closes: #981016.
+  * Fix permissions and group for local directories. Closes: #962422.
 
  -- Matthias Klose <doko@debian.org>  Tue, 26 Jan 2021 12:21:29 +0100
 
