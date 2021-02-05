@@ -1,9 +1,12 @@
-python3.9 (3.9.1-4) UNRELEASED; urgency=medium
+python3.9 (3.9.1-4) unstable; urgency=medium
 
+  * Update to the 3.9 branch 2021-02-04.
+  * Fix issue #43030, compiler warning in Py_UNICODE_ISSPACE with
+    signed wchar_t. Closes: #961396.
   * Depend on media-types instead of mime-support. Closes: #981016.
   * Fix permissions and group for local directories. Closes: #962422.
 
- -- Matthias Klose <doko@debian.org>  Tue, 26 Jan 2021 12:21:29 +0100
+ -- Matthias Klose <doko@debian.org>  Fri, 05 Feb 2021 14:46:56 +0100
 
 python3.9 (3.9.1-3) unstable; urgency=medium
 

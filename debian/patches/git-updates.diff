@@ -1,6 +1,6 @@
-# DP: updates from the 3.9 branch (until 2021-01-20).
+# DP: updates from the 3.9 branch (until 2021-02-04).
 
-# git diff --no-renames 1e5d33e9b9b8631b36f061103a30208b206fd03a 0654c4c4cc54a325e878154f8b117159d0105cf7 | filterdiff -x ?/.hgignore -x ?/.hgeol -x ?/.hgtags -x ?/.hgtouch -x ?/.gitignore -x ?/.gitattributes -x '?/.github/*' -x '?/.git*' -x ?/.codecov.yml -x ?/.travis.yml -x ?/configure --remove-timestamps
+# git diff --no-renames 1e5d33e9b9b8631b36f061103a30208b206fd03a b0b01811bb28d3d6c70846e47fa2f6ba03ed03f1 | filterdiff -x ?/.hgignore -x ?/.hgeol -x ?/.hgtags -x ?/.hgtouch -x ?/.gitignore -x ?/.gitattributes -x '?/.github/*' -x '?/.git*' -x ?/.codecov.yml -x ?/.travis.yml -x ?/configure --remove-timestamps
 
 diff --git a/Doc/c-api/bool.rst b/Doc/c-api/bool.rst
 index ce8de6e22f..c197d447e9 100644
@@ -583,6 +583,19 @@ index 1b90d9f172..4191c0bb63 100644
  
  Copyright © 2000 BeOpen.com. All rights reserved.
  
+diff --git a/Doc/howto/descriptor.rst b/Doc/howto/descriptor.rst
+index ab5a573c6a..0f999c9559 100644
+--- a/Doc/howto/descriptor.rst
++++ b/Doc/howto/descriptor.rst
+@@ -497,7 +497,7 @@ Definition and introduction
+ 
+ In general, a descriptor is an attribute value that has one of the methods in
+ the descriptor protocol.  Those methods are :meth:`__get__`, :meth:`__set__`,
+-and :meth:`__delete__`.  If any of those methods are defined for an the
++and :meth:`__delete__`.  If any of those methods are defined for an
+ attribute, it is said to be a :term:`descriptor`.
+ 
+ The default behavior for attribute access is to get, set, or delete the
 diff --git a/Doc/library/argparse.rst b/Doc/library/argparse.rst
 index 02cd70f4f7..4542961d78 100644
 --- a/Doc/library/argparse.rst
@@ -1387,6 +1400,38 @@ index ce07d326b3..925f08e914 100644
     ``[n for n in names if fnmatch(n, pattern)]``, but implemented more efficiently.
  
  
+diff --git a/Doc/library/functions.rst b/Doc/library/functions.rst
+index 9c12b6c48d..9d13967c04 100644
+--- a/Doc/library/functions.rst
++++ b/Doc/library/functions.rst
+@@ -1687,18 +1687,19 @@ are always available.  They are listed here in alphabetical order.
+ 
+ 
+    With three arguments, return a new type object.  This is essentially a
+-   dynamic form of the :keyword:`class` statement. The *name* string is the
+-   class name and becomes the :attr:`~definition.__name__` attribute; the *bases*
+-   tuple itemizes the base classes and becomes the :attr:`~class.__bases__`
+-   attribute; and the *dict* dictionary is the namespace containing definitions
+-   for class body and is copied to a standard dictionary to become the
+-   :attr:`~object.__dict__` attribute.  For example, the following two
+-   statements create identical :class:`type` objects:
++   dynamic form of the :keyword:`class` statement. The *name* string is
++   the class name and becomes the :attr:`~definition.__name__` attribute.
++   The *bases* tuple contains the base classes and becomes the
++   :attr:`~class.__bases__` attribute; if empty, :class:`object`, the
++   ultimate base of all classes, is added.  The *dict* dictionary contains
++   attribute and method definitions for the class body; it may be copied
++   or wrapped before becoming the :attr:`~object.__dict__` attribute.
++   The following two statements create identical :class:`type` objects:
+ 
+       >>> class X:
+       ...     a = 1
+       ...
+-      >>> X = type('X', (object,), dict(a=1))
++      >>> X = type('X', (), dict(a=1))
+ 
+    See also :ref:`bltin-type-objects`.
+ 
 diff --git a/Doc/library/functools.rst b/Doc/library/functools.rst
 index 4869b67cb9..85d4e74698 100644
 --- a/Doc/library/functools.rst
@@ -1422,6 +1467,19 @@ index 4869b67cb9..85d4e74698 100644
  
     Note, this decorator interferes with the operation of :pep:`412`
     key-sharing dictionaries.  This means that instance dictionaries
+diff --git a/Doc/library/idle.rst b/Doc/library/idle.rst
+index a59a5d3a46..e7eaabd8bf 100644
+--- a/Doc/library/idle.rst
++++ b/Doc/library/idle.rst
+@@ -250,7 +250,7 @@ View Last Restart
+   Scroll the shell window to the last Shell restart.
+ 
+ Restart Shell
+-  Restart the shell to clean the environment.
++  Restart the shell to clean the environment and reset display and exception handling.
+ 
+ Previous History
+   Cycle through earlier commands in history which match the current entry.
 diff --git a/Doc/library/importlib.metadata.rst b/Doc/library/importlib.metadata.rst
 index 21da143f3b..0dd3daaa54 100644
 --- a/Doc/library/importlib.metadata.rst
@@ -1967,10 +2025,21 @@ index faf8a76251..2fc170a0bc 100755
  .. _host_port:
  
 diff --git a/Doc/library/sqlite3.rst b/Doc/library/sqlite3.rst
-index ccb82278bd..7dc2cc48c4 100644
+index ccb82278bd..2e2e5e9cda 100644
 --- a/Doc/library/sqlite3.rst
 +++ b/Doc/library/sqlite3.rst
-@@ -197,7 +197,9 @@ Module functions and constants
+@@ -99,10 +99,6 @@ This example uses the iterator form::
+ 
+ .. seealso::
+ 
+-   https://github.com/ghaering/pysqlite
+-      The pysqlite web page -- sqlite3 is developed externally under the name
+-      "pysqlite".
+-
+    https://www.sqlite.org
+       The SQLite web page; the documentation describes the syntax and the
+       available data types for the supported SQL dialect.
+@@ -197,7 +193,9 @@ Module functions and constants
  
     *detect_types* defaults to 0 (i. e. off, no type detection), you can set it to
     any combination of :const:`PARSE_DECLTYPES` and :const:`PARSE_COLNAMES` to turn
@@ -1981,7 +2050,7 @@ index ccb82278bd..7dc2cc48c4 100644
  
     By default, *check_same_thread* is :const:`True` and only the creating thread may
     use the connection. If set :const:`False`, the returned connection may be shared
-@@ -543,7 +545,7 @@ Connection Objects
+@@ -543,7 +541,7 @@ Connection Objects
           con.close()
  
  
@@ -1990,7 +2059,7 @@ index ccb82278bd..7dc2cc48c4 100644
  
        This method makes a backup of a SQLite database even while it's being accessed
        by other clients, or concurrently by the same connection.  The copy will be
-@@ -1091,19 +1093,6 @@ committed:
+@@ -1091,19 +1089,6 @@ committed:
  .. literalinclude:: ../includes/sqlite3/ctx_manager.py
  
  
@@ -2266,9 +2335,18 @@ index c2732d900b..40cf198f12 100644
  A simple example demonstrating the use of the programmatic interface::
  
 diff --git a/Doc/library/turtle.rst b/Doc/library/turtle.rst
-index d3487537df..2084d75b3a 100644
+index d3487537df..6a9d61916a 100644
 --- a/Doc/library/turtle.rst
 +++ b/Doc/library/turtle.rst
+@@ -662,7 +662,7 @@ Tell Turtle's state
+ 
+    Return the angle between the line from turtle position to position specified
+    by (x,y), the vector or the other turtle.  This depends on the turtle's start
+-   orientation which depends on the mode - "standard"/"world" or "logo").
++   orientation which depends on the mode - "standard"/"world" or "logo".
+ 
+    .. doctest::
+       :skipif: _tkinter is None
 @@ -913,8 +913,8 @@ Color control
        Set pencolor to the RGB color represented by *r*, *g*, and *b*.  Each of
        *r*, *g*, and *b* must be in the range 0..colormode.
@@ -2302,6 +2380,60 @@ index d3487537df..2084d75b3a 100644
  
     .. doctest::
        :skipif: _tkinter is None
+@@ -1105,7 +1105,7 @@ More drawing control
+    :param font: a triple (fontname, fontsize, fonttype)
+ 
+    Write text - the string representation of *arg* - at the current turtle
+-   position according to *align* ("left", "center" or right") and with the given
++   position according to *align* ("left", "center" or "right") and with the given
+    font.  If *move* is true, the pen is moved to the bottom-right corner of the
+    text.  By default, *move* is ``False``.
+ 
+@@ -1192,7 +1192,7 @@ Appearance
+      :func:`shapesize`.
+    - "noresize": no adaption of the turtle's appearance takes place.
+ 
+-   resizemode("user") is called by :func:`shapesize` when used with arguments.
++   ``resizemode("user")`` is called by :func:`shapesize` when used with arguments.
+ 
+    .. doctest::
+       :skipif: _tkinter is None
+@@ -1330,7 +1330,7 @@ Appearance
+    matrix as a tuple of 4 elements.
+    Otherwise set the given elements and transform the turtleshape
+    according to the matrix consisting of first row t11, t12 and
+-   second row t21, 22. The determinant t11 * t22 - t12 * t21 must not be
++   second row t21, t22. The determinant t11 * t22 - t12 * t21 must not be
+    zero, otherwise an error is raised.
+    Modify stretchfactor, shearfactor and tiltangle according to the
+    given matrix.
+@@ -1513,7 +1513,7 @@ Special Turtle methods
+ 
+    :param size: an integer or ``None``
+ 
+-   Set or disable undobuffer.  If *size* is an integer an empty undobuffer of
++   Set or disable undobuffer.  If *size* is an integer, an empty undobuffer of
+    given size is installed.  *size* gives the maximum number of turtle actions
+    that can be undone by the :func:`undo` method/function.  If *size* is
+    ``None``, the undobuffer is disabled.
+@@ -1821,7 +1821,7 @@ Using screen events
+    existing bindings are removed.
+ 
+    Example for a TurtleScreen instance named ``screen`` and a Turtle instance
+-   named turtle:
++   named ``turtle``:
+ 
+    .. doctest::
+       :skipif: _tkinter is None
+@@ -2048,7 +2048,7 @@ Methods specific to Screen, not inherited from TurtleScreen
+ 
+ .. function:: exitonclick()
+ 
+-   Bind bye() method to mouse clicks on the Screen.
++   Bind ``bye()`` method to mouse clicks on the Screen.
+ 
+ 
+    If the value "using_IDLE" in the configuration dictionary is ``False``
 diff --git a/Doc/library/types.rst b/Doc/library/types.rst
 index 0fe3822fa5..d83d9667ba 100644
 --- a/Doc/library/types.rst
@@ -2398,6 +2530,37 @@ index 89063876cc..3b3bd5524e 100644
           These represent numbers in an unlimited range, subject to available (virtual)
           memory only.  For the purpose of shift and mask operations, a binary
           representation is assumed, and negative numbers are represented in a variant of
+diff --git a/Doc/using/venv-create.inc b/Doc/using/venv-create.inc
+index 5e724cd579..ddb36f9466 100644
+--- a/Doc/using/venv-create.inc
++++ b/Doc/using/venv-create.inc
+@@ -126,6 +126,10 @@ directory containing the virtual environment):
+ |             | PowerShell      | PS C:\\> <venv>\\Scripts\\Activate.ps1  |
+ +-------------+-----------------+-----------------------------------------+
+ 
++When a virtual environment is active, the :envvar:`VIRTUAL_ENV` environment
++variable is set to the path of the virtual environment. This can be used to
++check if one is running inside a virtual environment.
++
+ You don't specifically *need* to activate an environment; activation just
+ prepends the virtual environment's binary directory to your path, so that
+ "python" invokes the virtual environment's Python interpreter and you can run
+diff --git a/Doc/using/windows.rst b/Doc/using/windows.rst
+index d0c342e1da..857308e77d 100644
+--- a/Doc/using/windows.rst
++++ b/Doc/using/windows.rst
+@@ -339,6 +339,11 @@ full write access to shared locations such as ``TEMP`` and the registry.
+ Instead, it will write to a private copy. If your scripts must modify the
+ shared locations, you will need to install the full installer.
+ 
++For more detail on the technical basis for these limitations, please consult
++Microsoft's documentation on packaged full-trust apps, currently available at
++`docs.microsoft.com/en-us/windows/msix/desktop/desktop-to-uwp-behind-the-scenes
++<https://docs.microsoft.com/en-us/windows/msix/desktop/desktop-to-uwp-behind-the-scenes>`_
++
+ 
+ .. _windows-nuget:
+ 
 diff --git a/Doc/whatsnew/3.9.rst b/Doc/whatsnew/3.9.rst
 index f8f421bdda..68b1e504da 100644
 --- a/Doc/whatsnew/3.9.rst
@@ -2481,6 +2644,33 @@ index 7bc80833a7..0f1304d26a 100644
  }
  
  /* Call the callable object 'callable' with the "vectorcall" calling
+diff --git a/Include/cpython/unicodeobject.h b/Include/cpython/unicodeobject.h
+index 1fc732abeb..17db79cffb 100644
+--- a/Include/cpython/unicodeobject.h
++++ b/Include/cpython/unicodeobject.h
+@@ -22,7 +22,7 @@ extern "C" {
+ 
+  */
+ #define Py_UNICODE_ISSPACE(ch) \
+-    ((ch) < 128U ? _Py_ascii_whitespace[(ch)] : _PyUnicode_IsWhitespace(ch))
++    ((Py_UCS4)(ch) < 128U ? _Py_ascii_whitespace[(ch)] : _PyUnicode_IsWhitespace(ch))
+ 
+ #define Py_UNICODE_ISLOWER(ch) _PyUnicode_IsLowercase(ch)
+ #define Py_UNICODE_ISUPPER(ch) _PyUnicode_IsUppercase(ch)
+@@ -760,13 +760,6 @@ PyAPI_FUNC(const char *) PyUnicode_AsUTF8AndSize(
+ 
+    Use of this API is DEPRECATED since no size information can be
+    extracted from the returned data.
+-
+-   *** This API is for interpreter INTERNAL USE ONLY and will likely
+-   *** be removed or changed for Python 3.1.
+-
+-   *** If you need to access the Unicode object as UTF-8 bytes string,
+-   *** please use PyUnicode_AsUTF8String() instead.
+-
+ */
+ 
+ PyAPI_FUNC(const char *) PyUnicode_AsUTF8(PyObject *unicode);
 diff --git a/Include/patchlevel.h b/Include/patchlevel.h
 index 0b5d280bd4..253421378b 100644
 --- a/Include/patchlevel.h
@@ -2761,6 +2951,19 @@ index 7f23e9775d..d2edd148a2 100644
  
              Note that no stream repositioning should take place.
              This method is primarily intended to be able to recover
+diff --git a/Lib/collections/__init__.py b/Lib/collections/__init__.py
+index bc69a6757f..5bdd3b3516 100644
+--- a/Lib/collections/__init__.py
++++ b/Lib/collections/__init__.py
+@@ -424,7 +424,7 @@ def namedtuple(typename, field_names, *, rename=False, defaults=None, module=Non
+ 
+     namespace = {
+         '_tuple_new': tuple_new,
+-        '__builtins__': None,
++        '__builtins__': {},
+         '__name__': f'namedtuple_{typename}',
+     }
+     code = f'lambda _cls, {arg_list}: _tuple_new(_cls, ({arg_list}))'
 diff --git a/Lib/collections/abc.py b/Lib/collections/abc.py
 index 891600d16b..86ca8b8a84 100644
 --- a/Lib/collections/abc.py
@@ -2770,7 +2973,7 @@ index 891600d16b..86ca8b8a84 100644
  from _collections_abc import __all__
 +from _collections_abc import _CallableGenericAlias
 diff --git a/Lib/ctypes/test/test_parameters.py b/Lib/ctypes/test/test_parameters.py
-index e4c25fd880..531894fdec 100644
+index e4c25fd880..38af7ac13d 100644
 --- a/Lib/ctypes/test/test_parameters.py
 +++ b/Lib/ctypes/test/test_parameters.py
 @@ -201,6 +201,49 @@ class SimpleTypesTestCase(unittest.TestCase):
@@ -2816,13 +3019,63 @@ index e4c25fd880..531894fdec 100644
 +        self.assertEqual(repr(c_double.from_param(1.5)), "<cparam 'd' (1.5)>")
 +        self.assertEqual(repr(c_double.from_param(1e300)), "<cparam 'd' (1e+300)>")
 +        self.assertRegex(repr(c_longdouble.from_param(1.5)), r"^<cparam ('d' \(1.5\)|'g' at 0x[A-Fa-f0-9]+)>$")
-+        self.assertRegex(repr(c_char_p.from_param(b'hihi')), "^<cparam 'z' \(0x[A-Fa-f0-9]+\)>$")
-+        self.assertRegex(repr(c_wchar_p.from_param('hihi')), "^<cparam 'Z' \(0x[A-Fa-f0-9]+\)>$")
++        self.assertRegex(repr(c_char_p.from_param(b'hihi')), r"^<cparam 'z' \(0x[A-Fa-f0-9]+\)>$")
++        self.assertRegex(repr(c_wchar_p.from_param('hihi')), r"^<cparam 'Z' \(0x[A-Fa-f0-9]+\)>$")
 +        self.assertRegex(repr(c_void_p.from_param(0x12)), r"^<cparam 'P' \(0x0*12\)>$")
 +
  ################################################################
  
  if __name__ == '__main__':
+diff --git a/Lib/datetime.py b/Lib/datetime.py
+index e508d996fb..23d2bf0918 100644
+--- a/Lib/datetime.py
++++ b/Lib/datetime.py
+@@ -2358,7 +2358,7 @@ _EPOCH = datetime(1970, 1, 1, tzinfo=timezone.utc)
+ #    This is again a requirement for a sane tzinfo class.
+ #
+ # 4. (x+k).s = x.s
+-#    This follows from #2, and that datimetimetz+timedelta preserves tzinfo.
++#    This follows from #2, and that datetime.timetz+timedelta preserves tzinfo.
+ #
+ # 5. (x+k).n = x.n + k
+ #    Again follows from how arithmetic is defined.
+diff --git a/Lib/distutils/spawn.py b/Lib/distutils/spawn.py
+index f50edd2da9..0d1bd0391e 100644
+--- a/Lib/distutils/spawn.py
++++ b/Lib/distutils/spawn.py
+@@ -54,8 +54,8 @@ def spawn(cmd, search_path=1, verbose=0, dry_run=0):
+         global _cfg_target, _cfg_target_split
+         if _cfg_target is None:
+             from distutils import sysconfig
+-            _cfg_target = str(sysconfig.get_config_var(
+-                                  'MACOSX_DEPLOYMENT_TARGET') or '')
++            _cfg_target = sysconfig.get_config_var(
++                                  'MACOSX_DEPLOYMENT_TARGET') or ''
+             if _cfg_target:
+                 _cfg_target_split = [int(x) for x in _cfg_target.split('.')]
+         if _cfg_target:
+diff --git a/Lib/distutils/tests/test_build_ext.py b/Lib/distutils/tests/test_build_ext.py
+index 1b034c9302..808c0dc287 100644
+--- a/Lib/distutils/tests/test_build_ext.py
++++ b/Lib/distutils/tests/test_build_ext.py
+@@ -455,7 +455,7 @@ class BuildExtTestCase(TempdirManager,
+         deptarget = sysconfig.get_config_var('MACOSX_DEPLOYMENT_TARGET')
+         if deptarget:
+             # increment the minor version number (i.e. 10.6 -> 10.7)
+-            deptarget = [int(x) for x in str(deptarget).split('.')]
++            deptarget = [int(x) for x in deptarget.split('.')]
+             deptarget[-1] += 1
+             deptarget = '.'.join(str(i) for i in deptarget)
+             self._try_compile_deployment_target('<', deptarget)
+@@ -488,7 +488,7 @@ class BuildExtTestCase(TempdirManager,
+ 
+         # get the deployment target that the interpreter was built with
+         target = sysconfig.get_config_var('MACOSX_DEPLOYMENT_TARGET')
+-        target = tuple(map(int, str(target).split('.')[0:2]))
++        target = tuple(map(int, target.split('.')[0:2]))
+         # format the target value as defined in the Apple
+         # Availability Macros.  We can't use the macro names since
+         # at least one value we test with will not exist yet.
 diff --git a/Lib/enum.py b/Lib/enum.py
 index ebadd9f662..1fddb1c75e 100644
 --- a/Lib/enum.py
@@ -3364,6 +3617,19 @@ index 0eb1802bdb..7c52c23067 100644
      result = []
      pat = os.path.normcase(pat)
      match = _compile_pattern(pat)
+diff --git a/Lib/html/parser.py b/Lib/html/parser.py
+index 6083077981..9e49effca1 100644
+--- a/Lib/html/parser.py
++++ b/Lib/html/parser.py
+@@ -46,7 +46,7 @@ locatestarttagend_tolerant = re.compile(r"""
+           |"[^"]*"                   # LIT-enclosed value
+           |(?!['"])[^>\s]*           # bare value
+          )
+-         (?:\s*,)*                   # possibly followed by a comma
++        \s*                          # possibly followed by a space
+        )?(?:\s|/(?!>))*
+      )*
+    )?
 diff --git a/Lib/http/client.py b/Lib/http/client.py
 index c2ad0471bf..16afc871ea 100644
 --- a/Lib/http/client.py
@@ -3378,23 +3644,38 @@ index c2ad0471bf..16afc871ea 100644
  
          The headers argument should be a mapping of extra HTTP headers to send
 diff --git a/Lib/idlelib/NEWS.txt b/Lib/idlelib/NEWS.txt
-index 869be0a62b..0033e66f9b 100644
+index 869be0a62b..4bc4aefd1a 100644
 --- a/Lib/idlelib/NEWS.txt
 +++ b/Lib/idlelib/NEWS.txt
-@@ -3,6 +3,11 @@ Released on 2020-12-07?
+@@ -1,8 +1,24 @@
+-What's New in IDLE 3.9.1
+-Released on 2020-12-07?
++What's New in IDLE 3.9.2
++Released on 2021-02-15?
  ======================================
  
  
++bpo-23544: Disable Debug=>Stack Viewer when user code is running or
++Debugger is active, to prevent hang or crash.  Patch by Zackery Spytz.
++
++bpo-43008: Make IDLE invoke :func:`sys.excepthook` in normal,
++2-process mode.  Patch by Ken Hilton.
++
 +bpo-33065: Fix problem debugging user classes with __repr__ method.
 +
 +bpo-32631: Finish zzdummy example extension module: make menu entries
 +work; add docstrings and tests with 100% coverage.
 +
++
++What's New in IDLE 3.9.1
++Released on 2020-12-07
++======================================
++
  bpo-42508: Keep IDLE running on macOS.  Remove obsolete workaround
  that prevented running files with shortcuts when using new universal2
  installers built on macOS 11.
 diff --git a/Lib/idlelib/codecontext.py b/Lib/idlelib/codecontext.py
-index 989b30e599..eb19773f56 100644
+index 989b30e599..f2f44f5f8d 100644
 --- a/Lib/idlelib/codecontext.py
 +++ b/Lib/idlelib/codecontext.py
 @@ -7,11 +7,14 @@ the lines which contain the block opening keywords, e.g. 'if', for the
@@ -3440,6 +3721,15 @@ index 989b30e599..eb19773f56 100644
                                          bg=line_number_colors['background'])
              self.cell00.grid(row=0, column=0, sticky=NSEW)
              menu_status = 'Hide'
+@@ -139,7 +142,7 @@ class CodeContext:
+             self.text.after_cancel(self.t1)
+             self._reset()
+             menu_status = 'Show'
+-        self.editwin.update_menu_label(menu='options', index='* Code Context',
++        self.editwin.update_menu_label(menu='options', index='*ode*ontext',
+                                        label=f'{menu_status} Code Context')
+         return "break"
+ 
 @@ -221,7 +224,7 @@ class CodeContext:
          """
          try:
@@ -3450,9 +3740,47 @@ index 989b30e599..eb19773f56 100644
              if lines == 1:  # No context lines are showing.
                  newtop = 1
 diff --git a/Lib/idlelib/configdialog.py b/Lib/idlelib/configdialog.py
-index a84e1c5668..73e64852c6 100644
+index a84e1c5668..c52a04b503 100644
 --- a/Lib/idlelib/configdialog.py
 +++ b/Lib/idlelib/configdialog.py
+@@ -18,8 +18,8 @@ from tkinter import (Toplevel, Listbox, Scale, Canvas,
+                      HORIZONTAL, VERTICAL, ANCHOR, ACTIVE, END)
+ from tkinter.ttk import (Frame, LabelFrame, Button, Checkbutton, Entry, Label,
+                          OptionMenu, Notebook, Radiobutton, Scrollbar, Style)
+-import tkinter.colorchooser as tkColorChooser
+-import tkinter.font as tkFont
++from tkinter import colorchooser
++import tkinter.font as tkfont
+ from tkinter import messagebox
+ 
+ from idlelib.config import idleConf, ConfigChanges
+@@ -609,7 +609,7 @@ class FontPage(Frame):
+         font_bold  = configured_font[2]=='bold'
+ 
+         # Set sorted no-duplicate editor font selection list and font_name.
+-        fonts = sorted(set(tkFont.families(self)))
++        fonts = sorted(set(tkfont.families(self)))
+         for font in fonts:
+             self.fontlist.insert(END, font)
+         self.font_name.set(font_name)
+@@ -663,7 +663,7 @@ class FontPage(Frame):
+         Updates font_sample and highlight page highlight_sample.
+         """
+         font_name = self.font_name.get()
+-        font_weight = tkFont.BOLD if self.font_bold.get() else tkFont.NORMAL
++        font_weight = tkfont.BOLD if self.font_bold.get() else tkfont.NORMAL
+         new_font = (font_name, self.font_size.get(), font_weight)
+         self.font_sample['font'] = new_font
+         self.highlight_sample['font'] = new_font
+@@ -1100,7 +1100,7 @@ class HighPage(Frame):
+         target = self.highlight_target.get()
+         prev_color = self.style.lookup(self.frame_color_set['style'],
+                                        'background')
+-        rgbTuplet, color_string = tkColorChooser.askcolor(
++        rgbTuplet, color_string = colorchooser.askcolor(
+                 parent=self, title='Pick new color for : '+target,
+                 initialcolor=prev_color)
+         if color_string and (color_string != prev_color):
 @@ -2316,7 +2316,15 @@ display when Code Context is turned on for an editor window.
  
  Shell Preferences: Auto-Squeeze Min. Lines is the minimum number of lines
@@ -3498,6 +3826,117 @@ index 9dcfc56414..2620443885 100644
      from unittest import main
 -    main('idlelib.idle_test.test_debugger', verbosity=2, exit=False)
 +    main('idlelib.idle_test.test_debugger_r', verbosity=2, exit=False)
+diff --git a/Lib/idlelib/editor.py b/Lib/idlelib/editor.py
+index a178eaf93c..b9cb50264f 100644
+--- a/Lib/idlelib/editor.py
++++ b/Lib/idlelib/editor.py
+@@ -12,8 +12,8 @@ import webbrowser
+ from tkinter import *
+ from tkinter.font import Font
+ from tkinter.ttk import Scrollbar
+-import tkinter.simpledialog as tkSimpleDialog
+-import tkinter.messagebox as tkMessageBox
++from tkinter import simpledialog
++from tkinter import messagebox
+ 
+ from idlelib.config import idleConf
+ from idlelib import configdialog
+@@ -46,7 +46,7 @@ def _sphinx_version():
+     return release
+ 
+ 
+-class EditorWindow(object):
++class EditorWindow:
+     from idlelib.percolator import Percolator
+     from idlelib.colorizer import ColorDelegator, color_config
+     from idlelib.undo import UndoDelegator
+@@ -295,9 +295,9 @@ class EditorWindow(object):
+             window.register_callback(self.postwindowsmenu)
+ 
+         # Some abstractions so IDLE extensions are cross-IDE
+-        self.askyesno = tkMessageBox.askyesno
+-        self.askinteger = tkSimpleDialog.askinteger
+-        self.showerror = tkMessageBox.showerror
++        self.askinteger = simpledialog.askinteger
++        self.askyesno = messagebox.askyesno
++        self.showerror = messagebox.showerror
+ 
+         # Add pseudoevents for former extension fixed keys.
+         # (This probably needs to be done once in the process.)
+@@ -339,7 +339,7 @@ class EditorWindow(object):
+             text.bind("<<toggle-code-context>>",
+                       self.code_context.toggle_code_context_event)
+         else:
+-            self.update_menu_state('options', '*Code Context', 'disabled')
++            self.update_menu_state('options', '*ode*ontext', 'disabled')
+         if self.allow_line_numbers:
+             self.line_numbers = self.LineNumbers(self)
+             if idleConf.GetOption('main', 'EditorWindow',
+@@ -347,7 +347,7 @@ class EditorWindow(object):
+                 self.toggle_line_numbers_event()
+             text.bind("<<toggle-line-numbers>>", self.toggle_line_numbers_event)
+         else:
+-            self.update_menu_state('options', '*Line Numbers', 'disabled')
++            self.update_menu_state('options', '*ine*umbers', 'disabled')
+ 
+     def handle_winconfig(self, event=None):
+         self.set_width()
+@@ -450,7 +450,9 @@ class EditorWindow(object):
+         self.menudict = menudict = {}
+         for name, label in self.menu_specs:
+             underline, label = prepstr(label)
+-            menudict[name] = menu = Menu(mbar, name=name, tearoff=0)
++            postcommand = getattr(self, f'{name}_menu_postcommand', None)
++            menudict[name] = menu = Menu(mbar, name=name, tearoff=0,
++                                         postcommand=postcommand)
+             mbar.add_cascade(label=label, menu=menu, underline=underline)
+         if macosx.isCarbonTk():
+             # Insert the application menu
+@@ -596,7 +598,7 @@ class EditorWindow(object):
+             try:
+                 os.startfile(self.help_url)
+             except OSError as why:
+-                tkMessageBox.showerror(title='Document Start Failure',
++                messagebox.showerror(title='Document Start Failure',
+                     message=str(why), parent=self.text)
+         else:
+             webbrowser.open(self.help_url)
+@@ -927,7 +929,7 @@ class EditorWindow(object):
+                 try:
+                     os.startfile(helpfile)
+                 except OSError as why:
+-                    tkMessageBox.showerror(title='Document Start Failure',
++                    messagebox.showerror(title='Document Start Failure',
+                         message=str(why), parent=self.text)
+             else:
+                 webbrowser.open(helpfile)
+@@ -963,7 +965,7 @@ class EditorWindow(object):
+             except OSError as err:
+                 if not getattr(self.root, "recentfiles_message", False):
+                     self.root.recentfiles_message = True
+-                    tkMessageBox.showwarning(title='IDLE Warning',
++                    messagebox.showwarning(title='IDLE Warning',
+                         message="Cannot save Recent Files list to disk.\n"
+                                 f"  {err}\n"
+                                 "Select OK to continue.",
+@@ -1527,7 +1529,7 @@ class EditorWindow(object):
+         else:
+             self.line_numbers.show_sidebar()
+             menu_label = "Hide"
+-        self.update_menu_label(menu='options', index='*Line Numbers',
++        self.update_menu_label(menu='options', index='*ine*umbers',
+                                label=f'{menu_label} Line Numbers')
+ 
+ # "line.col" -> line, as an int
+@@ -1546,7 +1548,7 @@ def get_line_indent(line, tabwidth):
+     return m.end(), len(m.group().expandtabs(tabwidth))
+ 
+ 
+-class IndentSearcher(object):
++class IndentSearcher:
+ 
+     # .run() chews over the Text widget, looking for a block opener
+     # and the stmt following it.  Returns a pair,
 diff --git a/Lib/idlelib/extend.txt b/Lib/idlelib/extend.txt
 index c9cb2e8297..b482f76c4f 100644
 --- a/Lib/idlelib/extend.txt
@@ -3542,6 +3981,269 @@ index c9cb2e8297..b482f76c4f 100644
          "...Do what you want here..."
  
  The final piece of the puzzle is the file "config-extensions.def", which is
+diff --git a/Lib/idlelib/filelist.py b/Lib/idlelib/filelist.py
+index 0d200854ef..254f5caf6b 100644
+--- a/Lib/idlelib/filelist.py
++++ b/Lib/idlelib/filelist.py
+@@ -1,7 +1,7 @@
+ "idlelib.filelist"
+ 
+ import os
+-from tkinter import messagebox as tkMessageBox
++from tkinter import messagebox
+ 
+ 
+ class FileList:
+@@ -20,7 +20,7 @@ class FileList:
+         filename = self.canonize(filename)
+         if os.path.isdir(filename):
+             # This can happen when bad filename is passed on command line:
+-            tkMessageBox.showerror(
++            messagebox.showerror(
+                 "File Error",
+                 "%r is a directory." % (filename,),
+                 master=self.root)
+@@ -88,7 +88,7 @@ class FileList:
+         if newkey in self.dict:
+             conflict = self.dict[newkey]
+             self.inversedict[conflict] = None
+-            tkMessageBox.showerror(
++            messagebox.showerror(
+                 "Name Conflict",
+                 "You now have multiple edit windows open for %r" % (filename,),
+                 master=self.root)
+diff --git a/Lib/idlelib/idle_test/mock_tk.py b/Lib/idlelib/idle_test/mock_tk.py
+index b736bd001d..db58355383 100644
+--- a/Lib/idlelib/idle_test/mock_tk.py
++++ b/Lib/idlelib/idle_test/mock_tk.py
+@@ -59,27 +59,26 @@ class Mbox_func:
+ class Mbox:
+     """Mock for tkinter.messagebox with an Mbox_func for each function.
+ 
+-    This module was 'tkMessageBox' in 2.x; hence the 'import as' in  3.x.
+     Example usage in test_module.py for testing functions in module.py:
+     ---
+ from idlelib.idle_test.mock_tk import Mbox
+ import module
+ 
+-orig_mbox = module.tkMessageBox
++orig_mbox = module.messagebox
+ showerror = Mbox.showerror  # example, for attribute access in test methods
+ 
+ class Test(unittest.TestCase):
+ 
+     @classmethod
+     def setUpClass(cls):
+-        module.tkMessageBox = Mbox
++        module.messagebox = Mbox
+ 
+     @classmethod
+     def tearDownClass(cls):
+-        module.tkMessageBox = orig_mbox
++        module.messagebox = orig_mbox
+     ---
+     For 'ask' functions, set func.result return value before calling the method
+-    that uses the message function. When tkMessageBox functions are the
++    that uses the message function. When messagebox functions are the
+     only gui alls in a method, this replacement makes the method gui-free,
+     """
+     askokcancel = Mbox_func()     # True or False
+diff --git a/Lib/idlelib/idle_test/test_autocomplete.py b/Lib/idlelib/idle_test/test_autocomplete.py
+index 9c113bd893..642bb5db64 100644
+--- a/Lib/idlelib/idle_test/test_autocomplete.py
++++ b/Lib/idlelib/idle_test/test_autocomplete.py
+@@ -195,7 +195,7 @@ class AutoCompleteTest(unittest.TestCase):
+         self.assertFalse(acp.open_completions(ac.TAB))
+         self.text.delete('1.0', 'end')
+ 
+-    class dummy_acw():
++    class dummy_acw:
+         __init__ = Func()
+         show_window = Func(result=False)
+         hide_window = Func()
+diff --git a/Lib/idlelib/idle_test/test_calltip.py b/Lib/idlelib/idle_test/test_calltip.py
+index a76829f365..b23915c5ab 100644
+--- a/Lib/idlelib/idle_test/test_calltip.py
++++ b/Lib/idlelib/idle_test/test_calltip.py
+@@ -10,7 +10,7 @@ from idlelib.idle_test.mock_tk import Text
+ 
+ 
+ # Test Class TC is used in multiple get_argspec test methods
+-class TC():
++class TC:
+     'doc'
+     tip = "(ai=None, *b)"
+     def __init__(self, ai=None, *b): 'doc'
+@@ -268,7 +268,7 @@ class Get_entityTest(unittest.TestCase):
+ # open_calltip is about half the code; the others are fairly trivial.
+ # The default mocks are what are needed for open_calltip.
+ 
+-class mock_Shell():
++class mock_Shell:
+     "Return mock sufficient to pass to hyperparser."
+     def __init__(self, text):
+         text.tag_prevrange = Mock(return_value=None)
+diff --git a/Lib/idlelib/idle_test/test_codecontext.py b/Lib/idlelib/idle_test/test_codecontext.py
+index 9578cc731a..6969ad73b0 100644
+--- a/Lib/idlelib/idle_test/test_codecontext.py
++++ b/Lib/idlelib/idle_test/test_codecontext.py
+@@ -20,7 +20,7 @@ testcfg = {
+ }
+ code_sample = """\
+ 
+-class C1():
++class C1:
+     # Class comment.
+     def __init__(self, a, b):
+         self.a = a
+@@ -178,29 +178,29 @@ class CodeContextTest(unittest.TestCase):
+         with self.assertRaises(AssertionError):
+             gc(1, stopline=0)
+ 
+-        eq(gc(3), ([(2, 0, 'class C1():', 'class')], 0))
++        eq(gc(3), ([(2, 0, 'class C1:', 'class')], 0))
+ 
+         # Don't return comment.
+-        eq(gc(4), ([(2, 0, 'class C1():', 'class')], 0))
++        eq(gc(4), ([(2, 0, 'class C1:', 'class')], 0))
+ 
+         # Two indentation levels and no comment.
+-        eq(gc(5), ([(2, 0, 'class C1():', 'class'),
++        eq(gc(5), ([(2, 0, 'class C1:', 'class'),
+                     (4, 4, '    def __init__(self, a, b):', 'def')], 0))
+ 
+         # Only one 'def' is returned, not both at the same indent level.
+-        eq(gc(10), ([(2, 0, 'class C1():', 'class'),
++        eq(gc(10), ([(2, 0, 'class C1:', 'class'),
+                      (7, 4, '    def compare(self):', 'def'),
+                      (8, 8, '        if a > b:', 'if')], 0))
+ 
+         # With 'elif', also show the 'if' even though it's at the same level.
+-        eq(gc(11), ([(2, 0, 'class C1():', 'class'),
++        eq(gc(11), ([(2, 0, 'class C1:', 'class'),
+                      (7, 4, '    def compare(self):', 'def'),
+                      (8, 8, '        if a > b:', 'if'),
+                      (10, 8, '        elif a < b:', 'elif')], 0))
+ 
+         # Set stop_line to not go back to first line in source code.
+         # Return includes stop_line.
+-        eq(gc(11, stopline=2), ([(2, 0, 'class C1():', 'class'),
++        eq(gc(11, stopline=2), ([(2, 0, 'class C1:', 'class'),
+                                  (7, 4, '    def compare(self):', 'def'),
+                                  (8, 8, '        if a > b:', 'if'),
+                                  (10, 8, '        elif a < b:', 'elif')], 0))
+@@ -240,37 +240,37 @@ class CodeContextTest(unittest.TestCase):
+         # Scroll down to line 2.
+         cc.text.yview(2)
+         cc.update_code_context()
+-        eq(cc.info, [(0, -1, '', False), (2, 0, 'class C1():', 'class')])
++        eq(cc.info, [(0, -1, '', False), (2, 0, 'class C1:', 'class')])
+         eq(cc.topvisible, 3)
+-        eq(cc.context.get('1.0', 'end-1c'), 'class C1():')
++        eq(cc.context.get('1.0', 'end-1c'), 'class C1:')
+ 
+         # Scroll down to line 3.  Since it's a comment, nothing changes.
+         cc.text.yview(3)
+         cc.update_code_context()
+-        eq(cc.info, [(0, -1, '', False), (2, 0, 'class C1():', 'class')])
++        eq(cc.info, [(0, -1, '', False), (2, 0, 'class C1:', 'class')])
+         eq(cc.topvisible, 4)
+-        eq(cc.context.get('1.0', 'end-1c'), 'class C1():')
++        eq(cc.context.get('1.0', 'end-1c'), 'class C1:')
+ 
+         # Scroll down to line 4.
+         cc.text.yview(4)
+         cc.update_code_context()
+         eq(cc.info, [(0, -1, '', False),
+-                     (2, 0, 'class C1():', 'class'),
++                     (2, 0, 'class C1:', 'class'),
+                      (4, 4, '    def __init__(self, a, b):', 'def')])
+         eq(cc.topvisible, 5)
+-        eq(cc.context.get('1.0', 'end-1c'), 'class C1():\n'
++        eq(cc.context.get('1.0', 'end-1c'), 'class C1:\n'
+                                             '    def __init__(self, a, b):')
+ 
+         # Scroll down to line 11.  Last 'def' is removed.
+         cc.text.yview(11)
+         cc.update_code_context()
+         eq(cc.info, [(0, -1, '', False),
+-                     (2, 0, 'class C1():', 'class'),
++                     (2, 0, 'class C1:', 'class'),
+                      (7, 4, '    def compare(self):', 'def'),
+                      (8, 8, '        if a > b:', 'if'),
+                      (10, 8, '        elif a < b:', 'elif')])
+         eq(cc.topvisible, 12)
+-        eq(cc.context.get('1.0', 'end-1c'), 'class C1():\n'
++        eq(cc.context.get('1.0', 'end-1c'), 'class C1:\n'
+                                             '    def compare(self):\n'
+                                             '        if a > b:\n'
+                                             '        elif a < b:')
+@@ -279,12 +279,12 @@ class CodeContextTest(unittest.TestCase):
+         cc.update_code_context()
+         cc.context_depth = 1
+         eq(cc.info, [(0, -1, '', False),
+-                     (2, 0, 'class C1():', 'class'),
++                     (2, 0, 'class C1:', 'class'),
+                      (7, 4, '    def compare(self):', 'def'),
+                      (8, 8, '        if a > b:', 'if'),
+                      (10, 8, '        elif a < b:', 'elif')])
+         eq(cc.topvisible, 12)
+-        eq(cc.context.get('1.0', 'end-1c'), 'class C1():\n'
++        eq(cc.context.get('1.0', 'end-1c'), 'class C1:\n'
+                                             '    def compare(self):\n'
+                                             '        if a > b:\n'
+                                             '        elif a < b:')
+@@ -293,7 +293,7 @@ class CodeContextTest(unittest.TestCase):
+         cc.text.yview(5)
+         cc.update_code_context()
+         eq(cc.info, [(0, -1, '', False),
+-                     (2, 0, 'class C1():', 'class'),
++                     (2, 0, 'class C1:', 'class'),
+                      (4, 4, '    def __init__(self, a, b):', 'def')])
+         eq(cc.topvisible, 6)
+         # context_depth is 1.
+@@ -440,7 +440,7 @@ class HelperFunctionText(unittest.TestCase):
+         # Line 1 is not a BLOCKOPENER.
+         eq(gli(lines[0]), (codecontext.INFINITY, '', False))
+         # Line 2 is a BLOCKOPENER without an indent.
+-        eq(gli(lines[1]), (0, 'class C1():', 'class'))
++        eq(gli(lines[1]), (0, 'class C1:', 'class'))
+         # Line 3 is not a BLOCKOPENER and does not return the indent level.
+         eq(gli(lines[2]), (codecontext.INFINITY, '    # Class comment.', False))
+         # Line 4 is a BLOCKOPENER and is indented.
+diff --git a/Lib/idlelib/idle_test/test_configdialog.py b/Lib/idlelib/idle_test/test_configdialog.py
+index 1fea6d41df..98ddc67afd 100644
+--- a/Lib/idlelib/idle_test/test_configdialog.py
++++ b/Lib/idlelib/idle_test/test_configdialog.py
+@@ -423,7 +423,7 @@ class HighPageTest(unittest.TestCase):
+     def test_color(self):
+         d = self.page
+         d.on_new_color_set = Func()
+-        # self.color is only set in get_color through ColorChooser.
++        # self.color is only set in get_color through colorchooser.
+         d.color.set('green')
+         self.assertEqual(d.on_new_color_set.called, 1)
+         del d.on_new_color_set
+@@ -540,8 +540,8 @@ class HighPageTest(unittest.TestCase):
+     def test_get_color(self):
+         eq = self.assertEqual
+         d = self.page
+-        orig_chooser = configdialog.tkColorChooser.askcolor
+-        chooser = configdialog.tkColorChooser.askcolor = Func()
++        orig_chooser = configdialog.colorchooser.askcolor
++        chooser = configdialog.colorchooser.askcolor = Func()
+         gntn = d.get_new_theme_name = Func()
+ 
+         d.highlight_target.set('Editor Breakpoint')
+@@ -582,7 +582,7 @@ class HighPageTest(unittest.TestCase):
+         eq(d.color.get(), '#de0000')
+ 
+         del d.get_new_theme_name
+-        configdialog.tkColorChooser.askcolor = orig_chooser
++        configdialog.colorchooser.askcolor = orig_chooser
+ 
+     def test_on_new_color_set(self):
+         d = self.page
 diff --git a/Lib/idlelib/idle_test/test_debugger_r.py b/Lib/idlelib/idle_test/test_debugger_r.py
 index 199f63447c..638ebd36a7 100644
 --- a/Lib/idlelib/idle_test/test_debugger_r.py
@@ -3566,6 +4268,301 @@ index 199f63447c..638ebd36a7 100644
 +
  if __name__ == '__main__':
      unittest.main(verbosity=2)
+diff --git a/Lib/idlelib/idle_test/test_format.py b/Lib/idlelib/idle_test/test_format.py
+index a79bb51508..e5e9036885 100644
+--- a/Lib/idlelib/idle_test/test_format.py
++++ b/Lib/idlelib/idle_test/test_format.py
+@@ -418,7 +418,7 @@ class FormatRegionTest(unittest.TestCase):
+ 
+     code_sample = """\
+ # WS line needed for test.
+-class C1():
++class C1:
+     # Class comment.
+     def __init__(self, a, b):
+         self.a = a
+diff --git a/Lib/idlelib/idle_test/test_help_about.py b/Lib/idlelib/idle_test/test_help_about.py
+index 7c148d23a1..b915535aca 100644
+--- a/Lib/idlelib/idle_test/test_help_about.py
++++ b/Lib/idlelib/idle_test/test_help_about.py
+@@ -134,7 +134,7 @@ class CloseTest(unittest.TestCase):
+             self.dialog.winfo_class()
+ 
+ 
+-class Dummy_about_dialog():
++class Dummy_about_dialog:
+     # Dummy class for testing file display functions.
+     idle_credits = About.show_idle_credits
+     idle_readme = About.show_readme
+diff --git a/Lib/idlelib/idle_test/test_mainmenu.py b/Lib/idlelib/idle_test/test_mainmenu.py
+index 7ec0368371..51d2accfe4 100644
+--- a/Lib/idlelib/idle_test/test_mainmenu.py
++++ b/Lib/idlelib/idle_test/test_mainmenu.py
+@@ -2,6 +2,7 @@
+ # Reported as 88%; mocking turtledemo absence would have no point.
+ 
+ from idlelib import mainmenu
++import re
+ import unittest
+ 
+ 
+@@ -16,6 +17,26 @@ class MainMenuTest(unittest.TestCase):
+     def test_default_keydefs(self):
+         self.assertGreaterEqual(len(mainmenu.default_keydefs), 50)
+ 
++    def test_tcl_indexes(self):
++        # Test tcl patterns used to find menuitem to alter.
++        # On failure, change pattern here and in function(s).
++        # Patterns here have '.*' for re instead of '*' for tcl.
++        for menu, pattern in (
++            ('debug', '.*tack.*iewer'),  # PyShell.debug_menu_postcommand
++            ('options', '.*ode.*ontext'),  # EW.__init__, CodeContext.toggle...
++            ('options', '.*ine.*umbers'),  # EW.__init__, EW.toggle...event.
++            ):
++            with self.subTest(menu=menu, pattern=pattern):
++                for menutup in mainmenu.menudefs:
++                    if menutup[0] == menu:
++                        break
++                else:
++                    self.assertTrue(0, f"{menu} not in menudefs")
++                self.assertTrue(any(re.search(pattern, menuitem[0])
++                                    for menuitem in menutup[1]
++                                    if menuitem is not None),  # Separator.
++                                f"{pattern} not in {menu}")
++
+ 
+ if __name__ == '__main__':
+     unittest.main(verbosity=2)
+diff --git a/Lib/idlelib/idle_test/test_pyparse.py b/Lib/idlelib/idle_test/test_pyparse.py
+index f21baf7534..fb5726db1d 100644
+--- a/Lib/idlelib/idle_test/test_pyparse.py
++++ b/Lib/idlelib/idle_test/test_pyparse.py
+@@ -73,11 +73,12 @@ class PyParseTest(unittest.TestCase):
+ 
+         # Split def across lines.
+         setcode('"""This is a module docstring"""\n'
+-                'class C():\n'
++                'class C:\n'
+                 '    def __init__(self, a,\n'
+                 '                 b=True):\n'
+                 '        pass\n'
+                 )
++        pos0, pos = 33, 42  # Start of 'class...', '    def' lines.
+ 
+         # Passing no value or non-callable should fail (issue 32989).
+         with self.assertRaises(TypeError):
+@@ -91,40 +92,41 @@ class PyParseTest(unittest.TestCase):
+ 
+         # Make all text look like it's not in a string.  This means that it
+         # found a good start position.
+-        eq(start(char_in_string_false), 44)
++        eq(start(char_in_string_false), pos)
+ 
+         # If the beginning of the def line is not in a string, then it
+         # returns that as the index.
+-        eq(start(is_char_in_string=lambda index: index > 44), 44)
++        eq(start(is_char_in_string=lambda index: index > pos), pos)
+         # If the beginning of the def line is in a string, then it
+         # looks for a previous index.
+-        eq(start(is_char_in_string=lambda index: index >= 44), 33)
++        eq(start(is_char_in_string=lambda index: index >= pos), pos0)
+         # If everything before the 'def' is in a string, then returns None.
+         # The non-continuation def line returns 44 (see below).
+-        eq(start(is_char_in_string=lambda index: index < 44), None)
++        eq(start(is_char_in_string=lambda index: index < pos), None)
+ 
+         # Code without extra line break in def line - mostly returns the same
+         # values.
+         setcode('"""This is a module docstring"""\n'
+-                'class C():\n'
++                'class C:\n'
+                 '    def __init__(self, a, b=True):\n'
+                 '        pass\n'
+-                )
+-        eq(start(char_in_string_false), 44)
+-        eq(start(is_char_in_string=lambda index: index > 44), 44)
+-        eq(start(is_char_in_string=lambda index: index >= 44), 33)
++                )  # Does not affect class, def positions.
++        eq(start(char_in_string_false), pos)
++        eq(start(is_char_in_string=lambda index: index > pos), pos)
++        eq(start(is_char_in_string=lambda index: index >= pos), pos0)
+         # When the def line isn't split, this returns which doesn't match the
+         # split line test.
+-        eq(start(is_char_in_string=lambda index: index < 44), 44)
++        eq(start(is_char_in_string=lambda index: index < pos), pos)
+ 
+     def test_set_lo(self):
+         code = (
+                 '"""This is a module docstring"""\n'
+-                'class C():\n'
++                'class C:\n'
+                 '    def __init__(self, a,\n'
+                 '                 b=True):\n'
+                 '        pass\n'
+                 )
++        pos = 42
+         p = self.parser
+         p.set_code(code)
+ 
+@@ -137,8 +139,8 @@ class PyParseTest(unittest.TestCase):
+         self.assertEqual(p.code, code)
+ 
+         # An index that is preceded by a newline.
+-        p.set_lo(44)
+-        self.assertEqual(p.code, code[44:])
++        p.set_lo(pos)
++        self.assertEqual(p.code, code[pos:])
+ 
+     def test_study1(self):
+         eq = self.assertEqual
+diff --git a/Lib/idlelib/idle_test/test_replace.py b/Lib/idlelib/idle_test/test_replace.py
+index c3c5d2eeb9..6c07389b29 100644
+--- a/Lib/idlelib/idle_test/test_replace.py
++++ b/Lib/idlelib/idle_test/test_replace.py
+@@ -10,7 +10,7 @@ from unittest.mock import Mock
+ from idlelib.idle_test.mock_tk import Mbox
+ import idlelib.searchengine as se
+ 
+-orig_mbox = se.tkMessageBox
++orig_mbox = se.messagebox
+ showerror = Mbox.showerror
+ 
+ 
+@@ -20,7 +20,7 @@ class ReplaceDialogTest(unittest.TestCase):
+     def setUpClass(cls):
+         cls.root = Tk()
+         cls.root.withdraw()
+-        se.tkMessageBox = Mbox
++        se.messagebox = Mbox
+         cls.engine = se.SearchEngine(cls.root)
+         cls.dialog = ReplaceDialog(cls.root, cls.engine)
+         cls.dialog.bell = lambda: None
+@@ -32,7 +32,7 @@ class ReplaceDialogTest(unittest.TestCase):
+ 
+     @classmethod
+     def tearDownClass(cls):
+-        se.tkMessageBox = orig_mbox
++        se.messagebox = orig_mbox
+         del cls.text, cls.dialog, cls.engine
+         cls.root.destroy()
+         del cls.root
+diff --git a/Lib/idlelib/idle_test/test_run.py b/Lib/idlelib/idle_test/test_run.py
+index 37c0d4525e..a31671ee04 100644
+--- a/Lib/idlelib/idle_test/test_run.py
++++ b/Lib/idlelib/idle_test/test_run.py
+@@ -1,16 +1,18 @@
+ "Test run, coverage 49%."
+ 
+ from idlelib import run
++import io
++import sys
++from test.support import captured_output, captured_stderr
+ import unittest
+ from unittest import mock
++import idlelib
+ from idlelib.idle_test.mock_idle import Func
+-from test.support import captured_output, captured_stderr
+ 
+-import io
+-import sys
++idlelib.testing = True  # Use {} for executing test user code.
+ 
+ 
+-class RunTest(unittest.TestCase):
++class PrintExceptionTest(unittest.TestCase):
+ 
+     def test_print_exception_unhashable(self):
+         class UnhashableException(Exception):
+@@ -351,5 +353,38 @@ class HandleErrorTest(unittest.TestCase):
+             self.assertIn('IndexError', msg)
+             eq(func.called, 2)
+ 
++
++class ExecRuncodeTest(unittest.TestCase):
++
++    @classmethod
++    def setUpClass(cls):
++        cls.addClassCleanup(setattr,run,'print_exception',run.print_exception)
++        cls.prt = Func()  # Need reference.
++        run.print_exception = cls.prt
++        mockrpc = mock.Mock()
++        mockrpc.console.getvar = Func(result=False)
++        cls.ex = run.Executive(mockrpc)
++
++    @classmethod
++    def tearDownClass(cls):
++        assert sys.excepthook == sys.__excepthook__
++
++    def test_exceptions(self):
++        ex = self.ex
++        ex.runcode('1/0')
++        self.assertIs(ex.user_exc_info[0], ZeroDivisionError)
++
++        self.addCleanup(setattr, sys, 'excepthook', sys.__excepthook__)
++        sys.excepthook = lambda t, e, tb: run.print_exception(t)
++        ex.runcode('1/0')
++        self.assertIs(self.prt.args[0], ZeroDivisionError)
++
++        sys.excepthook = lambda: None
++        ex.runcode('1/0')
++        t, e, tb = ex.user_exc_info
++        self.assertIs(t, TypeError)
++        self.assertTrue(isinstance(e.__context__, ZeroDivisionError))
++
++
+ if __name__ == '__main__':
+     unittest.main(verbosity=2)
+diff --git a/Lib/idlelib/idle_test/test_searchengine.py b/Lib/idlelib/idle_test/test_searchengine.py
+index f8401ce938..9d97983941 100644
+--- a/Lib/idlelib/idle_test/test_searchengine.py
++++ b/Lib/idlelib/idle_test/test_searchengine.py
+@@ -4,7 +4,7 @@ from idlelib import searchengine as se
+ import unittest
+ # from test.support import requires
+ from tkinter import  BooleanVar, StringVar, TclError  # ,Tk, Text
+-import tkinter.messagebox as tkMessageBox
++from tkinter import messagebox
+ from idlelib.idle_test.mock_tk import Var, Mbox
+ from idlelib.idle_test.mock_tk import Text as mockText
+ import re
+@@ -19,13 +19,13 @@ def setUpModule():
+     # Replace s-e module tkinter imports other than non-gui TclError.
+     se.BooleanVar = Var
+     se.StringVar = Var
+-    se.tkMessageBox = Mbox
++    se.messagebox = Mbox
+ 
+ def tearDownModule():
+     # Restore 'just in case', though other tests should also replace.
+     se.BooleanVar = BooleanVar
+     se.StringVar = StringVar
+-    se.tkMessageBox = tkMessageBox
++    se.messagebox = messagebox
+ 
+ 
+ class Mock:
+diff --git a/Lib/idlelib/idle_test/test_squeezer.py b/Lib/idlelib/idle_test/test_squeezer.py
+index e3912f4bbb..ee1bbd76b5 100644
+--- a/Lib/idlelib/idle_test/test_squeezer.py
++++ b/Lib/idlelib/idle_test/test_squeezer.py
+@@ -396,7 +396,7 @@ class ExpandingButtonTest(unittest.TestCase):
+         expandingbutton.base_text = expandingbutton.text
+ 
+         # Patch the message box module to always return False.
+-        with patch('idlelib.squeezer.tkMessageBox') as mock_msgbox:
++        with patch('idlelib.squeezer.messagebox') as mock_msgbox:
+             mock_msgbox.askokcancel.return_value = False
+             mock_msgbox.askyesno.return_value = False
+             # Trigger the expand event.
+@@ -407,7 +407,7 @@ class ExpandingButtonTest(unittest.TestCase):
+         self.assertEqual(expandingbutton.text.get('1.0', 'end-1c'), '')
+ 
+         # Patch the message box module to always return True.
+-        with patch('idlelib.squeezer.tkMessageBox') as mock_msgbox:
++        with patch('idlelib.squeezer.messagebox') as mock_msgbox:
+             mock_msgbox.askokcancel.return_value = True
+             mock_msgbox.askyesno.return_value = True
+             # Trigger the expand event.
 diff --git a/Lib/idlelib/idle_test/test_zzdummy.py b/Lib/idlelib/idle_test/test_zzdummy.py
 new file mode 100644
 index 0000000000..1013cdc3c4
@@ -3724,11 +4721,213 @@ index 0000000000..1013cdc3c4
 +
 +if __name__ == '__main__':
 +    unittest.main(verbosity=2)
+diff --git a/Lib/idlelib/iomenu.py b/Lib/idlelib/iomenu.py
+index 8bb2fa6a6e..5ebf7089fb 100644
+--- a/Lib/idlelib/iomenu.py
++++ b/Lib/idlelib/iomenu.py
+@@ -5,8 +5,8 @@ import sys
+ import tempfile
+ import tokenize
+ 
+-import tkinter.filedialog as tkFileDialog
+-import tkinter.messagebox as tkMessageBox
++from tkinter import filedialog
++from tkinter import messagebox
+ from tkinter.simpledialog import askstring
+ 
+ import idlelib
+@@ -147,10 +147,10 @@ class IOBinding:
+                     eol_convention = f.newlines
+                     converted = True
+         except OSError as err:
+-            tkMessageBox.showerror("I/O Error", str(err), parent=self.text)
++            messagebox.showerror("I/O Error", str(err), parent=self.text)
+             return False
+         except UnicodeDecodeError:
+-            tkMessageBox.showerror("Decoding Error",
++            messagebox.showerror("Decoding Error",
+                                    "File %s\nFailed to Decode" % filename,
+                                    parent=self.text)
+             return False
+@@ -159,7 +159,7 @@ class IOBinding:
+             # If the file does not contain line separators, it is None.
+             # If the file contains mixed line separators, it is a tuple.
+             if eol_convention is not None:
+-                tkMessageBox.showwarning("Mixed Newlines",
++                messagebox.showwarning("Mixed Newlines",
+                                          "Mixed newlines detected.\n"
+                                          "The file will be changed on save.",
+                                          parent=self.text)
+@@ -187,10 +187,10 @@ class IOBinding:
+             return "yes"
+         message = "Do you want to save %s before closing?" % (
+             self.filename or "this untitled document")
+-        confirm = tkMessageBox.askyesnocancel(
++        confirm = messagebox.askyesnocancel(
+                   title="Save On Close",
+                   message=message,
+-                  default=tkMessageBox.YES,
++                  default=messagebox.YES,
+                   parent=self.text)
+         if confirm:
+             reply = "yes"
+@@ -249,7 +249,7 @@ class IOBinding:
+                 os.fsync(f.fileno())
+             return True
+         except OSError as msg:
+-            tkMessageBox.showerror("I/O Error", str(msg),
++            messagebox.showerror("I/O Error", str(msg),
+                                    parent=self.text)
+             return False
+ 
+@@ -286,7 +286,7 @@ class IOBinding:
+             failed = str(err)
+         except UnicodeEncodeError:
+             failed = "Invalid encoding '%s'" % enc
+-        tkMessageBox.showerror(
++        messagebox.showerror(
+             "I/O Error",
+             "%s.\nSaving as UTF-8" % failed,
+             parent=self.text)
+@@ -295,10 +295,10 @@ class IOBinding:
+         return chars.encode('utf-8-sig')
+ 
+     def print_window(self, event):
+-        confirm = tkMessageBox.askokcancel(
++        confirm = messagebox.askokcancel(
+                   title="Print",
+                   message="Print to Default Printer",
+-                  default=tkMessageBox.OK,
++                  default=messagebox.OK,
+                   parent=self.text)
+         if not confirm:
+             self.text.focus_set()
+@@ -336,10 +336,10 @@ class IOBinding:
+                          status + output
+             if output:
+                 output = "Printing command: %s\n" % repr(command) + output
+-                tkMessageBox.showerror("Print status", output, parent=self.text)
++                messagebox.showerror("Print status", output, parent=self.text)
+         else:  #no printing for this platform
+             message = "Printing is not enabled for this platform: %s" % platform
+-            tkMessageBox.showinfo("Print status", message, parent=self.text)
++            messagebox.showinfo("Print status", message, parent=self.text)
+         if tempfilename:
+             os.unlink(tempfilename)
+         return "break"
+@@ -358,7 +358,7 @@ class IOBinding:
+     def askopenfile(self):
+         dir, base = self.defaultfilename("open")
+         if not self.opendialog:
+-            self.opendialog = tkFileDialog.Open(parent=self.text,
++            self.opendialog = filedialog.Open(parent=self.text,
+                                                 filetypes=self.filetypes)
+         filename = self.opendialog.show(initialdir=dir, initialfile=base)
+         return filename
+@@ -378,7 +378,7 @@ class IOBinding:
+     def asksavefile(self):
+         dir, base = self.defaultfilename("save")
+         if not self.savedialog:
+-            self.savedialog = tkFileDialog.SaveAs(
++            self.savedialog = filedialog.SaveAs(
+                     parent=self.text,
+                     filetypes=self.filetypes,
+                     defaultextension=self.defaultextension)
 diff --git a/Lib/idlelib/pyshell.py b/Lib/idlelib/pyshell.py
-index adc302883a..6fa138219a 100755
+index adc302883a..fea3762461 100755
 --- a/Lib/idlelib/pyshell.py
 +++ b/Lib/idlelib/pyshell.py
-@@ -1061,8 +1061,10 @@ class PyShell(OutputWindow):
+@@ -21,13 +21,13 @@ if sys.platform == 'win32':
+     except (ImportError, AttributeError, OSError):
+         pass
+ 
+-import tkinter.messagebox as tkMessageBox
++from tkinter import messagebox
+ if TkVersion < 8.5:
+     root = Tk()  # otherwise create root in main
+     root.withdraw()
+     from idlelib.run import fix_scaling
+     fix_scaling(root)
+-    tkMessageBox.showerror("Idle Cannot Start",
++    messagebox.showerror("Idle Cannot Start",
+             "Idle requires tcl/tk 8.5+, not %s." % TkVersion,
+             parent=root)
+     raise SystemExit(1)
+@@ -261,7 +261,7 @@ class PyShellEditorWindow(EditorWindow):
+         except OSError as err:
+             if not getattr(self.root, "breakpoint_error_displayed", False):
+                 self.root.breakpoint_error_displayed = True
+-                tkMessageBox.showerror(title='IDLE Error',
++                messagebox.showerror(title='IDLE Error',
+                     message='Unable to update breakpoint list:\n%s'
+                         % str(err),
+                     parent=self.text)
+@@ -771,7 +771,7 @@ class ModifiedInterpreter(InteractiveInterpreter):
+                 exec(code, self.locals)
+         except SystemExit:
+             if not self.tkconsole.closing:
+-                if tkMessageBox.askyesno(
++                if messagebox.askyesno(
+                     "Exit?",
+                     "Do you want to exit altogether?",
+                     default="yes",
+@@ -805,7 +805,7 @@ class ModifiedInterpreter(InteractiveInterpreter):
+         return self.tkconsole.stderr.write(s)
+ 
+     def display_port_binding_error(self):
+-        tkMessageBox.showerror(
++        messagebox.showerror(
+             "Port Binding Error",
+             "IDLE can't bind to a TCP/IP port, which is necessary to "
+             "communicate with its Python execution server.  This might be "
+@@ -816,7 +816,7 @@ class ModifiedInterpreter(InteractiveInterpreter):
+             parent=self.tkconsole.text)
+ 
+     def display_no_subprocess_error(self):
+-        tkMessageBox.showerror(
++        messagebox.showerror(
+             "Subprocess Connection Error",
+             "IDLE's subprocess didn't make connection.\n"
+             "See the 'Startup failure' section of the IDLE doc, online at\n"
+@@ -824,7 +824,7 @@ class ModifiedInterpreter(InteractiveInterpreter):
+             parent=self.tkconsole.text)
+ 
+     def display_executing_dialog(self):
+-        tkMessageBox.showerror(
++        messagebox.showerror(
+             "Already executing",
+             "The Python Shell window is already executing a command; "
+             "please wait until it is finished.",
+@@ -945,7 +945,7 @@ class PyShell(OutputWindow):
+ 
+     def toggle_debugger(self, event=None):
+         if self.executing:
+-            tkMessageBox.showerror("Don't debug now",
++            messagebox.showerror("Don't debug now",
+                 "You can only toggle the debugger when idle",
+                 parent=self.text)
+             self.set_debugger_indicator()
+@@ -989,6 +989,10 @@ class PyShell(OutputWindow):
+         self.showprompt()
+         self.set_debugger_indicator()
+ 
++    def debug_menu_postcommand(self):
++        state = 'disabled' if self.executing else 'normal'
++        self.update_menu_state('debug', '*tack*iewer', state)
++
+     def beginexecuting(self):
+         "Helper for ModifiedInterpreter"
+         self.resetoutput()
+@@ -1003,7 +1007,7 @@ class PyShell(OutputWindow):
+     def close(self):
+         "Extend EditorWindow.close()"
+         if self.executing:
+-            response = tkMessageBox.askokcancel(
++            response = messagebox.askokcancel(
+                 "Kill?",
+                 "Your program is still running!\n Do you want to kill it?",
+                 default="ok",
+@@ -1061,8 +1065,10 @@ class PyShell(OutputWindow):
                     (sys.version, sys.platform, self.COPYRIGHT, nosub))
          self.text.focus_force()
          self.showprompt()
@@ -3740,6 +4939,232 @@ index adc302883a..6fa138219a 100755
          return True
  
      def stop_readline(self):
+@@ -1252,7 +1258,7 @@ class PyShell(OutputWindow):
+         try:
+             sys.last_traceback
+         except:
+-            tkMessageBox.showerror("No stack trace",
++            messagebox.showerror("No stack trace",
+                 "There is no stack trace yet.\n"
+                 "(sys.last_traceback is not defined)",
+                 parent=self.text)
+diff --git a/Lib/idlelib/rpc.py b/Lib/idlelib/rpc.py
+index aa8cbd36c4..8efcf048fa 100644
+--- a/Lib/idlelib/rpc.py
++++ b/Lib/idlelib/rpc.py
+@@ -125,7 +125,7 @@ request_queue = queue.Queue(0)
+ response_queue = queue.Queue(0)
+ 
+ 
+-class SocketIO(object):
++class SocketIO:
+ 
+     nextseq = 0
+ 
+@@ -486,7 +486,7 @@ class SocketIO(object):
+ 
+ #----------------- end class SocketIO --------------------
+ 
+-class RemoteObject(object):
++class RemoteObject:
+     # Token mix-in class
+     pass
+ 
+@@ -497,7 +497,7 @@ def remoteref(obj):
+     return RemoteProxy(oid)
+ 
+ 
+-class RemoteProxy(object):
++class RemoteProxy:
+ 
+     def __init__(self, oid):
+         self.oid = oid
+@@ -547,7 +547,7 @@ class RPCClient(SocketIO):
+         return RPCProxy(self, oid)
+ 
+ 
+-class RPCProxy(object):
++class RPCProxy:
+ 
+     __methods = None
+     __attributes = None
+@@ -596,7 +596,7 @@ def _getattributes(obj, attributes):
+             attributes[name] = 1
+ 
+ 
+-class MethodProxy(object):
++class MethodProxy:
+ 
+     def __init__(self, sockio, oid, name):
+         self.sockio = sockio
+diff --git a/Lib/idlelib/run.py b/Lib/idlelib/run.py
+index 1e84ecc658..07e9a2bf9c 100644
+--- a/Lib/idlelib/run.py
++++ b/Lib/idlelib/run.py
+@@ -16,6 +16,7 @@ import _thread as thread
+ import threading
+ import warnings
+ 
++import idlelib  # testing
+ from idlelib import autocomplete  # AutoComplete, fetch_encodings
+ from idlelib import calltip  # Calltip
+ from idlelib import debugger_r  # start_debugger
+@@ -538,18 +539,21 @@ class MyHandler(rpc.RPCHandler):
+         thread.interrupt_main()
+ 
+ 
+-class Executive(object):
++class Executive:
+ 
+     def __init__(self, rpchandler):
+         self.rpchandler = rpchandler
+-        self.locals = __main__.__dict__
+-        self.calltip = calltip.Calltip()
+-        self.autocomplete = autocomplete.AutoComplete()
++        if idlelib.testing is False:
++            self.locals = __main__.__dict__
++            self.calltip = calltip.Calltip()
++            self.autocomplete = autocomplete.AutoComplete()
++        else:
++            self.locals = {}
+ 
+     def runcode(self, code):
+         global interruptable
+         try:
+-            self.usr_exc_info = None
++            self.user_exc_info = None
+             interruptable = True
+             try:
+                 exec(code, self.locals)
+@@ -562,10 +566,17 @@ class Executive(object):
+                     print('SystemExit: ' + str(ob), file=sys.stderr)
+             # Return to the interactive prompt.
+         except:
+-            self.usr_exc_info = sys.exc_info()
++            self.user_exc_info = sys.exc_info()  # For testing, hook, viewer.
+             if quitting:
+                 exit()
+-            print_exception()
++            if sys.excepthook is sys.__excepthook__:
++                print_exception()
++            else:
++                try:
++                    sys.excepthook(*self.user_exc_info)
++                except:
++                    self.user_exc_info = sys.exc_info()  # For testing.
++                    print_exception()
+             jit = self.rpchandler.console.getvar("<<toggle-jit-stack-viewer>>")
+             if jit:
+                 self.rpchandler.interp.open_remote_stack_viewer()
+@@ -590,8 +601,8 @@ class Executive(object):
+         return self.autocomplete.fetch_completions(what, mode)
+ 
+     def stackviewer(self, flist_oid=None):
+-        if self.usr_exc_info:
+-            typ, val, tb = self.usr_exc_info
++        if self.user_exc_info:
++            typ, val, tb = self.user_exc_info
+         else:
+             return None
+         flist = None
+diff --git a/Lib/idlelib/runscript.py b/Lib/idlelib/runscript.py
+index 028b0dbd21..55712e9046 100644
+--- a/Lib/idlelib/runscript.py
++++ b/Lib/idlelib/runscript.py
+@@ -14,7 +14,7 @@ import tabnanny
+ import time
+ import tokenize
+ 
+-import tkinter.messagebox as tkMessageBox
++from tkinter import messagebox
+ 
+ from idlelib.config import idleConf
+ from idlelib import macosx
+@@ -195,15 +195,15 @@ class ScriptBinding:
+ 
+     def ask_save_dialog(self):
+         msg = "Source Must Be Saved\n" + 5*' ' + "OK to Save?"
+-        confirm = tkMessageBox.askokcancel(title="Save Before Run or Check",
++        confirm = messagebox.askokcancel(title="Save Before Run or Check",
+                                            message=msg,
+-                                           default=tkMessageBox.OK,
++                                           default=messagebox.OK,
+                                            parent=self.editwin.text)
+         return confirm
+ 
+     def errorbox(self, title, message):
+         # XXX This should really be a function of EditorWindow...
+-        tkMessageBox.showerror(title, message, parent=self.editwin.text)
++        messagebox.showerror(title, message, parent=self.editwin.text)
+         self.editwin.text.focus_set()
+         self.perf = time.perf_counter()
+ 
+diff --git a/Lib/idlelib/searchengine.py b/Lib/idlelib/searchengine.py
+index a50038e282..eddef581ab 100644
+--- a/Lib/idlelib/searchengine.py
++++ b/Lib/idlelib/searchengine.py
+@@ -2,7 +2,7 @@
+ import re
+ 
+ from tkinter import StringVar, BooleanVar, TclError
+-import tkinter.messagebox as tkMessageBox
++from tkinter import messagebox
+ 
+ def get(root):
+     '''Return the singleton SearchEngine instance for the process.
+@@ -96,7 +96,7 @@ class SearchEngine:
+             msg = msg + "\nPattern: " + str(pat)
+         if col is not None:
+             msg = msg + "\nOffset: " + str(col)
+-        tkMessageBox.showerror("Regular expression error",
++        messagebox.showerror("Regular expression error",
+                                msg, master=self.root)
+ 
+     def search_text(self, text, prog=None, ok=0):
+diff --git a/Lib/idlelib/squeezer.py b/Lib/idlelib/squeezer.py
+index be1538a25f..3046d803b7 100644
+--- a/Lib/idlelib/squeezer.py
++++ b/Lib/idlelib/squeezer.py
+@@ -17,7 +17,7 @@ messages and their tracebacks.
+ import re
+ 
+ import tkinter as tk
+-import tkinter.messagebox as tkMessageBox
++from tkinter import messagebox
+ 
+ from idlelib.config import idleConf
+ from idlelib.textview import view_text
+@@ -147,7 +147,7 @@ class ExpandingButton(tk.Button):
+         if self.is_dangerous is None:
+             self.set_is_dangerous()
+         if self.is_dangerous:
+-            confirm = tkMessageBox.askokcancel(
++            confirm = messagebox.askokcancel(
+                 title="Expand huge output?",
+                 message="\n\n".join([
+                     "The squeezed output is very long: %d lines, %d chars.",
+@@ -155,7 +155,7 @@ class ExpandingButton(tk.Button):
+                     "It is recommended to view or copy the output instead.",
+                     "Really expand?"
+                 ]) % (self.numoflines, len(self.s)),
+-                default=tkMessageBox.CANCEL,
++                default=messagebox.CANCEL,
+                 parent=self.text)
+             if not confirm:
+                 return "break"
+diff --git a/Lib/idlelib/tooltip.py b/Lib/idlelib/tooltip.py
+index 69658264db..d714318dae 100644
+--- a/Lib/idlelib/tooltip.py
++++ b/Lib/idlelib/tooltip.py
+@@ -7,7 +7,7 @@ This includes:
+ from tkinter import *
+ 
+ 
+-class TooltipBase(object):
++class TooltipBase:
+     """abstract base class for tooltips"""
+ 
+     def __init__(self, anchor_widget):
 diff --git a/Lib/idlelib/zzdummy.py b/Lib/idlelib/zzdummy.py
 index 3c4b1d23b0..1247e8f1cc 100644
 --- a/Lib/idlelib/zzdummy.py
@@ -3980,6 +5405,21 @@ index 7b169a16fb..6920a7b654 100644
      def getLogger(self, name):
          """
          Get a logger with the specified name (channel name), creating it
+diff --git a/Lib/pdb.py b/Lib/pdb.py
+index d7d9571594..7a5192cbad 100755
+--- a/Lib/pdb.py
++++ b/Lib/pdb.py
+@@ -1686,8 +1686,9 @@ def main():
+ 
+     sys.argv[:] = args      # Hide "pdb.py" and pdb options from argument list
+ 
+-    # Replace pdb's dir with script's dir in front of module search path.
+     if not run_as_module:
++        mainpyfile = os.path.realpath(mainpyfile)
++        # Replace pdb's dir with script's dir in front of module search path.
+         sys.path[0] = os.path.dirname(mainpyfile)
+ 
+     # Note on saving/restoring sys.argv: it's a good idea when sys.argv was
 diff --git a/Lib/platform.py b/Lib/platform.py
 index e9f50ab622..6258827d0e 100755
 --- a/Lib/platform.py
@@ -4110,10 +5550,41 @@ index f1d829a6f1..ddf1128fdd 100644
      return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
                 **kwargs).stdout
 diff --git a/Lib/sysconfig.py b/Lib/sysconfig.py
-index bf04ac541e..59da8e5290 100644
+index bf04ac541e..e3f79bfde5 100644
 --- a/Lib/sysconfig.py
 +++ b/Lib/sysconfig.py
-@@ -424,10 +424,11 @@ def _init_posix(vars):
+@@ -18,6 +18,11 @@ __all__ = [
+     'parse_config_h',
+ ]
+ 
++# Keys for get_config_var() that are never converted to Python integers.
++_ALWAYS_STR = {
++    'MACOSX_DEPLOYMENT_TARGET',
++}
++
+ _INSTALL_SCHEMES = {
+     'posix_prefix': {
+         'stdlib': '{installed_base}/{platlibdir}/python{py_version_short}',
+@@ -240,6 +245,9 @@ def _parse_makefile(filename, vars=None):
+                 notdone[n] = v
+             else:
+                 try:
++                    if n in _ALWAYS_STR:
++                        raise ValueError
++
+                     v = int(v)
+                 except ValueError:
+                     # insert literal `$'
+@@ -298,6 +306,8 @@ def _parse_makefile(filename, vars=None):
+                         notdone[name] = value
+                     else:
+                         try:
++                            if name in _ALWAYS_STR:
++                                raise ValueError
+                             value = int(value)
+                         except ValueError:
+                             done[name] = value.strip()
+@@ -424,10 +434,11 @@ def _init_posix(vars):
  def _init_non_posix(vars):
      """Initialize the module as appropriate for NT"""
      # set basic install directories
@@ -4126,6 +5597,15 @@ index bf04ac541e..59da8e5290 100644
      vars['EXE'] = '.exe'
      vars['VERSION'] = _PY_VERSION_SHORT_NO_DOT
      vars['BINDIR'] = os.path.dirname(_safe_realpath(sys.executable))
+@@ -458,6 +469,8 @@ def parse_config_h(fp, vars=None):
+         if m:
+             n, v = m.group(1, 2)
+             try:
++                if n in _ALWAYS_STR:
++                    raise ValueError
+                 v = int(v)
+             except ValueError:
+                 pass
 diff --git a/Lib/test/crashers/bogus_code_obj.py b/Lib/test/crashers/bogus_code_obj.py
 index 198d229491..e71b3582cf 100644
 --- a/Lib/test/crashers/bogus_code_obj.py
@@ -4715,32 +6195,66 @@ index 4df1b95bca..d009f57e47 100644
      def test_format(self):
          # Test the basic machinery of the format() builtin.  Don't test
          #  the specifics of the various formatters
+diff --git a/Lib/test/test_collections.py b/Lib/test/test_collections.py
+index 057ec92015..3ff660cf7a 100644
+--- a/Lib/test/test_collections.py
++++ b/Lib/test/test_collections.py
+@@ -680,6 +680,11 @@ class TestNamedTuple(unittest.TestCase):
+         self.assertEqual(np.x, 1)
+         self.assertEqual(np.y, 2)
+ 
++    def test_new_builtins_issue_43102(self):
++        self.assertEqual(
++            namedtuple('C', ()).__new__.__globals__['__builtins__'],
++            {})
++
+ 
+ ################################################################################
+ ### Abstract Base Classes
 diff --git a/Lib/test/test_curses.py b/Lib/test/test_curses.py
-index 5e619d1383..de9f301737 100644
+index 5e619d1383..c1ad23b456 100644
 --- a/Lib/test/test_curses.py
 +++ b/Lib/test/test_curses.py
-@@ -4,8 +4,7 @@
- # This script doesn't actually display anything very coherent. but it
- # does call (nearly) every method and function.
- #
+@@ -1,14 +1,5 @@
+-#
+-# Test script for the curses module
+-#
+-# This script doesn't actually display anything very coherent. but it
+-# does call (nearly) every method and function.
+-#
 -# Functions not tested: {def,reset}_{shell,prog}_mode, getch(), getstr(),
 -# init_color()
-+# Functions not tested: {def,reset}_{shell,prog}_mode, getch(), getstr()
- # Only called, not tested: getmouse(), ungetmouse()
- #
- 
-@@ -13,6 +12,7 @@ import os
+-# Only called, not tested: getmouse(), ungetmouse()
+-#
+-
++import functools
++import inspect
+ import os
  import string
  import sys
- import tempfile
-+import functools
- import unittest
+@@ -20,7 +11,6 @@ from test.support import requires, import_module, verbose, SaveSignals
+ # Optionally test curses module.  This currently requires that the
+ # 'curses' resource be given on the regrtest command line using the -u
+ # option.  If not available, nothing after this line will be executed.
+-import inspect
+ requires('curses')
  
- from test.support import requires, import_module, verbose, SaveSignals
-@@ -36,7 +36,17 @@ def requires_curses_func(name):
+ # If either of these don't exist, skip the tests.
+@@ -36,7 +26,28 @@ def requires_curses_func(name):
      return unittest.skipUnless(hasattr(curses, name),
                                 'requires curses.%s' % name)
  
++def requires_curses_window_meth(name):
++    def deco(test):
++        @functools.wraps(test)
++        def wrapped(self, *args, **kwargs):
++            if not hasattr(self.stdscr, name):
++                raise unittest.SkipTest('requires curses.window.%s' % name)
++            test(self, *args, **kwargs)
++        return wrapped
++    return deco
++
++
 +def requires_colors(test):
 +    @functools.wraps(test)
 +    def wrapped(self, *args, **kwargs):
@@ -4755,7 +6269,7 @@ index 5e619d1383..de9f301737 100644
  
  # If newterm was supported we could use it instead of initscr and not exit
  @unittest.skipIf(not term or term == 'unknown',
-@@ -47,37 +57,59 @@ class TestCurses(unittest.TestCase):
+@@ -47,254 +58,941 @@ class TestCurses(unittest.TestCase):
  
      @classmethod
      def setUpClass(cls):
@@ -4826,102 +6340,943 @@ index 5e619d1383..de9f301737 100644
 +            print(file=self.output, flush=True)
          self.stdscr = curses.initscr()
 -        curses.savetty()
--
--    def tearDown(self):
--        curses.resetty()
--        curses.endwin()
--        self.save_signals.restore()
 +        if self.isatty:
 +            curses.savetty()
 +            self.addCleanup(curses.endwin)
 +            self.addCleanup(curses.resetty)
- 
-     def test_window_funcs(self):
-         "Test the methods of windows"
-@@ -95,7 +127,7 @@ class TestCurses(unittest.TestCase):
-         for meth in [stdscr.clear, stdscr.clrtobot,
-                      stdscr.clrtoeol, stdscr.cursyncup, stdscr.delch,
-                      stdscr.deleteln, stdscr.erase, stdscr.getbegyx,
--                     stdscr.getbkgd, stdscr.getkey, stdscr.getmaxyx,
-+                     stdscr.getbkgd, stdscr.getmaxyx,
-                      stdscr.getparyx, stdscr.getyx, stdscr.inch,
-                      stdscr.insertln, stdscr.instr, stdscr.is_wintouched,
-                      win.noutrefresh, stdscr.redrawwin, stdscr.refresh,
-@@ -206,6 +238,11 @@ class TestCurses(unittest.TestCase):
-         if hasattr(stdscr, 'enclose'):
-             stdscr.enclose(10, 10)
- 
-+        with tempfile.TemporaryFile() as f:
-+            self.stdscr.putwin(f)
-+            f.seek(0)
-+            curses.getwin(f)
++        self.stdscr.erase()
 +
-         self.assertRaises(ValueError, stdscr.getstr, -400)
-         self.assertRaises(ValueError, stdscr.getstr, 2, 3, -400)
-         self.assertRaises(ValueError, stdscr.instr, -2)
-@@ -224,16 +261,19 @@ class TestCurses(unittest.TestCase):
-     def test_module_funcs(self):
-         "Test module-level functions"
-         for func in [curses.baudrate, curses.beep, curses.can_change_color,
++    @requires_curses_func('filter')
++    def test_filter(self):
++        # TODO: Should be called before initscr() or newterm() are called.
++        # TODO: nofilter()
++        curses.filter()
++
++    @requires_curses_func('use_env')
++    def test_use_env(self):
++        # TODO: Should be called before initscr() or newterm() are called.
++        # TODO: use_tioctl()
++        curses.use_env(False)
++        curses.use_env(True)
++
++    def test_create_windows(self):
++        win = curses.newwin(5, 10)
++        self.assertEqual(win.getbegyx(), (0, 0))
++        self.assertEqual(win.getparyx(), (-1, -1))
++        self.assertEqual(win.getmaxyx(), (5, 10))
++
++        win = curses.newwin(10, 15, 2, 5)
++        self.assertEqual(win.getbegyx(), (2, 5))
++        self.assertEqual(win.getparyx(), (-1, -1))
++        self.assertEqual(win.getmaxyx(), (10, 15))
++
++        win2 = win.subwin(3, 7)
++        self.assertEqual(win2.getbegyx(), (3, 7))
++        self.assertEqual(win2.getparyx(), (1, 2))
++        self.assertEqual(win2.getmaxyx(), (9, 13))
++
++        win2 = win.subwin(5, 10, 3, 7)
++        self.assertEqual(win2.getbegyx(), (3, 7))
++        self.assertEqual(win2.getparyx(), (1, 2))
++        self.assertEqual(win2.getmaxyx(), (5, 10))
++
++        win3 = win.derwin(2, 3)
++        self.assertEqual(win3.getbegyx(), (4, 8))
++        self.assertEqual(win3.getparyx(), (2, 3))
++        self.assertEqual(win3.getmaxyx(), (8, 12))
++
++        win3 = win.derwin(6, 11, 2, 3)
++        self.assertEqual(win3.getbegyx(), (4, 8))
++        self.assertEqual(win3.getparyx(), (2, 3))
++        self.assertEqual(win3.getmaxyx(), (6, 11))
++
++        win.mvwin(0, 1)
++        self.assertEqual(win.getbegyx(), (0, 1))
++        self.assertEqual(win.getparyx(), (-1, -1))
++        self.assertEqual(win.getmaxyx(), (10, 15))
++        self.assertEqual(win2.getbegyx(), (3, 7))
++        self.assertEqual(win2.getparyx(), (1, 2))
++        self.assertEqual(win2.getmaxyx(), (5, 10))
++        self.assertEqual(win3.getbegyx(), (4, 8))
++        self.assertEqual(win3.getparyx(), (2, 3))
++        self.assertEqual(win3.getmaxyx(), (6, 11))
++
++        win2.mvderwin(2, 1)
++        self.assertEqual(win2.getbegyx(), (3, 7))
++        self.assertEqual(win2.getparyx(), (2, 1))
++        self.assertEqual(win2.getmaxyx(), (5, 10))
++
++        win3.mvderwin(2, 1)
++        self.assertEqual(win3.getbegyx(), (4, 8))
++        self.assertEqual(win3.getparyx(), (2, 1))
++        self.assertEqual(win3.getmaxyx(), (6, 11))
++
++    def test_move_cursor(self):
++        stdscr = self.stdscr
++        win = stdscr.subwin(10, 15, 2, 5)
++        stdscr.move(1, 2)
++        win.move(2, 4)
++        self.assertEqual(stdscr.getyx(), (1, 2))
++        self.assertEqual(win.getyx(), (2, 4))
+ 
+-    def tearDown(self):
+-        curses.resetty()
+-        curses.endwin()
+-        self.save_signals.restore()
++        win.cursyncup()
++        self.assertEqual(stdscr.getyx(), (4, 9))
++
++    def test_refresh_control(self):
++        stdscr = self.stdscr
++        # touchwin()/untouchwin()/is_wintouched()
++        stdscr.refresh()
++        self.assertIs(stdscr.is_wintouched(), False)
++        stdscr.touchwin()
++        self.assertIs(stdscr.is_wintouched(), True)
++        stdscr.refresh()
++        self.assertIs(stdscr.is_wintouched(), False)
++        stdscr.touchwin()
++        self.assertIs(stdscr.is_wintouched(), True)
++        stdscr.untouchwin()
++        self.assertIs(stdscr.is_wintouched(), False)
++
++        # touchline()/untouchline()/is_linetouched()
++        stdscr.touchline(5, 2)
++        self.assertIs(stdscr.is_linetouched(5), True)
++        self.assertIs(stdscr.is_linetouched(6), True)
++        self.assertIs(stdscr.is_wintouched(), True)
++        stdscr.touchline(5, 1, False)
++        self.assertIs(stdscr.is_linetouched(5), False)
++
++        # syncup()
++        win = stdscr.subwin(10, 15, 2, 5)
++        win2 = win.subwin(5, 10, 3, 7)
++        win2.touchwin()
++        stdscr.untouchwin()
++        win2.syncup()
++        self.assertIs(win.is_wintouched(), True)
++        self.assertIs(stdscr.is_wintouched(), True)
++
++        # syncdown()
++        stdscr.touchwin()
++        win.untouchwin()
++        win2.untouchwin()
++        win2.syncdown()
++        self.assertIs(win2.is_wintouched(), True)
++
++        # syncok()
++        if hasattr(stdscr, 'syncok') and not sys.platform.startswith("sunos"):
++            win.untouchwin()
++            stdscr.untouchwin()
++            for syncok in [False, True]:
++                win2.syncok(syncok)
++                win2.addch('a')
++                self.assertIs(win.is_wintouched(), syncok)
++                self.assertIs(stdscr.is_wintouched(), syncok)
++
++    def test_output_character(self):
++        stdscr = self.stdscr
++        encoding = stdscr.encoding
++        # addch()
++        stdscr.refresh()
++        stdscr.move(0, 0)
++        stdscr.addch('A')
++        stdscr.addch(b'A')
++        stdscr.addch(65)
++        c = '\u20ac'
++        try:
++            stdscr.addch(c)
++        except UnicodeEncodeError:
++            self.assertRaises(UnicodeEncodeError, c.encode, encoding)
++        except OverflowError:
++            encoded = c.encode(encoding)
++            self.assertNotEqual(len(encoded), 1, repr(encoded))
++        stdscr.addch('A', curses.A_BOLD)
++        stdscr.addch(1, 2, 'A')
++        stdscr.addch(2, 3, 'A', curses.A_BOLD)
++        self.assertIs(stdscr.is_wintouched(), True)
++
++        # echochar()
++        stdscr.refresh()
++        stdscr.move(0, 0)
++        stdscr.echochar('A')
++        stdscr.echochar(b'A')
++        stdscr.echochar(65)
++        with self.assertRaises((UnicodeEncodeError, OverflowError)):
++            stdscr.echochar('\u20ac')
++        stdscr.echochar('A', curses.A_BOLD)
++        self.assertIs(stdscr.is_wintouched(), False)
++
++    def test_output_string(self):
++        stdscr = self.stdscr
++        encoding = stdscr.encoding
++        # addstr()/insstr()
++        for func in [stdscr.addstr, stdscr.insstr]:
++            with self.subTest(func.__qualname__):
++                stdscr.move(0, 0)
++                func('abcd')
++                func(b'abcd')
++                s = 'àßçđ'
++                try:
++                    func(s)
++                except UnicodeEncodeError:
++                    self.assertRaises(UnicodeEncodeError, s.encode, encoding)
++                func('abcd', curses.A_BOLD)
++                func(1, 2, 'abcd')
++                func(2, 3, 'abcd', curses.A_BOLD)
++
++        # addnstr()/insnstr()
++        for func in [stdscr.addnstr, stdscr.insnstr]:
++            with self.subTest(func.__qualname__):
++                stdscr.move(0, 0)
++                func('1234', 3)
++                func(b'1234', 3)
++                s = '\u0661\u0662\u0663\u0664'
++                try:
++                    func(s, 3)
++                except UnicodeEncodeError:
++                    self.assertRaises(UnicodeEncodeError, s.encode, encoding)
++                func('1234', 5)
++                func('1234', 3, curses.A_BOLD)
++                func(1, 2, '1234', 3)
++                func(2, 3, '1234', 3, curses.A_BOLD)
++
++    def test_output_string_embedded_null_chars(self):
++        # reject embedded null bytes and characters
++        stdscr = self.stdscr
++        for arg in ['a\0', b'a\0']:
++            with self.subTest(arg=arg):
++                self.assertRaises(ValueError, stdscr.addstr, arg)
++                self.assertRaises(ValueError, stdscr.addnstr, arg, 1)
++                self.assertRaises(ValueError, stdscr.insstr, arg)
++                self.assertRaises(ValueError, stdscr.insnstr, arg, 1)
+ 
+-    def test_window_funcs(self):
+-        "Test the methods of windows"
++    def test_read_from_window(self):
+         stdscr = self.stdscr
+-        win = curses.newwin(10,10)
+-        win = curses.newwin(5,5, 5,5)
+-        win2 = curses.newwin(15,15, 5,5)
+-
+-        for meth in [stdscr.addch, stdscr.addstr]:
+-            for args in [('a',), ('a', curses.A_BOLD),
+-                         (4,4, 'a'), (5,5, 'a', curses.A_BOLD)]:
+-                with self.subTest(meth=meth.__qualname__, args=args):
+-                    meth(*args)
+-
+-        for meth in [stdscr.clear, stdscr.clrtobot,
+-                     stdscr.clrtoeol, stdscr.cursyncup, stdscr.delch,
+-                     stdscr.deleteln, stdscr.erase, stdscr.getbegyx,
+-                     stdscr.getbkgd, stdscr.getkey, stdscr.getmaxyx,
+-                     stdscr.getparyx, stdscr.getyx, stdscr.inch,
+-                     stdscr.insertln, stdscr.instr, stdscr.is_wintouched,
+-                     win.noutrefresh, stdscr.redrawwin, stdscr.refresh,
+-                     stdscr.standout, stdscr.standend, stdscr.syncdown,
+-                     stdscr.syncup, stdscr.touchwin, stdscr.untouchwin]:
+-            with self.subTest(meth=meth.__qualname__):
+-                meth()
+-
+-        stdscr.addnstr('1234', 3)
+-        stdscr.addnstr('1234', 3, curses.A_BOLD)
+-        stdscr.addnstr(4,4, '1234', 3)
+-        stdscr.addnstr(5,5, '1234', 3, curses.A_BOLD)
+-
+-        stdscr.attron(curses.A_BOLD)
+-        stdscr.attroff(curses.A_BOLD)
+-        stdscr.attrset(curses.A_BOLD)
+-        stdscr.bkgd(' ')
+-        stdscr.bkgd(' ', curses.A_REVERSE)
+-        stdscr.bkgdset(' ')
+-        stdscr.bkgdset(' ', curses.A_REVERSE)
++        stdscr.addstr(0, 1, 'ABCD', curses.A_BOLD)
++        # inch()
++        stdscr.move(0, 1)
++        self.assertEqual(stdscr.inch(), 65 | curses.A_BOLD)
++        self.assertEqual(stdscr.inch(0, 3), 67 | curses.A_BOLD)
++        stdscr.move(0, 0)
++        # instr()
++        self.assertEqual(stdscr.instr()[:6], b' ABCD ')
++        self.assertEqual(stdscr.instr(3)[:6], b' AB')
++        self.assertEqual(stdscr.instr(0, 2)[:4], b'BCD ')
++        self.assertEqual(stdscr.instr(0, 2, 4), b'BCD ')
++        self.assertRaises(ValueError, stdscr.instr, -2)
++        self.assertRaises(ValueError, stdscr.instr, 0, 2, -2)
++
++    def test_getch(self):
++        win = curses.newwin(5, 12, 5, 2)
++
++        # TODO: Test with real input by writing to master fd.
++        for c in 'spam\n'[::-1]:
++            curses.ungetch(c)
++        self.assertEqual(win.getch(3, 1), b's'[0])
++        self.assertEqual(win.getyx(), (3, 1))
++        self.assertEqual(win.getch(3, 4), b'p'[0])
++        self.assertEqual(win.getyx(), (3, 4))
++        self.assertEqual(win.getch(), b'a'[0])
++        self.assertEqual(win.getyx(), (3, 4))
++        self.assertEqual(win.getch(), b'm'[0])
++        self.assertEqual(win.getch(), b'\n'[0])
++
++    def test_getstr(self):
++        win = curses.newwin(5, 12, 5, 2)
++        curses.echo()
++        self.addCleanup(curses.noecho)
++
++        self.assertRaises(ValueError, win.getstr, -400)
++        self.assertRaises(ValueError, win.getstr, 2, 3, -400)
++
++        # TODO: Test with real input by writing to master fd.
++        for c in 'Lorem\nipsum\ndolor\nsit\namet\n'[::-1]:
++            curses.ungetch(c)
++        self.assertEqual(win.getstr(3, 1, 2), b'Lo')
++        self.assertEqual(win.instr(3, 0), b' Lo         ')
++        self.assertEqual(win.getstr(3, 5, 10), b'ipsum')
++        self.assertEqual(win.instr(3, 0), b' Lo  ipsum  ')
++        self.assertEqual(win.getstr(1, 5), b'dolor')
++        self.assertEqual(win.instr(1, 0), b'     dolor  ')
++        self.assertEqual(win.getstr(2), b'si')
++        self.assertEqual(win.instr(1, 0), b'si   dolor  ')
++        self.assertEqual(win.getstr(), b'amet')
++        self.assertEqual(win.instr(1, 0), b'amet dolor  ')
++
++    def test_clear(self):
++        win = curses.newwin(5, 15, 5, 2)
++        lorem_ipsum(win)
++
++        win.move(0, 8)
++        win.clrtoeol()
++        self.assertEqual(win.instr(0, 0).rstrip(), b'Lorem ip')
++        self.assertEqual(win.instr(1, 0).rstrip(), b'dolor sit amet,')
++
++        win.move(0, 3)
++        win.clrtobot()
++        self.assertEqual(win.instr(0, 0).rstrip(), b'Lor')
++        self.assertEqual(win.instr(1, 0).rstrip(), b'')
++
++        for func in [win.erase, win.clear]:
++            lorem_ipsum(win)
++            func()
++            self.assertEqual(win.instr(0, 0).rstrip(), b'')
++            self.assertEqual(win.instr(1, 0).rstrip(), b'')
++
++    def test_insert_delete(self):
++        win = curses.newwin(5, 15, 5, 2)
++        lorem_ipsum(win)
++
++        win.move(0, 2)
++        win.delch()
++        self.assertEqual(win.instr(0, 0), b'Loem ipsum     ')
++        win.delch(0, 7)
++        self.assertEqual(win.instr(0, 0), b'Loem ipum      ')
++
++        win.move(1, 5)
++        win.deleteln()
++        self.assertEqual(win.instr(0, 0), b'Loem ipum      ')
++        self.assertEqual(win.instr(1, 0), b'consectetur    ')
++        self.assertEqual(win.instr(2, 0), b'adipiscing elit')
++        self.assertEqual(win.instr(3, 0), b'sed do eiusmod ')
++        self.assertEqual(win.instr(4, 0), b'               ')
++
++        win.move(1, 5)
++        win.insertln()
++        self.assertEqual(win.instr(0, 0), b'Loem ipum      ')
++        self.assertEqual(win.instr(1, 0), b'               ')
++        self.assertEqual(win.instr(2, 0), b'consectetur    ')
++
++        win.clear()
++        lorem_ipsum(win)
++        win.move(1, 5)
++        win.insdelln(2)
++        self.assertEqual(win.instr(0, 0), b'Lorem ipsum    ')
++        self.assertEqual(win.instr(1, 0), b'               ')
++        self.assertEqual(win.instr(2, 0), b'               ')
++        self.assertEqual(win.instr(3, 0), b'dolor sit amet,')
++
++        win.clear()
++        lorem_ipsum(win)
++        win.move(1, 5)
++        win.insdelln(-2)
++        self.assertEqual(win.instr(0, 0), b'Lorem ipsum    ')
++        self.assertEqual(win.instr(1, 0), b'adipiscing elit')
++        self.assertEqual(win.instr(2, 0), b'sed do eiusmod ')
++        self.assertEqual(win.instr(3, 0), b'               ')
++
++    def test_scroll(self):
++        win = curses.newwin(5, 15, 5, 2)
++        lorem_ipsum(win)
++        win.scrollok(True)
++        win.scroll()
++        self.assertEqual(win.instr(0, 0), b'dolor sit amet,')
++        win.scroll(2)
++        self.assertEqual(win.instr(0, 0), b'adipiscing elit')
++        win.scroll(-3)
++        self.assertEqual(win.instr(0, 0), b'               ')
++        self.assertEqual(win.instr(2, 0), b'               ')
++        self.assertEqual(win.instr(3, 0), b'adipiscing elit')
++        win.scrollok(False)
++
++    def test_attributes(self):
++        # TODO: attr_get(), attr_set(), ...
++        win = curses.newwin(5, 15, 5, 2)
++        win.attron(curses.A_BOLD)
++        win.attroff(curses.A_BOLD)
++        win.attrset(curses.A_BOLD)
++
++        win.standout()
++        win.standend()
++
++    @requires_curses_window_meth('chgat')
++    def test_chgat(self):
++        win = curses.newwin(5, 15, 5, 2)
++        win.addstr(2, 0, 'Lorem ipsum')
++        win.addstr(3, 0, 'dolor sit amet')
++
++        win.move(2, 8)
++        win.chgat(curses.A_BLINK)
++        self.assertEqual(win.inch(2, 7), b'p'[0])
++        self.assertEqual(win.inch(2, 8), b's'[0] | curses.A_BLINK)
++        self.assertEqual(win.inch(2, 14), b' '[0] | curses.A_BLINK)
++
++        win.move(2, 1)
++        win.chgat(3, curses.A_BOLD)
++        self.assertEqual(win.inch(2, 0), b'L'[0])
++        self.assertEqual(win.inch(2, 1), b'o'[0] | curses.A_BOLD)
++        self.assertEqual(win.inch(2, 3), b'e'[0] | curses.A_BOLD)
++        self.assertEqual(win.inch(2, 4), b'm'[0])
++
++        win.chgat(3, 2, curses.A_UNDERLINE)
++        self.assertEqual(win.inch(3, 1), b'o'[0])
++        self.assertEqual(win.inch(3, 2), b'l'[0] | curses.A_UNDERLINE)
++        self.assertEqual(win.inch(3, 14), b' '[0] | curses.A_UNDERLINE)
++
++        win.chgat(3, 4, 7, curses.A_BLINK)
++        self.assertEqual(win.inch(3, 3), b'o'[0] | curses.A_UNDERLINE)
++        self.assertEqual(win.inch(3, 4), b'r'[0] | curses.A_BLINK)
++        self.assertEqual(win.inch(3, 10), b'a'[0] | curses.A_BLINK)
++        self.assertEqual(win.inch(3, 11), b'm'[0] | curses.A_UNDERLINE)
++        self.assertEqual(win.inch(3, 14), b' '[0] | curses.A_UNDERLINE)
++
++    def test_background(self):
++        win = curses.newwin(5, 15, 5, 2)
++        win.addstr(0, 0, 'Lorem ipsum')
++
++        self.assertIn(win.getbkgd(), (0, 32))
++
++        # bkgdset()
++        win.bkgdset('_')
++        self.assertEqual(win.getbkgd(), b'_'[0])
++        win.bkgdset(b'#')
++        self.assertEqual(win.getbkgd(), b'#'[0])
++        win.bkgdset(65)
++        self.assertEqual(win.getbkgd(), 65)
++        win.bkgdset(0)
++        self.assertEqual(win.getbkgd(), 32)
++
++        win.bkgdset('#', curses.A_REVERSE)
++        self.assertEqual(win.getbkgd(), b'#'[0] | curses.A_REVERSE)
++        self.assertEqual(win.inch(0, 0), b'L'[0])
++        self.assertEqual(win.inch(0, 5), b' '[0])
++        win.bkgdset(0)
++
++        # bkgd()
++        win.bkgd('_')
++        self.assertEqual(win.getbkgd(), b'_'[0])
++        self.assertEqual(win.inch(0, 0), b'L'[0])
++        self.assertEqual(win.inch(0, 5), b'_'[0])
++
++        win.bkgd('#', curses.A_REVERSE)
++        self.assertEqual(win.getbkgd(), b'#'[0] | curses.A_REVERSE)
++        self.assertEqual(win.inch(0, 0), b'L'[0] | curses.A_REVERSE)
++        self.assertEqual(win.inch(0, 5), b'#'[0] | curses.A_REVERSE)
++
++    def test_overlay(self):
++        srcwin = curses.newwin(5, 18, 3, 4)
++        lorem_ipsum(srcwin)
++        dstwin = curses.newwin(7, 17, 5, 7)
++        for i in range(6):
++            dstwin.addstr(i, 0, '_'*17)
++
++        srcwin.overlay(dstwin)
++        self.assertEqual(dstwin.instr(0, 0), b'sectetur_________')
++        self.assertEqual(dstwin.instr(1, 0), b'piscing_elit,____')
++        self.assertEqual(dstwin.instr(2, 0), b'_do_eiusmod______')
++        self.assertEqual(dstwin.instr(3, 0), b'_________________')
++
++        srcwin.overwrite(dstwin)
++        self.assertEqual(dstwin.instr(0, 0), b'sectetur       __')
++        self.assertEqual(dstwin.instr(1, 0), b'piscing elit,  __')
++        self.assertEqual(dstwin.instr(2, 0), b' do eiusmod    __')
++        self.assertEqual(dstwin.instr(3, 0), b'_________________')
++
++        srcwin.overlay(dstwin, 1, 4, 3, 2, 4, 11)
++        self.assertEqual(dstwin.instr(3, 0), b'__r_sit_amet_____')
++        self.assertEqual(dstwin.instr(4, 0), b'__ectetur________')
++        self.assertEqual(dstwin.instr(5, 0), b'_________________')
++
++        srcwin.overwrite(dstwin, 1, 4, 3, 2, 4, 11)
++        self.assertEqual(dstwin.instr(3, 0), b'__r sit amet_____')
++        self.assertEqual(dstwin.instr(4, 0), b'__ectetur   _____')
++        self.assertEqual(dstwin.instr(5, 0), b'_________________')
++
++    def test_refresh(self):
++        win = curses.newwin(5, 15, 2, 5)
++        win.noutrefresh()
++        win.redrawln(1, 2)
++        win.redrawwin()
++        win.refresh()
++        curses.doupdate()
++
++    @requires_curses_window_meth('resize')
++    def test_resize(self):
++        win = curses.newwin(5, 15, 2, 5)
++        win.resize(4, 20)
++        self.assertEqual(win.getmaxyx(), (4, 20))
++        win.resize(5, 15)
++        self.assertEqual(win.getmaxyx(), (5, 15))
++
++    @requires_curses_window_meth('enclose')
++    def test_enclose(self):
++        win = curses.newwin(5, 15, 2, 5)
++        # TODO: Return bool instead of 1/0
++        self.assertTrue(win.enclose(2, 5))
++        self.assertFalse(win.enclose(1, 5))
++        self.assertFalse(win.enclose(2, 4))
++        self.assertTrue(win.enclose(6, 19))
++        self.assertFalse(win.enclose(7, 19))
++        self.assertFalse(win.enclose(6, 20))
++
++    def test_putwin(self):
++        win = curses.newwin(5, 12, 1, 2)
++        win.addstr(2, 1, 'Lorem ipsum')
++        with tempfile.TemporaryFile() as f:
++            win.putwin(f)
++            del win
++            f.seek(0)
++            win = curses.getwin(f)
++            self.assertEqual(win.getbegyx(), (1, 2))
++            self.assertEqual(win.getmaxyx(), (5, 12))
++            self.assertEqual(win.instr(2, 0), b' Lorem ipsum')
+ 
+-        win.border(65, 66, 67, 68,
+-                   69, 70, 71, 72)
++    def test_borders_and_lines(self):
++        win = curses.newwin(5, 10, 5, 2)
+         win.border('|', '!', '-', '_',
+                    '+', '\\', '#', '/')
+-        with self.assertRaises(TypeError,
+-                               msg="Expected win.border() to raise TypeError"):
+-            win.border(65, 66, 67, 68,
+-                       69, [], 71, 72)
+-
+-        win.box(65, 67)
+-        win.box('!', '_')
++        self.assertEqual(win.instr(0, 0), b'+--------\\')
++        self.assertEqual(win.instr(1, 0), b'|        !')
++        self.assertEqual(win.instr(4, 0), b'#________/')
++        win.border(b'|', b'!', b'-', b'_',
++                   b'+', b'\\', b'#', b'/')
++        win.border(65, 66, 67, 68,
++                   69, 70, 71, 72)
++        self.assertRaises(TypeError, win.border,
++                          65, 66, 67, 68, 69, [], 71, 72)
++        self.assertRaises(TypeError, win.border,
++                          65, 66, 67, 68, 69, 70, 71, 72, 73)
++        self.assertRaises(TypeError, win.border,
++                          65, 66, 67, 68, 69, 70, 71, 72, 73)
++        win.border(65, 66, 67, 68, 69, 70, 71)
++        win.border(65, 66, 67, 68, 69, 70)
++        win.border(65, 66, 67, 68, 69)
++        win.border(65, 66, 67, 68)
++        win.border(65, 66, 67)
++        win.border(65, 66)
++        win.border(65)
++        win.border()
++
++        win.box(':', '~')
++        self.assertEqual(win.instr(0, 1, 8), b'~~~~~~~~')
++        self.assertEqual(win.instr(1, 0),   b':        :')
++        self.assertEqual(win.instr(4, 1, 8), b'~~~~~~~~')
+         win.box(b':', b'~')
++        win.box(65, 67)
+         self.assertRaises(TypeError, win.box, 65, 66, 67)
+         self.assertRaises(TypeError, win.box, 65)
+         win.box()
+ 
+-        stdscr.clearok(1)
++        win.move(1, 2)
++        win.hline('-', 5)
++        self.assertEqual(win.instr(1, 1, 7), b' ----- ')
++        win.hline(b'-', 5)
++        win.hline(45, 5)
++        win.hline('-', 5, curses.A_BOLD)
++        win.hline(1, 1, '-', 5)
++        win.hline(1, 1, '-', 5, curses.A_BOLD)
++
++        win.move(1, 2)
++        win.vline('a', 3)
++        win.vline(b'a', 3)
++        win.vline(97, 3)
++        win.vline('a', 3, curses.A_STANDOUT)
++        win.vline(1, 1, 'a', 3)
++        win.vline(1, 1, ';', 2, curses.A_STANDOUT)
++        self.assertEqual(win.inch(1, 1), b';'[0] | curses.A_STANDOUT)
++        self.assertEqual(win.inch(2, 1), b';'[0] | curses.A_STANDOUT)
++        self.assertEqual(win.inch(3, 1), b'a'[0])
++
++    def test_unctrl(self):
++        # TODO: wunctrl()
++        self.assertEqual(curses.unctrl(b'A'), b'A')
++        self.assertEqual(curses.unctrl('A'), b'A')
++        self.assertEqual(curses.unctrl(65), b'A')
++        self.assertEqual(curses.unctrl(b'\n'), b'^J')
++        self.assertEqual(curses.unctrl('\n'), b'^J')
++        self.assertEqual(curses.unctrl(10), b'^J')
++        self.assertRaises(TypeError, curses.unctrl, b'')
++        self.assertRaises(TypeError, curses.unctrl, b'AB')
++        self.assertRaises(TypeError, curses.unctrl, '')
++        self.assertRaises(TypeError, curses.unctrl, 'AB')
++        self.assertRaises(OverflowError, curses.unctrl, 2**64)
++
++    def test_endwin(self):
++        if not self.isatty:
++            self.skipTest('requires terminal')
++        self.assertIs(curses.isendwin(), False)
++        curses.endwin()
++        self.assertIs(curses.isendwin(), True)
++        curses.doupdate()
++        self.assertIs(curses.isendwin(), False)
++
++    def test_terminfo(self):
++        self.assertIsInstance(curses.tigetflag('hc'), int)
++        self.assertEqual(curses.tigetflag('cols'), -1)
++        self.assertEqual(curses.tigetflag('cr'), -1)
++
++        self.assertIsInstance(curses.tigetnum('cols'), int)
++        self.assertEqual(curses.tigetnum('hc'), -2)
++        self.assertEqual(curses.tigetnum('cr'), -2)
++
++        self.assertIsInstance(curses.tigetstr('cr'), (bytes, type(None)))
++        self.assertIsNone(curses.tigetstr('hc'))
++        self.assertIsNone(curses.tigetstr('cols'))
++
++        cud = curses.tigetstr('cud')
++        if cud is not None:
++            # See issue10570.
++            self.assertIsInstance(cud, bytes)
++            curses.tparm(cud, 2)
++            cud_2 = curses.tparm(cud, 2)
++            self.assertIsInstance(cud_2, bytes)
++            curses.putp(cud_2)
++
++        curses.putp(b'abc\n')
++
++    def test_misc_module_funcs(self):
++        curses.delay_output(1)
++        curses.flushinp()
++
++        curses.doupdate()
++        self.assertIs(curses.isendwin(), False)
+ 
+-        win4 = stdscr.derwin(2,2)
+-        win4 = stdscr.derwin(1,1, 5,5)
+-        win4.mvderwin(9,9)
++        curses.napms(100)
++
++        curses.newpad(50, 50)
++
++    def test_env_queries(self):
++        # TODO: term_attrs(), erasewchar(), killwchar()
++        self.assertIsInstance(curses.termname(), bytes)
++        self.assertIsInstance(curses.longname(), bytes)
++        self.assertIsInstance(curses.baudrate(), int)
++        self.assertIsInstance(curses.has_ic(), bool)
++        self.assertIsInstance(curses.has_il(), bool)
++        self.assertIsInstance(curses.termattrs(), int)
++
++        c = curses.killchar()
++        self.assertIsInstance(c, bytes)
++        self.assertEqual(len(c), 1)
++        c = curses.erasechar()
++        self.assertIsInstance(c, bytes)
++        self.assertEqual(len(c), 1)
++
++    def test_output_options(self):
++        stdscr = self.stdscr
++
++        stdscr.clearok(True)
++        stdscr.clearok(False)
+ 
+-        stdscr.echochar('a')
+-        stdscr.echochar('a', curses.A_BOLD)
+-        stdscr.hline('-', 5)
+-        stdscr.hline('-', 5, curses.A_BOLD)
+-        stdscr.hline(1,1,'-', 5)
+-        stdscr.hline(1,1,'-', 5, curses.A_BOLD)
++        stdscr.idcok(True)
++        stdscr.idcok(False)
++
++        stdscr.idlok(False)
++        stdscr.idlok(True)
+ 
+-        stdscr.idcok(1)
+-        stdscr.idlok(1)
+         if hasattr(stdscr, 'immedok'):
+-            stdscr.immedok(1)
+-            stdscr.immedok(0)
+-        stdscr.insch('c')
+-        stdscr.insdelln(1)
+-        stdscr.insnstr('abc', 3)
+-        stdscr.insnstr('abc', 3, curses.A_BOLD)
+-        stdscr.insnstr(5, 5, 'abc', 3)
+-        stdscr.insnstr(5, 5, 'abc', 3, curses.A_BOLD)
+-
+-        stdscr.insstr('def')
+-        stdscr.insstr('def', curses.A_BOLD)
+-        stdscr.insstr(5, 5, 'def')
+-        stdscr.insstr(5, 5, 'def', curses.A_BOLD)
+-        stdscr.is_linetouched(0)
+-        stdscr.keypad(1)
+-        stdscr.leaveok(1)
+-        stdscr.move(3,3)
+-        win.mvwin(2,2)
+-        stdscr.nodelay(1)
+-        stdscr.notimeout(1)
+-        win2.overlay(win)
+-        win2.overwrite(win)
+-        win2.overlay(win, 1, 2, 2, 1, 3, 3)
+-        win2.overwrite(win, 1, 2, 2, 1, 3, 3)
+-        stdscr.redrawln(1,2)
+-
+-        stdscr.scrollok(1)
+-        stdscr.scroll()
+-        stdscr.scroll(2)
+-        stdscr.scroll(-3)
+-
+-        stdscr.move(12, 2)
+-        stdscr.setscrreg(10,15)
+-        win3 = stdscr.subwin(10,10)
+-        win3 = stdscr.subwin(10,10, 5,5)
+-        if hasattr(stdscr, 'syncok') and not sys.platform.startswith("sunos"):
+-            stdscr.syncok(1)
+-        stdscr.timeout(5)
+-        stdscr.touchline(5,5)
+-        stdscr.touchline(5,5,0)
+-        stdscr.vline('a', 3)
+-        stdscr.vline('a', 3, curses.A_STANDOUT)
+-        if hasattr(stdscr, 'chgat'):
+-            stdscr.chgat(5, 2, 3, curses.A_BLINK)
+-            stdscr.chgat(3, curses.A_BOLD)
+-            stdscr.chgat(5, 8, curses.A_UNDERLINE)
+-            stdscr.chgat(curses.A_BLINK)
+-        stdscr.refresh()
++            stdscr.immedok(True)
++            stdscr.immedok(False)
+ 
+-        stdscr.vline(1,1, 'a', 3)
+-        stdscr.vline(1,1, 'a', 3, curses.A_STANDOUT)
++        stdscr.leaveok(True)
++        stdscr.leaveok(False)
+ 
+-        if hasattr(stdscr, 'resize'):
+-            stdscr.resize(25, 80)
+-        if hasattr(stdscr, 'enclose'):
+-            stdscr.enclose(10, 10)
++        stdscr.scrollok(True)
++        stdscr.scrollok(False)
+ 
+-        self.assertRaises(ValueError, stdscr.getstr, -400)
+-        self.assertRaises(ValueError, stdscr.getstr, 2, 3, -400)
+-        self.assertRaises(ValueError, stdscr.instr, -2)
+-        self.assertRaises(ValueError, stdscr.instr, 2, 3, -2)
++        stdscr.setscrreg(5, 10)
+ 
+-    def test_embedded_null_chars(self):
+-        # reject embedded null bytes and characters
++        curses.nonl()
++        curses.nl(True)
++        curses.nl(False)
++        curses.nl()
++
++
++    def test_input_options(self):
+         stdscr = self.stdscr
+-        for arg in ['a', b'a']:
+-            with self.subTest(arg=arg):
+-                self.assertRaises(ValueError, stdscr.addstr, 'a\0')
+-                self.assertRaises(ValueError, stdscr.addnstr, 'a\0', 1)
+-                self.assertRaises(ValueError, stdscr.insstr, 'a\0')
+-                self.assertRaises(ValueError, stdscr.insnstr, 'a\0', 1)
+-
+-    def test_module_funcs(self):
+-        "Test module-level functions"
+-        for func in [curses.baudrate, curses.beep, curses.can_change_color,
 -                     curses.cbreak, curses.def_prog_mode, curses.doupdate,
 -                     curses.flash, curses.flushinp,
-+                     curses.doupdate, curses.flash, curses.flushinp,
-                      curses.has_colors, curses.has_ic, curses.has_il,
-                      curses.isendwin, curses.killchar, curses.longname,
+-                     curses.has_colors, curses.has_ic, curses.has_il,
+-                     curses.isendwin, curses.killchar, curses.longname,
 -                     curses.nocbreak, curses.noecho, curses.nonl,
 -                     curses.noqiflush, curses.noraw,
 -                     curses.reset_prog_mode, curses.termattrs,
 -                     curses.termname, curses.erasechar]:
-+                     curses.noecho, curses.nonl, curses.noqiflush,
-+                     curses.termattrs, curses.termname, curses.erasechar]:
-             with self.subTest(func=func.__qualname__):
-                 func()
-+        if self.isatty:
-+            for func in [curses.cbreak, curses.def_prog_mode,
-+                         curses.nocbreak, curses.noraw,
-+                         curses.reset_prog_mode]:
-+                with self.subTest(func=func.__qualname__):
-+                    func()
-         if hasattr(curses, 'filter'):
-             curses.filter()
-         if hasattr(curses, 'getsyx'):
-@@ -245,13 +285,9 @@ class TestCurses(unittest.TestCase):
-         curses.delay_output(1)
-         curses.echo() ; curses.echo(1)
+-            with self.subTest(func=func.__qualname__):
+-                func()
+-        if hasattr(curses, 'filter'):
+-            curses.filter()
+-        if hasattr(curses, 'getsyx'):
+-            curses.getsyx()
+-
+-        # Functions that actually need arguments
+-        if curses.tigetstr("cnorm"):
+-            curses.curs_set(1)
+-        curses.delay_output(1)
+-        curses.echo() ; curses.echo(1)
  
 -        with tempfile.TemporaryFile() as f:
 -            self.stdscr.putwin(f)
 -            f.seek(0)
 -            curses.getwin(f)
--
++        if self.isatty:
++            curses.nocbreak()
++            curses.cbreak()
++            curses.cbreak(False)
++            curses.cbreak(True)
++
++            curses.intrflush(True)
++            curses.intrflush(False)
++
++            curses.raw()
++            curses.raw(False)
++            curses.raw(True)
++            curses.noraw()
+ 
++        curses.noecho()
++        curses.echo()
++        curses.echo(False)
++        curses.echo(True)
++
++        curses.halfdelay(255)
          curses.halfdelay(1)
 -        curses.intrflush(1)
-+        if self.isatty:
-+            curses.intrflush(1)
-         curses.meta(1)
-         curses.napms(100)
-         curses.newpad(50,50)
-@@ -260,7 +296,8 @@ class TestCurses(unittest.TestCase):
-         curses.nl() ; curses.nl(1)
-         curses.putp(b'abc')
+-        curses.meta(1)
+-        curses.napms(100)
+-        curses.newpad(50,50)
+-        win = curses.newwin(5,5)
+-        win = curses.newwin(5,5, 1,1)
+-        curses.nl() ; curses.nl(1)
+-        curses.putp(b'abc')
++
++        stdscr.keypad(True)
++        stdscr.keypad(False)
++
++        curses.meta(True)
++        curses.meta(False)
++
++        stdscr.nodelay(True)
++        stdscr.nodelay(False)
++
++        curses.noqiflush()
++        curses.qiflush(True)
++        curses.qiflush(False)
          curses.qiflush()
 -        curses.raw() ; curses.raw(1)
-+        if self.isatty:
-+            curses.raw() ; curses.raw(1)
++
++        stdscr.notimeout(True)
++        stdscr.notimeout(False)
++
++        stdscr.timeout(-1)
++        stdscr.timeout(0)
++        stdscr.timeout(5)
++
++    @requires_curses_func('typeahead')
++    def test_typeahead(self):
++        curses.typeahead(sys.__stdin__.fileno())
++        curses.typeahead(-1)
++
++    def test_prog_mode(self):
++        if not self.isatty:
++            self.skipTest('requires terminal')
++        curses.def_prog_mode()
++        curses.reset_prog_mode()
++
++    def test_beep(self):
++        if (curses.tigetstr("bel") is not None
++            or curses.tigetstr("flash") is not None):
++            curses.beep()
++        else:
++            try:
++                curses.beep()
++            except curses.error:
++                self.skipTest('beep() failed')
++
++    def test_flash(self):
++        if (curses.tigetstr("bel") is not None
++            or curses.tigetstr("flash") is not None):
++            curses.flash()
++        else:
++            try:
++                curses.flash()
++            except curses.error:
++                self.skipTest('flash() failed')
++
++    def test_curs_set(self):
++        for vis, cap in [(0, 'civis'), (2, 'cvvis'), (1, 'cnorm')]:
++            if curses.tigetstr(cap) is not None:
++                curses.curs_set(vis)
++            else:
++                try:
++                    curses.curs_set(vis)
++                except curses.error:
++                    pass
++
++    @requires_curses_func('get_escdelay')
++    def test_escdelay(self):
++        escdelay = curses.get_escdelay()
++        self.assertIsInstance(escdelay, int)
          curses.set_escdelay(25)
          self.assertEqual(curses.get_escdelay(), 25)
++        curses.set_escdelay(escdelay)
++
++    @requires_curses_func('get_tabsize')
++    def test_tabsize(self):
++        tabsize = curses.get_tabsize()
++        self.assertIsInstance(tabsize, int)
          curses.set_tabsize(4)
-@@ -279,18 +316,128 @@ class TestCurses(unittest.TestCase):
-             curses.use_env(1)
- 
-     # Functions only available on a few platforms
+         self.assertEqual(curses.get_tabsize(), 4)
+-        if hasattr(curses, 'setsyx'):
+-            curses.setsyx(5,5)
+-        curses.tigetflag('hc')
+-        curses.tigetnum('co')
+-        curses.tigetstr('cr')
+-        curses.tparm(b'cr')
+-        if hasattr(curses, 'typeahead'):
+-            curses.typeahead(sys.__stdin__.fileno())
+-        curses.unctrl('a')
+-        curses.ungetch('a')
+-        if hasattr(curses, 'use_env'):
+-            curses.use_env(1)
+-
+-    # Functions only available on a few platforms
 -    def test_colors_funcs(self):
++        curses.set_tabsize(tabsize)
++
++    @requires_curses_func('getsyx')
++    def test_getsyx(self):
++        y, x = curses.getsyx()
++        self.assertIsInstance(y, int)
++        self.assertIsInstance(x, int)
++        curses.setsyx(4, 5)
++        self.assertEqual(curses.getsyx(), (4, 5))
 +
 +    def bad_colors(self):
 +        return (-2**31 - 1, 2**31, -2**63 - 1, 2**63, 2**64)
 +
 +    def bad_pairs(self):
 +        return (-2**31 - 1, 2**31, -2**63 - 1, 2**63, 2**64)
++
++    def test_has_colors(self):
++        self.assertIsInstance(curses.has_colors(), bool)
++        self.assertIsInstance(curses.can_change_color(), bool)
 +
 +    def test_start_color(self):
          if not curses.has_colors():
@@ -4934,7 +7289,6 @@ index 5e619d1383..de9f301737 100644
 -        curses.pair_number(0)
 -
 -        if hasattr(curses, 'use_default_colors'):
--            curses.use_default_colors()
 +        if verbose:
 +            print(f'COLORS = {curses.COLORS}', file=sys.stderr)
 +            print(f'COLOR_PAIRS = {curses.COLOR_PAIRS}', file=sys.stderr)
@@ -4954,7 +7308,7 @@ index 5e619d1383..de9f301737 100644
 +
 +    @requires_colors
 +    def test_init_color(self):
-+        if not curses.can_change_color:
++        if not curses.can_change_color():
 +            self.skipTest('cannot change color')
 +
 +        old = curses.color_content(0)
@@ -5042,22 +7396,124 @@ index 5e619d1383..de9f301737 100644
 +    @requires_curses_func('use_default_colors')
 +    @requires_colors
 +    def test_use_default_colors(self):
-+        self.assertIn(curses.pair_content(0),
-+                      ((curses.COLOR_WHITE, curses.COLOR_BLACK), (-1, -1)))
-+        curses.use_default_colors()
++        old = curses.pair_content(0)
++        try:
+             curses.use_default_colors()
++        except curses.error:
++            self.skipTest('cannot change color (use_default_colors() failed)')
 +        self.assertEqual(curses.pair_content(0), (-1, -1))
++        self.assertIn(old, [(curses.COLOR_WHITE, curses.COLOR_BLACK), (-1, -1), (0, 0)])
  
-     @requires_curses_func('keyname')
+-    @requires_curses_func('keyname')
      def test_keyname(self):
-@@ -358,7 +505,6 @@ class TestCurses(unittest.TestCase):
+-        curses.keyname(13)
++        # TODO: key_name()
++        self.assertEqual(curses.keyname(65), b'A')
++        self.assertEqual(curses.keyname(13), b'^M')
++        self.assertEqual(curses.keyname(127), b'^?')
++        self.assertEqual(curses.keyname(0), b'^@')
++        self.assertRaises(ValueError, curses.keyname, -1)
++        self.assertIsInstance(curses.keyname(256), bytes)
+ 
+     @requires_curses_func('has_key')
+     def test_has_key(self):
+@@ -350,23 +1048,46 @@ class TestCurses(unittest.TestCase):
+ 
+     @requires_curses_func('is_term_resized')
+     def test_is_term_resized(self):
+-        curses.is_term_resized(*self.stdscr.getmaxyx())
++        lines, cols = curses.LINES, curses.COLS
++        self.assertIs(curses.is_term_resized(lines, cols), False)
++        self.assertIs(curses.is_term_resized(lines-1, cols-1), True)
+ 
+     @requires_curses_func('resize_term')
+     def test_resize_term(self):
+-        curses.resize_term(*self.stdscr.getmaxyx())
++        curses.update_lines_cols()
++        lines, cols = curses.LINES, curses.COLS
++        new_lines = lines - 1
++        new_cols = cols + 1
++        curses.resize_term(new_lines, new_cols)
++        self.assertEqual(curses.LINES, new_lines)
++        self.assertEqual(curses.COLS, new_cols)
++
++        curses.resize_term(lines, cols)
++        self.assertEqual(curses.LINES, lines)
++        self.assertEqual(curses.COLS, cols)
  
      @requires_curses_func('resizeterm')
      def test_resizeterm(self):
 -        stdscr = self.stdscr
++        curses.update_lines_cols()
          lines, cols = curses.LINES, curses.COLS
          new_lines = lines - 1
          new_cols = cols + 1
-@@ -462,6 +608,8 @@ class MiscTests(unittest.TestCase):
+         curses.resizeterm(new_lines, new_cols)
+-
+         self.assertEqual(curses.LINES, new_lines)
+         self.assertEqual(curses.COLS, new_cols)
+ 
++        curses.resizeterm(lines, cols)
++        self.assertEqual(curses.LINES, lines)
++        self.assertEqual(curses.COLS, cols)
++
++    def test_ungetch(self):
++        curses.ungetch(b'A')
++        self.assertEqual(self.stdscr.getkey(), 'A')
++        curses.ungetch('B')
++        self.assertEqual(self.stdscr.getkey(), 'B')
++        curses.ungetch(67)
++        self.assertEqual(self.stdscr.getkey(), 'C')
++
+     def test_issue6243(self):
+         curses.ungetch(1025)
+         self.stdscr.getkey()
+@@ -395,10 +1116,6 @@ class TestCurses(unittest.TestCase):
+             read = stdscr.get_wch()
+             self.assertEqual(read, ch)
+ 
+-    def test_issue10570(self):
+-        b = curses.tparm(curses.tigetstr("cup"), 5, 3)
+-        self.assertIs(type(b), bytes)
+-
+     def test_encoding(self):
+         stdscr = self.stdscr
+         import codecs
+@@ -438,30 +1155,31 @@ class TestCurses(unittest.TestCase):
+         human_readable_signature = stdscr.addch.__doc__.split("\n")[0]
+         self.assertIn("[y, x,]", human_readable_signature)
+ 
++    @requires_curses_window_meth('resize')
+     def test_issue13051(self):
+-        stdscr = self.stdscr
+-        if not hasattr(stdscr, 'resize'):
+-            raise unittest.SkipTest('requires curses.window.resize')
+-        box = curses.textpad.Textbox(stdscr, insert_mode=True)
+-        lines, cols = stdscr.getmaxyx()
+-        stdscr.resize(lines-2, cols-2)
++        win = curses.newwin(5, 15, 2, 5)
++        box = curses.textpad.Textbox(win, insert_mode=True)
++        lines, cols = win.getmaxyx()
++        win.resize(lines-2, cols-2)
+         # this may cause infinite recursion, leading to a RuntimeError
+         box._insert_printable_char('a')
+ 
+ 
+ class MiscTests(unittest.TestCase):
+ 
+-    @requires_curses_func('update_lines_cols')
+     def test_update_lines_cols(self):
+-        # this doesn't actually test that LINES and COLS are updated,
+-        # because we can't automate changing them. See Issue #4254 for
+-        # a manual test script. We can only test that the function
+-        # can be called.
+         curses.update_lines_cols()
++        lines, cols = curses.LINES, curses.COLS
++        curses.LINES = curses.COLS = 0
++        curses.update_lines_cols()
++        self.assertEqual(curses.LINES, lines)
++        self.assertEqual(curses.COLS, cols)
+ 
      @requires_curses_func('ncurses_version')
      def test_ncurses_version(self):
          v = curses.ncurses_version
@@ -5066,6 +7522,36 @@ index 5e619d1383..de9f301737 100644
          self.assertIsInstance(v[:], tuple)
          self.assertEqual(len(v), 3)
          self.assertIsInstance(v[0], int)
+@@ -477,6 +1195,7 @@ class MiscTests(unittest.TestCase):
+         self.assertGreaterEqual(v.minor, 0)
+         self.assertGreaterEqual(v.patch, 0)
+ 
++
+ class TestAscii(unittest.TestCase):
+ 
+     def test_controlnames(self):
+@@ -565,5 +1284,21 @@ class TestAscii(unittest.TestCase):
+         self.assertEqual(unctrl(ord('\xc1')), '!A')
+ 
+ 
++def lorem_ipsum(win):
++    text = [
++        'Lorem ipsum',
++        'dolor sit amet,',
++        'consectetur',
++        'adipiscing elit,',
++        'sed do eiusmod',
++        'tempor incididunt',
++        'ut labore et',
++        'dolore magna',
++        'aliqua.',
++    ]
++    maxy, maxx = win.getmaxyx()
++    for y, line in enumerate(text[:maxy]):
++        win.addstr(y, 0, line[:maxx - (y == maxy - 1)])
++
+ if __name__ == '__main__':
+     unittest.main()
 diff --git a/Lib/test/test_descr.py b/Lib/test/test_descr.py
 index 9e875da375..c7a191bccd 100644
 --- a/Lib/test/test_descr.py
@@ -5539,6 +8025,116 @@ index c113e53824..ccf40b13d3 100644
  
  if __name__ == "__main__":
      unittest.main()
+diff --git a/Lib/test/test_htmlparser.py b/Lib/test/test_htmlparser.py
+index a2bfb39d16..12917755a5 100644
+--- a/Lib/test/test_htmlparser.py
++++ b/Lib/test/test_htmlparser.py
+@@ -452,42 +452,6 @@ text
+         self._run_check('<!spacer type="block" height="25">',
+                         [('comment', 'spacer type="block" height="25"')])
+ 
+-    def test_with_unquoted_attributes(self):
+-        # see #12008
+-        html = ("<html><body bgcolor=d0ca90 text='181008'>"
+-                "<table cellspacing=0 cellpadding=1 width=100% ><tr>"
+-                "<td align=left><font size=-1>"
+-                "- <a href=/rabota/><span class=en> software-and-i</span></a>"
+-                "- <a href='/1/'><span class=en> library</span></a></table>")
+-        expected = [
+-            ('starttag', 'html', []),
+-            ('starttag', 'body', [('bgcolor', 'd0ca90'), ('text', '181008')]),
+-            ('starttag', 'table',
+-                [('cellspacing', '0'), ('cellpadding', '1'), ('width', '100%')]),
+-            ('starttag', 'tr', []),
+-            ('starttag', 'td', [('align', 'left')]),
+-            ('starttag', 'font', [('size', '-1')]),
+-            ('data', '- '), ('starttag', 'a', [('href', '/rabota/')]),
+-            ('starttag', 'span', [('class', 'en')]), ('data', ' software-and-i'),
+-            ('endtag', 'span'), ('endtag', 'a'),
+-            ('data', '- '), ('starttag', 'a', [('href', '/1/')]),
+-            ('starttag', 'span', [('class', 'en')]), ('data', ' library'),
+-            ('endtag', 'span'), ('endtag', 'a'), ('endtag', 'table')
+-        ]
+-        self._run_check(html, expected)
+-
+-    def test_comma_between_attributes(self):
+-        self._run_check('<form action="/xxx.php?a=1&amp;b=2&amp", '
+-                        'method="post">', [
+-                            ('starttag', 'form',
+-                                [('action', '/xxx.php?a=1&b=2&'),
+-                                 (',', None), ('method', 'post')])])
+-
+-    def test_weird_chars_in_unquoted_attribute_values(self):
+-        self._run_check('<form action=bogus|&#()value>', [
+-                            ('starttag', 'form',
+-                                [('action', 'bogus|&#()value')])])
+-
+     def test_invalid_end_tags(self):
+         # A collection of broken end tags. <br> is used as separator.
+         # see http://www.w3.org/TR/html5/tokenization.html#end-tag-open-state
+@@ -766,6 +730,62 @@ class AttributesTestCase(TestCaseBase):
+                           [("href", "http://www.example.org/\">;")]),
+                          ("data", "spam"), ("endtag", "a")])
+ 
++    def test_with_unquoted_attributes(self):
++        # see #12008
++        html = ("<html><body bgcolor=d0ca90 text='181008'>"
++                "<table cellspacing=0 cellpadding=1 width=100% ><tr>"
++                "<td align=left><font size=-1>"
++                "- <a href=/rabota/><span class=en> software-and-i</span></a>"
++                "- <a href='/1/'><span class=en> library</span></a></table>")
++        expected = [
++            ('starttag', 'html', []),
++            ('starttag', 'body', [('bgcolor', 'd0ca90'), ('text', '181008')]),
++            ('starttag', 'table',
++                [('cellspacing', '0'), ('cellpadding', '1'), ('width', '100%')]),
++            ('starttag', 'tr', []),
++            ('starttag', 'td', [('align', 'left')]),
++            ('starttag', 'font', [('size', '-1')]),
++            ('data', '- '), ('starttag', 'a', [('href', '/rabota/')]),
++            ('starttag', 'span', [('class', 'en')]), ('data', ' software-and-i'),
++            ('endtag', 'span'), ('endtag', 'a'),
++            ('data', '- '), ('starttag', 'a', [('href', '/1/')]),
++            ('starttag', 'span', [('class', 'en')]), ('data', ' library'),
++            ('endtag', 'span'), ('endtag', 'a'), ('endtag', 'table')
++        ]
++        self._run_check(html, expected)
++
++    def test_comma_between_attributes(self):
++        # see bpo 41478
++        # HTMLParser preserves duplicate attributes, leaving the task of
++        # removing duplicate attributes to a conformant html tree builder
++        html = ('<div class=bar,baz=asd>'        # between attrs (unquoted)
++                '<div class="bar",baz="asd">'    # between attrs (quoted)
++                '<div class=bar, baz=asd,>'      # after values (unquoted)
++                '<div class="bar", baz="asd",>'  # after values (quoted)
++                '<div class="bar",>'             # one comma values (quoted)
++                '<div class=,bar baz=,asd>'      # before values (unquoted)
++                '<div class=,"bar" baz=,"asd">'  # before values (quoted)
++                '<div ,class=bar ,baz=asd>'      # before names
++                '<div class,="bar" baz,="asd">'  # after names
++        )
++        expected = [
++            ('starttag', 'div', [('class', 'bar,baz=asd'),]),
++            ('starttag', 'div', [('class', 'bar'), (',baz', 'asd')]),
++            ('starttag', 'div', [('class', 'bar,'), ('baz', 'asd,')]),
++            ('starttag', 'div', [('class', 'bar'), (',', None),
++                                 ('baz', 'asd'), (',', None)]),
++            ('starttag', 'div', [('class', 'bar'), (',', None)]),
++            ('starttag', 'div', [('class', ',bar'), ('baz', ',asd')]),
++            ('starttag', 'div', [('class', ',"bar"'), ('baz', ',"asd"')]),
++            ('starttag', 'div', [(',class', 'bar'), (',baz', 'asd')]),
++            ('starttag', 'div', [('class,', 'bar'), ('baz,', 'asd')]),
++        ]
++        self._run_check(html, expected)
++
++    def test_weird_chars_in_unquoted_attribute_values(self):
++        self._run_check('<form action=bogus|&#()value>', [
++                            ('starttag', 'form',
++                                [('action', 'bogus|&#()value')])])
+ 
+ if __name__ == "__main__":
+     unittest.main()
 diff --git a/Lib/test/test_httplib.py b/Lib/test/test_httplib.py
 index ed125893d6..28943f0256 100644
 --- a/Lib/test/test_httplib.py
@@ -5714,6 +8310,120 @@ index fdea44e4d8..9df4efbfff 100644
  
  class PurePythonOrderedDictTests(OrderedDictTests, unittest.TestCase):
  
+diff --git a/Lib/test/test_os.py b/Lib/test/test_os.py
+index bf1cb5f511..35933e9c8c 100644
+--- a/Lib/test/test_os.py
++++ b/Lib/test/test_os.py
+@@ -3659,6 +3659,33 @@ class FDInheritanceTests(unittest.TestCase):
+         self.assertEqual(fcntl.fcntl(fd, fcntl.F_GETFD) & fcntl.FD_CLOEXEC,
+                          0)
+ 
++    @unittest.skipUnless(hasattr(os, 'O_PATH'), "need os.O_PATH")
++    def test_get_set_inheritable_o_path(self):
++        fd = os.open(__file__, os.O_PATH)
++        self.addCleanup(os.close, fd)
++        self.assertEqual(os.get_inheritable(fd), False)
++
++        os.set_inheritable(fd, True)
++        self.assertEqual(os.get_inheritable(fd), True)
++
++        os.set_inheritable(fd, False)
++        self.assertEqual(os.get_inheritable(fd), False)
++
++    def test_get_set_inheritable_badf(self):
++        fd = support.make_bad_fd()
++
++        with self.assertRaises(OSError) as ctx:
++            os.get_inheritable(fd)
++        self.assertEqual(ctx.exception.errno, errno.EBADF)
++
++        with self.assertRaises(OSError) as ctx:
++            os.set_inheritable(fd, True)
++        self.assertEqual(ctx.exception.errno, errno.EBADF)
++
++        with self.assertRaises(OSError) as ctx:
++            os.set_inheritable(fd, False)
++        self.assertEqual(ctx.exception.errno, errno.EBADF)
++
+     def test_open(self):
+         fd = os.open(__file__, os.O_RDONLY)
+         self.addCleanup(os.close, fd)
+diff --git a/Lib/test/test_pdb.py b/Lib/test/test_pdb.py
+index 8016f81e5a..6c4eaf318e 100644
+--- a/Lib/test/test_pdb.py
++++ b/Lib/test/test_pdb.py
+@@ -1661,6 +1661,71 @@ def bœr():
+             '(Pdb) ',
+         ])
+ 
++
++    def test_issue42384(self):
++        '''When running `python foo.py` sys.path[0] is an absolute path. `python -m pdb foo.py` should behave the same'''
++        script = textwrap.dedent("""
++            import sys
++            print('sys.path[0] is', sys.path[0])
++        """)
++        commands = 'c\nq'
++
++        with support.temp_cwd() as cwd:
++            expected = f'(Pdb) sys.path[0] is {os.path.realpath(cwd)}'
++
++            stdout, stderr = self.run_pdb_script(script, commands)
++
++            self.assertEqual(stdout.split('\n')[2].rstrip('\r'), expected)
++
++    @support.skip_unless_symlink
++    def test_issue42384_symlink(self):
++        '''When running `python foo.py` sys.path[0] resolves symlinks. `python -m pdb foo.py` should behave the same'''
++        script = textwrap.dedent("""
++            import sys
++            print('sys.path[0] is', sys.path[0])
++        """)
++        commands = 'c\nq'
++
++        with support.temp_cwd() as cwd:
++            cwd = os.path.realpath(cwd)
++            dir_one = os.path.join(cwd, 'dir_one')
++            dir_two = os.path.join(cwd, 'dir_two')
++            expected = f'(Pdb) sys.path[0] is {dir_one}'
++
++            os.mkdir(dir_one)
++            with open(os.path.join(dir_one, 'foo.py'), 'w') as f:
++                f.write(script)
++            os.mkdir(dir_two)
++            os.symlink(os.path.join(dir_one, 'foo.py'), os.path.join(dir_two, 'foo.py'))
++
++            stdout, stderr = self._run_pdb([os.path.join('dir_two', 'foo.py')], commands)
++
++            self.assertEqual(stdout.split('\n')[2].rstrip('\r'), expected)
++
++    def test_issue42383(self):
++        with support.temp_cwd() as cwd:
++            with open('foo.py', 'w') as f:
++                s = textwrap.dedent("""
++                    print('The correct file was executed')
++
++                    import os
++                    os.chdir("subdir")
++                """)
++                f.write(s)
++
++            subdir = os.path.join(cwd, 'subdir')
++            os.mkdir(subdir)
++            os.mkdir(os.path.join(subdir, 'subdir'))
++            wrong_file = os.path.join(subdir, 'foo.py')
++
++            with open(wrong_file, 'w') as f:
++                f.write('print("The wrong file was executed")')
++
++            stdout, stderr = self._run_pdb(['foo.py'], 'c\nc\nq')
++            expected = '(Pdb) The correct file was executed'
++            self.assertEqual(stdout.split('\n')[6].rstrip('\r'), expected)
++
++
+ def load_tests(*args):
+     from test import test_pdb
+     suites = [
 diff --git a/Lib/test/test_platform.py b/Lib/test/test_platform.py
 index a3b06feb65..9f04c79e09 100644
 --- a/Lib/test/test_platform.py
@@ -5764,6 +8474,19 @@ index a3b06feb65..9f04c79e09 100644
      @unittest.skipIf(sys.platform in ['win32', 'OpenVMS'], "uname -p not used")
      def test_uname_processor(self):
          """
+diff --git a/Lib/test/test_posix.py b/Lib/test/test_posix.py
+index bfbcbab3b6..f4edb8bd95 100644
+--- a/Lib/test/test_posix.py
++++ b/Lib/test/test_posix.py
+@@ -1045,7 +1045,7 @@ class PosixTester(unittest.TestCase):
+         if sys.platform == 'darwin':
+             import sysconfig
+             dt = sysconfig.get_config_var('MACOSX_DEPLOYMENT_TARGET') or '10.0'
+-            if tuple(int(n) for n in str(dt).split('.')[0:2]) < (10, 6):
++            if tuple(int(n) for n in dt.split('.')[0:2]) < (10, 6):
+                 raise unittest.SkipTest("getgroups(2) is broken prior to 10.6")
+ 
+         # 'id -G' and 'os.getgroups()' should return the same
 diff --git a/Lib/test/test_random.py b/Lib/test/test_random.py
 index a80e71e67e..15a68418bd 100644
 --- a/Lib/test/test_random.py
@@ -6224,7 +8947,7 @@ index b71be549d2..12c3f4dbd5 100644
              self.assertEqual(_parse_proxy(tc), expected)
  
 diff --git a/Lib/tkinter/__init__.py b/Lib/tkinter/__init__.py
-index 2175afcffa..98e95ad448 100644
+index 2175afcffa..f15f6c5e57 100644
 --- a/Lib/tkinter/__init__.py
 +++ b/Lib/tkinter/__init__.py
 @@ -270,7 +270,7 @@ class Event:
@@ -6315,7 +9038,17 @@ index 2175afcffa..98e95ad448 100644
      except TclError:
          raise ValueError("invalid literal for getboolean()")
  
-@@ -2248,7 +2257,7 @@ class Tk(Misc, Wm):
+@@ -1151,8 +1160,7 @@ class Misc:
+             self.tk.call('winfo', 'reqwidth', self._w))
+ 
+     def winfo_rgb(self, color):
+-        """Return tuple of decimal values for red, green, blue for
+-        COLOR in this widget."""
++        """Return a tuple of integer RGB values in range(65536) for color in this widget."""
+         return self._getints(
+             self.tk.call('winfo', 'rgb', self._w, color))
+ 
+@@ -2248,7 +2256,7 @@ class Tk(Misc, Wm):
          is the name of the widget class."""
          self.master = None
          self.children = {}
@@ -6324,7 +9057,7 @@ index 2175afcffa..98e95ad448 100644
          # to avoid recursions in the getattr code in case of failure, we
          # ensure that self.tk is always _something_.
          self.tk = None
-@@ -2272,7 +2281,7 @@ class Tk(Misc, Wm):
+@@ -2272,7 +2280,7 @@ class Tk(Misc, Wm):
              self._loadtk()
  
      def _loadtk(self):
@@ -6333,7 +9066,7 @@ index 2175afcffa..98e95ad448 100644
          global _default_root
          # Version sanity checks
          tk_version = self.tk.getvar('tk_version')
-@@ -2521,12 +2530,8 @@ class BaseWidget(Misc):
+@@ -2521,12 +2529,8 @@ class BaseWidget(Misc):
  
      def _setup(self, master, cnf):
          """Internal function. Sets up information about children."""
@@ -6348,7 +9081,7 @@ index 2175afcffa..98e95ad448 100644
          self.master = master
          self.tk = master.tk
          name = None
-@@ -3990,9 +3995,7 @@ class Image:
+@@ -3990,9 +3994,7 @@ class Image:
      def __init__(self, imgtype, name=None, cnf={}, master=None, **kw):
          self.name = None
          if not master:
@@ -6359,7 +9092,7 @@ index 2175afcffa..98e95ad448 100644
          self.tk = getattr(master, 'tk', master)
          if not name:
              Image._last_id += 1
-@@ -4146,11 +4149,13 @@ class BitmapImage(Image):
+@@ -4146,11 +4148,13 @@ class BitmapImage(Image):
  
  
  def image_names():
@@ -6375,6 +9108,104 @@ index 2175afcffa..98e95ad448 100644
  
  
  class Spinbox(Widget, XView):
+diff --git a/Lib/tkinter/colorchooser.py b/Lib/tkinter/colorchooser.py
+index 3cfc06f6f1..e2fb69dba9 100644
+--- a/Lib/tkinter/colorchooser.py
++++ b/Lib/tkinter/colorchooser.py
+@@ -8,57 +8,69 @@
+ # fixed initialcolor handling in August 1998
+ #
+ 
+-#
+-# options (all have default values):
+-#
+-# - initialcolor: color to mark as selected when dialog is displayed
+-#   (given as an RGB triplet or a Tk color string)
+-#
+-# - parent: which window to place the dialog on top of
+-#
+-# - title: dialog title
+-#
+ 
+ from tkinter.commondialog import Dialog
+ 
+ __all__ = ["Chooser", "askcolor"]
+ 
+ 
+-#
+-# color chooser class
+-
+ class Chooser(Dialog):
+-    "Ask for a color"
++    """Create a dialog for the tk_chooseColor command.
++
++    Args:
++        master: The master widget for this dialog.  If not provided,
++            defaults to options['parent'] (if defined).
++        options: Dictionary of options for the tk_chooseColor call.
++            initialcolor: Specifies the selected color when the
++                dialog is first displayed.  This can be a tk color
++                string or a 3-tuple of ints in the range (0, 255)
++                for an RGB triplet.
++            parent: The parent window of the color dialog.  The
++                color dialog is displayed on top of this.
++            title: A string for the title of the dialog box.
++    """
+ 
+     command = "tk_chooseColor"
+ 
+     def _fixoptions(self):
++        """Ensure initialcolor is a tk color string.
++
++        Convert initialcolor from a RGB triplet to a color string.
++        """
+         try:
+-            # make sure initialcolor is a tk color string
+             color = self.options["initialcolor"]
+             if isinstance(color, tuple):
+-                # assume an RGB triplet
++                # Assume an RGB triplet.
+                 self.options["initialcolor"] = "#%02x%02x%02x" % color
+         except KeyError:
+             pass
+ 
+     def _fixresult(self, widget, result):
+-        # result can be somethings: an empty tuple, an empty string or
+-        # a Tcl_Obj, so this somewhat weird check handles that
++        """Adjust result returned from call to tk_chooseColor.
++
++        Return both an RGB tuple of ints in the range (0, 255) and the
++        tk color string in the form #rrggbb.
++        """
++        # Result can be many things: an empty tuple, an empty string, or
++        # a _tkinter.Tcl_Obj, so this somewhat weird check handles that.
+         if not result or not str(result):
+-            return None, None # canceled
++            return None, None  # canceled
+ 
+-        # to simplify application code, the color chooser returns
+-        # an RGB tuple together with the Tk color string
++        # To simplify application code, the color chooser returns
++        # an RGB tuple together with the Tk color string.
+         r, g, b = widget.winfo_rgb(result)
+-        return (r/256, g/256, b/256), str(result)
++        return (r//256, g//256, b//256), str(result)
+ 
+ 
+ #
+ # convenience stuff
+ 
+-def askcolor(color = None, **options):
+-    "Ask for a color"
++def askcolor(color=None, **options):
++    """Display dialog window for selection of a color.
++
++    Convenience wrapper for the Chooser class.  Displays the color
++    chooser dialog with color as the initial value.
++    """
+ 
+     if color:
+         options = options.copy()
 diff --git a/Lib/tkinter/commondialog.py b/Lib/tkinter/commondialog.py
 index e56b5baf7d..cc3069842c 100644
 --- a/Lib/tkinter/commondialog.py
@@ -6525,6 +9356,55 @@ index 467a0b66c2..dbc47a81e6 100644
  def destroy_default_root():
      if getattr(tkinter, '_default_root', None):
          tkinter._default_root.update_idletasks()
+diff --git a/Lib/tkinter/test/test_tkinter/test_colorchooser.py b/Lib/tkinter/test/test_tkinter/test_colorchooser.py
+new file mode 100644
+index 0000000000..4798bc9c26
+--- /dev/null
++++ b/Lib/tkinter/test/test_tkinter/test_colorchooser.py
+@@ -0,0 +1,43 @@
++import unittest
++import tkinter
++from test.support import requires, run_unittest, swap_attr
++from tkinter.test.support import AbstractTkTest
++from tkinter import colorchooser
++
++requires('gui')
++
++
++class ChooserTest(AbstractTkTest, unittest.TestCase):
++
++    @classmethod
++    def setUpClass(cls):
++        AbstractTkTest.setUpClass.__func__(cls)
++        cls.cc = colorchooser.Chooser(initialcolor='dark blue slate')
++
++    def test_fixoptions(self):
++        cc = self.cc
++        cc._fixoptions()
++        self.assertEqual(cc.options['initialcolor'], 'dark blue slate')
++
++        cc.options['initialcolor'] = '#D2D269691E1E'
++        cc._fixoptions()
++        self.assertEqual(cc.options['initialcolor'], '#D2D269691E1E')
++
++        cc.options['initialcolor'] = (210, 105, 30)
++        cc._fixoptions()
++        self.assertEqual(cc.options['initialcolor'], '#d2691e')
++
++    def test_fixresult(self):
++        cc = self.cc
++        self.assertEqual(cc._fixresult(self.root, ()), (None, None))
++        self.assertEqual(cc._fixresult(self.root, ''), (None, None))
++        self.assertEqual(cc._fixresult(self.root, 'chocolate'),
++                         ((210, 105, 30), 'chocolate'))
++        self.assertEqual(cc._fixresult(self.root, '#4a3c8c'),
++                         ((74, 60, 140), '#4a3c8c'))
++
++
++tests_gui = (ChooserTest,)
++
++if __name__ == "__main__":
++    run_unittest(*tests_gui)
 diff --git a/Lib/tkinter/test/test_tkinter/test_font.py b/Lib/tkinter/test/test_tkinter/test_font.py
 index a021ea3368..0ea7924f5d 100644
 --- a/Lib/tkinter/test/test_tkinter/test_font.py
@@ -6673,7 +9553,7 @@ index 2805d35a1f..94bba8518f 100644
  if __name__ == "__main__":
      support.run_unittest(*tests_gui)
 diff --git a/Lib/tkinter/test/test_tkinter/test_misc.py b/Lib/tkinter/test/test_tkinter/test_misc.py
-index b8eea2544f..585d81ddf9 100644
+index b8eea2544f..f6e5b4db1a 100644
 --- a/Lib/tkinter/test/test_tkinter/test_misc.py
 +++ b/Lib/tkinter/test/test_tkinter/test_misc.py
 @@ -1,7 +1,7 @@
@@ -6685,7 +9565,34 @@ index b8eea2544f..585d81ddf9 100644
  
  support.requires('gui')
  
-@@ -241,7 +241,85 @@ class MiscTest(AbstractTkTest, unittest.TestCase):
+@@ -192,6 +192,26 @@ class MiscTest(AbstractTkTest, unittest.TestCase):
+         with self.assertRaises(tkinter.TclError):
+             root.clipboard_get()
+ 
++    def test_winfo_rgb(self):
++        root = self.root
++        rgb = root.winfo_rgb
++
++        # Color name.
++        self.assertEqual(rgb('red'), (65535, 0, 0))
++        self.assertEqual(rgb('dark slate blue'), (18504, 15677, 35723))
++        # #RGB - extends each 4-bit hex value to be 16-bit.
++        self.assertEqual(rgb('#F0F'), (0xFFFF, 0x0000, 0xFFFF))
++        # #RRGGBB - extends each 8-bit hex value to be 16-bit.
++        self.assertEqual(rgb('#4a3c8c'), (0x4a4a, 0x3c3c, 0x8c8c))
++        # #RRRRGGGGBBBB
++        self.assertEqual(rgb('#dede14143939'), (0xdede, 0x1414, 0x3939))
++        # Invalid string.
++        with self.assertRaises(tkinter.TclError):
++            rgb('#123456789a')
++        # RGB triplet is invalid input.
++        with self.assertRaises(tkinter.TclError):
++            rgb((111, 78, 55))
++
+     def test_event_repr_defaults(self):
+         e = tkinter.Event()
+         e.serial = 12345
+@@ -241,7 +261,85 @@ class MiscTest(AbstractTkTest, unittest.TestCase):
                           " num=3 delta=-1 focus=True"
                           " x=10 y=20 width=300 height=200>")
  
@@ -8838,6 +11745,42 @@ index 11267fb118..0000000000
 -   armv6+7-*-iphoneos)
 - 	__CNF_CFLAGS="$__CNF_CFLAGS -arch armv6 -arch armv7"
 - 	__CNF_CXXFLAGS="$__CNF_CXXFLAGS -arch armv6 -arch armv7"
+diff --git a/Mac/BuildScript/scripts/postflight.patch-profile b/Mac/BuildScript/scripts/postflight.patch-profile
+index 0a62e327f5..68b8e4bb04 100755
+--- a/Mac/BuildScript/scripts/postflight.patch-profile
++++ b/Mac/BuildScript/scripts/postflight.patch-profile
+@@ -20,7 +20,7 @@ fi
+ # Make sure the directory ${PYTHON_ROOT}/bin is on the users PATH.
+ BSH="`basename "${theShell}"`"
+ case "${BSH}" in
+-bash|ksh|sh|*csh|zsh)
++bash|ksh|sh|*csh|zsh|fish)
+ 	if [ `id -ur` = 0 ]; then
+ 		P=`su - ${USER} -c 'echo A-X-4-X@@$PATH@@X-4-X-A' | grep 'A-X-4-X@@.*@@X-4-X-A' | sed -e 's/^A-X-4-X@@//g' -e 's/@@X-4-X-A$//g'`
+ 	else
+@@ -76,6 +76,22 @@ bash)
+ 		PR="${HOME}/.bash_profile"
+ 	fi
+ 	;;
++fish)
++	CONFIG_DIR="${HOME}/.config/fish"
++	RC="${CONFIG_DIR}/config.fish"
++	mkdir -p "$CONFIG_DIR"
++	if [ -f "${RC}" ]; then
++		cp -fp "${RC}" "${RC}.pysave"
++	fi
++	echo "" >> "${RC}"
++	echo "# Setting PATH for Python ${PYVER}" >> "${RC}"
++	echo "# The original version is saved in ${RC}.pysave" >> "${RC}"
++	echo "set -x PATH \"${PYTHON_ROOT}/bin\" \"\$PATH\"" >> "${RC}"
++	if [ `id -ur` = 0 ]; then
++		chown "${USER}" "${RC}"
++	fi
++	exit 0
++	;;
+ zsh)
+         PR="${HOME}/.zprofile"
+         ;;
 diff --git a/Mac/IDLE/IDLE.app/Contents/Info.plist b/Mac/IDLE/IDLE.app/Contents/Info.plist
 index dcc48abdd2..f6b5cfe8d5 100644
 --- a/Mac/IDLE/IDLE.app/Contents/Info.plist
@@ -9010,8 +11953,60 @@ index b0a36a3024..f2506de544 100644
  }
  
  static PyMemberDef PyCArgType_members[] = {
+diff --git a/Modules/_ctypes/malloc_closure.c b/Modules/_ctypes/malloc_closure.c
+index 4f220e42ff..788bae6a96 100644
+--- a/Modules/_ctypes/malloc_closure.c
++++ b/Modules/_ctypes/malloc_closure.c
+@@ -91,11 +91,15 @@ static void more_core(void)
+ /* put the item back into the free list */
+ void Py_ffi_closure_free(void *p)
+ {
+-#if USING_APPLE_OS_LIBFFI && HAVE_FFI_CLOSURE_ALLOC
++#if HAVE_FFI_CLOSURE_ALLOC
++#if USING_APPLE_OS_LIBFFI
+     if (__builtin_available(macos 10.15, ios 13, watchos 6, tvos 13, *)) {
++#endif
+         ffi_closure_free(p);
+         return;
++#if USING_APPLE_OS_LIBFFI
+     }
++#endif
+ #endif
+     ITEM *item = (ITEM *)p;
+     item->next = free_list;
+@@ -105,10 +109,14 @@ void Py_ffi_closure_free(void *p)
+ /* return one item from the free list, allocating more if needed */
+ void *Py_ffi_closure_alloc(size_t size, void** codeloc)
+ {
+-#if USING_APPLE_OS_LIBFFI && HAVE_FFI_CLOSURE_ALLOC
++#if HAVE_FFI_CLOSURE_ALLOC
++#if USING_APPLE_OS_LIBFFI
+     if (__builtin_available(macos 10.15, ios 13, watchos 6, tvos 13, *)) {
++#endif
+         return ffi_closure_alloc(size, codeloc);
++#if USING_APPLE_OS_LIBFFI
+     }
++#endif
+ #endif
+     ITEM *item;
+     if (!free_list)
+diff --git a/Modules/_curses_panel.c b/Modules/_curses_panel.c
+index f124803493..4f026794e3 100644
+--- a/Modules/_curses_panel.c
++++ b/Modules/_curses_panel.c
+@@ -440,7 +440,9 @@ _curses_panel_panel_set_userptr(PyCursesPanelObject *self, PyObject *obj)
+         /* In case of an ncurses error, decref the new object again */
+         Py_DECREF(obj);
+     }
+-    Py_XDECREF(oldobj);
++    else {
++        Py_XDECREF(oldobj);
++    }
+     return PyCursesCheckERR(rc, "set_panel_userptr");
+ }
+ 
 diff --git a/Modules/_cursesmodule.c b/Modules/_cursesmodule.c
-index c70b0e2a19..d129248e36 100644
+index c70b0e2a19..c84f838227 100644
 --- a/Modules/_cursesmodule.c
 +++ b/Modules/_cursesmodule.c
 @@ -176,18 +176,6 @@ static char *screen_encoding = NULL;
@@ -9033,7 +12028,15 @@ index c70b0e2a19..d129248e36 100644
  /*
   * Check the return code from a curses function and return None
   * or raise an exception as appropriate.  These are exported using the
-@@ -618,7 +606,7 @@ _curses_window_addch_impl(PyCursesWindowObject *self, int group_left_1,
+@@ -377,6 +365,7 @@ PyCurses_ConvertToString(PyCursesWindowObject *win, PyObject *obj,
+         *bytes = obj;
+         /* check for embedded null bytes */
+         if (PyBytes_AsStringAndSize(*bytes, &str, NULL) < 0) {
++            Py_DECREF(obj);
+             return 0;
+         }
+         return 1;
+@@ -618,7 +607,7 @@ _curses_window_addch_impl(PyCursesWindowObject *self, int group_left_1,
      if (type == 2) {
          funcname = "add_wch";
          wstr[1] = L'\0';
@@ -9042,7 +12045,18 @@ index c70b0e2a19..d129248e36 100644
          if (coordinates_group)
              rtn = mvwadd_wch(self->win,y,x, &wcval);
          else {
-@@ -2586,7 +2574,7 @@ NoArgOrFlagNoReturnFunctionBody(cbreak, flag)
+@@ -691,8 +680,9 @@ _curses_window_addstr_impl(PyCursesWindowObject *self, int group_left_1,
+ #else
+     strtype = PyCurses_ConvertToString(self, str, &bytesobj, NULL);
+ #endif
+-    if (strtype == 0)
++    if (strtype == 0) {
+         return NULL;
++    }
+     if (use_attr) {
+         attr_old = getattrs(self->win);
+         (void)wattrset(self->win,attr);
+@@ -2586,7 +2576,7 @@ NoArgOrFlagNoReturnFunctionBody(cbreak, flag)
  _curses.color_content
  
      color_number: short
@@ -9051,7 +12065,7 @@ index c70b0e2a19..d129248e36 100644
      /
  
  Return the red, green, and blue (RGB) components of the specified color.
-@@ -2597,27 +2585,32 @@ which will be between 0 (no component) and 1000 (maximum amount of component).
+@@ -2597,27 +2587,32 @@ which will be between 0 (no component) and 1000 (maximum amount of component).
  
  static PyObject *
  _curses_color_content_impl(PyObject *module, short color_number)
@@ -9092,7 +12106,7 @@ index c70b0e2a19..d129248e36 100644
      /
  
  Return the attribute value for displaying text in the specified color.
-@@ -2627,13 +2620,13 @@ other A_* attributes.  pair_number() is the counterpart to this function.
+@@ -2627,13 +2622,13 @@ other A_* attributes.  pair_number() is the counterpart to this function.
  [clinic start generated code]*/
  
  static PyObject *
@@ -9109,7 +12123,7 @@ index c70b0e2a19..d129248e36 100644
  }
  
  /*[clinic input]
-@@ -3028,7 +3021,7 @@ _curses_has_key_impl(PyObject *module, int key)
+@@ -3028,7 +3023,7 @@ _curses_has_key_impl(PyObject *module, int key)
  _curses.init_color
  
      color_number: short
@@ -9118,7 +12132,7 @@ index c70b0e2a19..d129248e36 100644
      r: short
          Red component (0 - 1000).
      g: short
-@@ -3041,13 +3034,13 @@ Change the definition of a color.
+@@ -3041,13 +3036,13 @@ Change the definition of a color.
  
  When init_color() is used, all occurrences of that color on the screen
  immediately change to the new definition.  This function is a no-op on
@@ -9134,7 +12148,7 @@ index c70b0e2a19..d129248e36 100644
  {
      PyCursesInitialised;
      PyCursesInitialisedColor;
-@@ -3061,9 +3054,9 @@ _curses.init_pair
+@@ -3061,9 +3056,9 @@ _curses.init_pair
      pair_number: short
          The number of the color-pair to be changed (1 - (COLOR_PAIRS-1)).
      fg: short
@@ -9146,7 +12160,7 @@ index c70b0e2a19..d129248e36 100644
      /
  
  Change the definition of a color-pair.
-@@ -3075,7 +3068,7 @@ all occurrences of that color-pair are changed to the new definition.
+@@ -3075,7 +3070,7 @@ all occurrences of that color-pair are changed to the new definition.
  static PyObject *
  _curses_init_pair_impl(PyObject *module, short pair_number, short fg,
                         short bg)
@@ -9155,7 +12169,7 @@ index c70b0e2a19..d129248e36 100644
  {
      PyCursesInitialised;
      PyCursesInitialisedColor;
-@@ -3713,9 +3706,14 @@ _curses_pair_content_impl(PyObject *module, short pair_number)
+@@ -3713,9 +3708,14 @@ _curses_pair_content_impl(PyObject *module, short pair_number)
      PyCursesInitialised;
      PyCursesInitialisedColor;
  
@@ -9173,7 +12187,7 @@ index c70b0e2a19..d129248e36 100644
          return NULL;
      }
  
-@@ -3740,7 +3738,7 @@ _curses_pair_number_impl(PyObject *module, int attr)
+@@ -3740,7 +3740,7 @@ _curses_pair_number_impl(PyObject *module, int attr)
      PyCursesInitialised;
      PyCursesInitialisedColor;
  
@@ -9258,6 +12272,71 @@ index 5356417dd7..d64e0a1cfa 100644
                  if (!_Py_Gid_Converter(elem, &gid)) {
                      Py_DECREF(elem);
                      PyErr_SetString(PyExc_ValueError, "invalid group id");
+diff --git a/Modules/_sqlite/connection.c b/Modules/_sqlite/connection.c
+index b80037347f..d20339ca3f 100644
+--- a/Modules/_sqlite/connection.c
++++ b/Modules/_sqlite/connection.c
+@@ -1704,7 +1704,11 @@ pysqlite_connection_create_collation(pysqlite_Connection* self, PyObject* args)
+                                   (callable != Py_None) ? callable : NULL,
+                                   (callable != Py_None) ? pysqlite_collation_callback : NULL);
+     if (rc != SQLITE_OK) {
+-        PyDict_DelItem(self->collations, uppercase_name);
++        if (callable != Py_None) {
++            if (PyDict_DelItem(self->collations, uppercase_name) < 0) {
++                PyErr_Clear();
++            }
++        }
+         _pysqlite_seterror(self->db, NULL);
+         goto finally;
+     }
+diff --git a/Modules/_sqlite/cursor.c b/Modules/_sqlite/cursor.c
+index 5cfb4b97d6..dd0ce7e1ea 100644
+--- a/Modules/_sqlite/cursor.c
++++ b/Modules/_sqlite/cursor.c
+@@ -569,11 +569,13 @@ _pysqlite_query_execute(pysqlite_Cursor* self, int multiple, PyObject* args)
+         }
+ 
+         if (!multiple) {
+-            Py_DECREF(self->lastrowid);
+             Py_BEGIN_ALLOW_THREADS
+             lastrowid = sqlite3_last_insert_rowid(self->connection->db);
+             Py_END_ALLOW_THREADS
+-            self->lastrowid = PyLong_FromLongLong(lastrowid);
++            Py_SETREF(self->lastrowid, PyLong_FromLongLong(lastrowid));
++            if (self->lastrowid == NULL) {
++                goto error;
++            }
+         }
+ 
+         if (rc == SQLITE_ROW) {
+@@ -802,8 +804,11 @@ PyObject* pysqlite_cursor_fetchmany(pysqlite_Cursor* self, PyObject* args, PyObj
+     }
+ 
+     while ((row = pysqlite_cursor_iternext(self))) {
+-        PyList_Append(list, row);
+-        Py_XDECREF(row);
++        if (PyList_Append(list, row) < 0) {
++            Py_DECREF(row);
++            break;
++        }
++        Py_DECREF(row);
+ 
+         if (++counter == maxrows) {
+             break;
+@@ -829,8 +834,11 @@ PyObject* pysqlite_cursor_fetchall(pysqlite_Cursor* self, PyObject* args)
+     }
+ 
+     while ((row = pysqlite_cursor_iternext(self))) {
+-        PyList_Append(list, row);
+-        Py_XDECREF(row);
++        if (PyList_Append(list, row) < 0) {
++            Py_DECREF(row);
++            break;
++        }
++        Py_DECREF(row);
+     }
+ 
+     if (PyErr_Occurred()) {
 diff --git a/Modules/_tkinter.c b/Modules/_tkinter.c
 index 793c5e7154..b30141d449 100644
 --- a/Modules/_tkinter.c
@@ -9331,7 +12410,7 @@ index 793c5e7154..b30141d449 100644
  }
  
 diff --git a/Modules/_zoneinfo.c b/Modules/_zoneinfo.c
-index 2cee65fac6..d87a20100a 100644
+index 2cee65fac6..0a4b38a6dc 100644
 --- a/Modules/_zoneinfo.c
 +++ b/Modules/_zoneinfo.c
 @@ -171,7 +171,7 @@ static void
@@ -9396,6 +12475,29 @@ index 2cee65fac6..d87a20100a 100644
          PyErr_Format(PyExc_ValueError, "Day must be in [0, 6]");
          return -1;
      }
+@@ -2524,7 +2530,11 @@ zoneinfo_init_subclass(PyTypeObject *cls, PyObject *args, PyObject **kwargs)
+         return NULL;
+     }
+ 
+-    PyObject_SetAttrString((PyObject *)cls, "_weak_cache", weak_cache);
++    if (PyObject_SetAttrString((PyObject *)cls, "_weak_cache",
++                               weak_cache) < 0) {
++        Py_DECREF(weak_cache);
++        return NULL;
++    }
+     Py_DECREF(weak_cache);
+     Py_RETURN_NONE;
+ }
+@@ -2624,6 +2634,9 @@ static int
+ zoneinfomodule_exec(PyObject *m)
+ {
+     PyDateTime_IMPORT;
++    if (PyDateTimeAPI == NULL) {
++        goto error;
++    }
+     PyZoneInfo_ZoneInfoType.tp_base = PyDateTimeAPI->TZInfoType;
+     if (PyType_Ready(&PyZoneInfo_ZoneInfoType) < 0) {
+         goto error;
 diff --git a/Modules/clinic/_cursesmodule.c.h b/Modules/clinic/_cursesmodule.c.h
 index 50d7f213e0..66ffcdfdb3 100644
 --- a/Modules/clinic/_cursesmodule.c.h
@@ -12867,6 +15969,24 @@ index 199b09c4d8..614012df9b 100644
      } else {
          result = PyTuple_New(tuplesize);
          if (result == NULL)
+diff --git a/Python/fileutils.c b/Python/fileutils.c
+index 397ac34e80..ddc090988f 100644
+--- a/Python/fileutils.c
++++ b/Python/fileutils.c
+@@ -1165,6 +1165,13 @@ set_inheritable(int fd, int inheritable, int raise, int *atomic_flag_works)
+             return 0;
+         }
+ 
++#ifdef __linux__
++        if (errno == EBADF) {
++            // On Linux, ioctl(FIOCLEX) will fail with EBADF for O_PATH file descriptors
++            // Fall through to the fcntl() path
++        }
++        else
++#endif
+         if (errno != ENOTTY && errno != EACCES) {
+             if (raise)
+                 PyErr_SetFromErrno(PyExc_OSError);
 diff --git a/Python/getcopyright.c b/Python/getcopyright.c
 index 299ccc08c4..7fdeb314d5 100644
 --- a/Python/getcopyright.c
@@ -13413,9 +16533,22 @@ index c968d149c2..972287a9c4 100644
  
  int main()
  {
---- a/Misc/NEWS	2021-01-10 16:46:26.107360742 +0100
-+++ b/Misc/NEWS	2021-01-20 15:37:49.110848532 +0100
-@@ -2,6 +2,248 @@
+diff --git a/setup.py b/setup.py
+index bd5f736924..d42eb9d117 100644
+--- a/setup.py
++++ b/setup.py
+@@ -1013,7 +1013,7 @@ class PyBuildExt(build_ext):
+             os_release = int(os.uname()[2].split('.')[0])
+             dep_target = sysconfig.get_config_var('MACOSX_DEPLOYMENT_TARGET')
+             if (dep_target and
+-                    (tuple(int(n) for n in str(dep_target).split('.')[0:2])
++                    (tuple(int(n) for n in dep_target.split('.')[0:2])
+                         < (10, 5) ) ):
+                 os_release = 8
+             if os_release < 9:
+--- a/Misc/NEWS
++++ b/Misc/NEWS
+@@ -2,6 +2,291 @@
  Python News
  +++++++++++
  
@@ -13486,12 +16619,24 @@ index c968d149c2..972287a9c4 100644
 +Library
 +-------
 +
++- bpo-43102: The namedtuple __new__ method had its __builtins__ set to None
++  instead of an actual dictionary.  This created problems for introspection
++  tools.
++
++- bpo-43108: Fixed a reference leak in the :mod:`curses` module. Patch by
++  Pablo Galindo
++
 +- bpo-42944: Fix ``random.Random.sample`` when ``counts`` argument is not
 +  ``None``.
 +
 +- bpo-42931: Add :func:`randbytes` to ``random.__all__``.
 +
++- bpo-42780: Fix os.set_inheritable() for O_PATH file descriptors on Linux.
++
 +- bpo-42851: remove __init_subclass__ support for Enum members
++
++- bpo-41748: Fix HTMLParser parsing rules for element attributes containing
++  commas with spaces. Patch by Karl Dubost.
 +
 +- bpo-42759: Fixed equality comparison of :class:`tkinter.Variable` and
 +  :class:`tkinter.font.Font`. Objects which belong to different Tcl
@@ -13544,6 +16689,13 @@ index c968d149c2..972287a9c4 100644
 +
 +- bpo-42375: subprocess module update for DragonFlyBSD support.
 +
++- bpo-42384: Make pdb populate sys.path[0] exactly the same as regular
++  python execution.
++
++- bpo-42383: Fix pdb: previously pdb would fail to restart the debugging
++  target if it was specified using a relative path and the current directory
++  changed.
++
 +- bpo-42318: Fixed support of non-BMP characters in :mod:`tkinter` on macOS.
 +
 +- bpo-42163: Restore compatibility for ``uname_result`` around deepcopy and
@@ -13573,6 +16725,9 @@ index c968d149c2..972287a9c4 100644
 +
 +- bpo-41891: Ensure asyncio.wait_for waits for task completion
 +
++- bpo-41604: Don't decrement the reference count of the previous user_ptr
++  when set_panel_userptr fails.
++
 +- bpo-40219: Lowered :class:`tkinter.ttk.LabeledScale` dummy widget to
 +  prevent hiding part of the content label.
 +
@@ -13582,8 +16737,14 @@ index c968d149c2..972287a9c4 100644
 +- bpo-39068: Fix initialization race condition in :func:`a85encode` and
 +  :func:`b85encode` in :mod:`base64`. Patch by Brandon Stansbury.
 +
++- bpo-33289: Correct call to :mod:`tkinter.colorchooser` to return RGB
++  triplet of ints instead of floats.  Patch by Cheryl Sabella.
++
 +Documentation
 +-------------
++
++- bpo-40304: Fix doc for type(name, bases, dict).  Patch by Boris
++  Verkhovskiy and Éric Araujo.
 +
 +- bpo-42811: Updated importlib.utils.resolve_name() doc to use
 +  __spec__.parent instead of __package__. (Thanks Yair Frid.)
@@ -13615,6 +16776,8 @@ index c968d149c2..972287a9c4 100644
 +  have resulted in incorrect configuration checks.  Patch contributed by
 +  Joshua Root.
 +
++- bpo-29076: Add fish shell support to macOS installer.
++
 +Windows
 +-------
 +
@@ -13624,6 +16787,10 @@ index c968d149c2..972287a9c4 100644
 +
 +macOS
 +-----
++
++- bpo-42504: Ensure that the value of
++  sysconfig.get_config_var('MACOSX_DEPLOYMENT_TARGET') is always a string,
++  even in when the value is parsable as an integer.
 +
 +- bpo-42361: Update macOS installer build to use Tcl/Tk 8.6.11 (rc2,
 +  expected to be final release).
@@ -13635,7 +16802,13 @@ index c968d149c2..972287a9c4 100644
 +IDLE
 +----
 +
++- bpo-43008: Make IDLE invoke :func:`sys.excepthook` in normal, 2-process
++  mode. Patch by Ken Hilton.
++
 +- bpo-33065: Fix problem debugging user classes with __repr__ method.
++
++- bpo-23544: Disable Debug=>Stack Viewer when user code is running or
++  Debugger is active, to prevent hang or crash.  Patch by Zackery Spytz.
 +
 +- bpo-32631: Finish zzdummy example extension module: make menu entries
 +  work; add docstrings and tests with 100% coverage.
@@ -13652,6 +16825,9 @@ index c968d149c2..972287a9c4 100644
 +C API
 +-----
 +
++- bpo-43030: Fixed a compiler warning in :c:func:`Py_UNICODE_ISSPACE()` on
++  platforms with signed ``wchar_t``.
++
 +- bpo-42591: Export the :c:func:`Py_FrozenMain` function: fix a Python 3.9.0
 +  regression. Python 3.9 uses ``-fvisibility=hidden`` and the function was
 +  not exported explicitly and so not exported.
@@ -13664,7 +16840,7 @@ index c968d149c2..972287a9c4 100644
  What's New in Python 3.9.1 final?
  =================================
  
-@@ -148,8 +390,6 @@
+@@ -148,8 +433,6 @@
    rules that only generate better error messages to gain performance. If
    there's a parse failure, run the parser a second time with those enabled.
  
@@ -13673,7 +16849,7 @@ index c968d149c2..972287a9c4 100644
  - bpo-42057: Fix peephole optimizer misoptimize conditional jump +
    JUMP_IF_NOT_EXC_MATCH pair.
  
-@@ -265,7 +505,7 @@
+@@ -265,7 +548,7 @@
  - bpo-41316: Fix the :mod:`tarfile` module to write only basename of TAR
    file to GZIP compression header.
  
@@ -13682,7 +16858,7 @@ index c968d149c2..972287a9c4 100644
    systems.
  
  - bpo-40592: :func:`shutil.which` now ignores empty entries in
-@@ -291,6 +531,8 @@
+@@ -291,6 +574,8 @@
  
  - bpo-42061: Document __format__ functionality for IP addresses.
  
