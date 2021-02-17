@@ -59,6 +59,7 @@ debian/python3.9-dbg
 debian/python3.9-dev
 debian/python3.9-doc
 debian/python3.9-examples
+debian/python3.9-full
 debian/python3.9-minimal
 debian/python3.9
 debian/test_results
