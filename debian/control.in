@@ -250,9 +250,15 @@ Depends: @PVER@ (= ${binary:Version}),
   ${shlibs:Depends}, ${misc:Depends}
 Recommends: @PVER@-doc, @PVER@-examples,
 Suggests: @PVER@-dev
-Description: Python Interpreter with all built modules (version @VER@)
- This is a dependency package, depending on the Python @VER@ interpreter, and
- all modules included in the standard library (all batteries included).
+Description: Python Interpreter with complete class library (version @VER@)
+ Python, the high-level, interactive object oriented language,
+ includes an extensive class library with lots of goodies for
+ network programming, system administration, sounds and graphics.
  .
- According to the Debian Python policy, this package must not be used in build
- dependencies, dependencies and recommendations.
+ This package is a dependency package, which depends on the full
+ standard library of Python for Python developers. Including modules
+ used only at build-time, such as venv and distutils, and modules with
+ complex dependencies, such as tk and IDLE. All batteries included.
+ .
+ According to the Debian Python policy, this package must not be used in
+ build dependencies, dependencies and recommendations.
