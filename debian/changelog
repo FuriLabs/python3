@@ -1,3 +1,12 @@
+python3.9 (3.9.2~rc1-1) UNRELEASED; urgency=medium
+
+  * Python 3.9.2 release candidate 1. Changes since 3.9.1-4:
+    - Fix issue #42967, web cache poisoning vulnerability.
+    - Fix issue #42938, explicitly disable bracketed paste in the interactive
+      interpreter. Closes: #979154.
+
+ -- Matthias Klose <doko@debian.org>  Wed, 17 Feb 2021 14:47:41 +0100
+
 python3.9 (3.9.1-4) unstable; urgency=medium
 
   * Update to the 3.9 branch 2021-02-04.
