@@ -4,6 +4,7 @@ python3.9 (3.9.2~rc1-1) UNRELEASED; urgency=medium
     - Fix issue #42967, web cache poisoning vulnerability.
     - Fix issue #42938, explicitly disable bracketed paste in the interactive
       interpreter. Closes: #979154.
+  * Fix permissions and group for local directories. Closes: #962422.
 
  -- Matthias Klose <doko@debian.org>  Wed, 17 Feb 2021 14:47:41 +0100
 

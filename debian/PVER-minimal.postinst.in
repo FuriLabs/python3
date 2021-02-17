@@ -12,9 +12,9 @@ case "$1" in
     configure)
         # Create empty directories in /usr/local
         if [ -e /etc/staff-group-for-usr-local ]; then
-            perm=2775; group=staff
+            perm=2755; group=staff
         else
-            perm=775; group=root
+            perm=755; group=root
         fi
         if [ ! -e /usr/local/lib/@PVER@ ]; then
             mkdir -p /usr/local/lib/@PVER@ 2> /dev/null || true
