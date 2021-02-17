@@ -1101,6 +1101,9 @@ endif
 		usr/bin/idle-python$(VER) \
 		usr/lib/python$(VER)/idlelib
 	cp -p debian/idle-$(PVER).1 $(d_idle)/usr/share/man/man1/
+	: # regenerate idlelib/help.html, see idlelib.help.copy_strip
+	sed 's/ *$$//' Doc/build/html/library/idle.html \
+		> $(d_idle)/usr/lib/python$(VER)/idlelib/help.html
 
 	: # Replace all '#!' calls to python with $(PY_INTERPRETER)
 	: # and make them executable
