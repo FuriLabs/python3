@@ -176,7 +176,6 @@ Package: idle-python3.9
 Architecture: all
 Depends: python3.9, python3-tk, python3.9-tk,
   ${misc:Depends},
-  libjs-mathjax,
 Enhances: python3.9
 Description: IDE for Python (v3.9) using Tkinter
  IDLE is an Integrated Development Environment for Python (v3.9).

@@ -6,6 +6,7 @@ python3.9 (3.9.2~rc1-1) UNRELEASED; urgency=medium
       interpreter. Closes: #979154.
   * Fix permissions and group for local directories. Closes: #962422.
   * Build a python3.9-full package.
+  * idle-python3.9: Drop dependency on libjs-mathjax, Unused in 3.8 and 3.9.
 
  -- Matthias Klose <doko@debian.org>  Wed, 17 Feb 2021 14:47:41 +0100
 

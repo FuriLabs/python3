@@ -176,7 +176,6 @@ Package: idle-@PVER@
 Architecture: all
 Depends: @PVER@, python3-tk, @PVER@-tk,
   ${misc:Depends},
-  libjs-mathjax,
 Enhances: @PVER@
 Description: IDE for Python (v@VER@) using Tkinter
  IDLE is an Integrated Development Environment for Python (v@VER@).
