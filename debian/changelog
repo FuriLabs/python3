@@ -1,9 +1,9 @@
-python3.9 (3.9.2-1) UNRELEASED; urgency=medium
+python3.9 (3.9.2-1) unstable; urgency=medium
 
   * Python 3.9.2 release. No changes since 3.9.2~rc1-1.
   * Build idlelib/help.html from source, don't ship the pre-generated file.
 
- -- Matthias Klose <doko@debian.org>  Sat, 20 Feb 2021 09:27:02 +0100
+ -- Matthias Klose <doko@debian.org>  Fri, 26 Feb 2021 07:41:43 +0100
 
 python3.9 (3.9.2~rc1-1) experimental; urgency=medium
 
