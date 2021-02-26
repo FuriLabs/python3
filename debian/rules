@@ -1101,9 +1101,6 @@ endif
 		usr/bin/idle-python$(VER) \
 		usr/lib/python$(VER)/idlelib
 	cp -p debian/idle-$(PVER).1 $(d_idle)/usr/share/man/man1/
-	: # regenerate idlelib/help.html, see idlelib.help.copy_strip
-	sed 's/ *$$//' Doc/build/html/library/idle.html \
-		> $(d_idle)/usr/lib/python$(VER)/idlelib/help.html
 
 	: # Replace all '#!' calls to python with $(PY_INTERPRETER)
 	: # and make them executable
@@ -1376,6 +1373,10 @@ binary-indep: build-indep install stamps/stamp-control
 	gzip -9nv $(d_doc)/usr/share/doc/$(p_base)/html/$(PVER).devhelp
 	dh_link -p$(p_doc) \
 		/usr/share/doc/$(p_base)/html /usr/share/devhelp/books/$(PVER)
+
+	: # regenerate idlelib/help.html, see idlelib.help.copy_strip
+	sed 's/ *$$//' Doc/build/html/library/idle.html \
+		> $(d_idle)/usr/lib/python$(VER)/idlelib/help.html
 
 	for i in $(p_ltst); do \
 	  rm -rf debian/$$i/usr/share/doc/$$i; \
