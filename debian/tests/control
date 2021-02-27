@@ -9,7 +9,7 @@ Depends: build-essential,
   idle-python3.9,
   systemtap-sdt-dev,
 # need to turn off apport
-Restrictions: needs-root
+Restrictions: needs-root, allow-stderr
 
 Tests: testsuite-dbg
 Depends: build-essential,
@@ -23,7 +23,7 @@ Depends: build-essential,
   idle-python3.9,
   systemtap-sdt-dev,
 # need to turn off apport
-Restrictions: needs-root
+Restrictions: needs-root, allow-stderr
 
 Tests: failing-tests
 Depends: build-essential,
@@ -34,7 +34,7 @@ Depends: build-essential,
   python3-distutils,
   python3-tk,
 # need to turn off apport
-Restrictions: needs-root allow-stderr
+Restrictions: needs-root, allow-stderr
 
 Tests: failing-tests-dbg
 Depends: build-essential,
@@ -47,7 +47,7 @@ Depends: build-essential,
   python3-distutils,
   python3-tk-dbg,
 # need to turn off apport
-Restrictions: needs-root allow-stderr
+Restrictions: needs-root, allow-stderr
 
 Tests: module-install-local
 Depends: build-essential, python3.9-dev, python3-setuptools, shunit2

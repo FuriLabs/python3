@@ -2,8 +2,9 @@ python3.9 (3.9.2-1) unstable; urgency=medium
 
   * Python 3.9.2 release. No changes since 3.9.2~rc1-1.
   * Build idlelib/help.html from source, don't ship the pre-generated file.
+  * Run testsuite{,-dbg} autopkg tests with allow-stderr. Closes: #983305.
 
- -- Matthias Klose <doko@debian.org>  Fri, 26 Feb 2021 07:41:43 +0100
+ -- Matthias Klose <doko@debian.org>  Sat, 27 Feb 2021 11:18:02 +0100
 
 python3.9 (3.9.2~rc1-1) experimental; urgency=medium
 
@@ -13,7 +14,7 @@ python3.9 (3.9.2~rc1-1) experimental; urgency=medium
       interpreter. Closes: #979154.
   * Fix permissions and group for local directories. Closes: #962422.
   * Build a python3.9-full package.
-  * idle-python3.9: Drop dependency on libjs-mathjax, Unused in 3.8 and 3.9.
+  * idle-python3.9: Drop dependency on libjs-mathjax, unused in 3.8 and 3.9.
   * python3.9-doc: Fix links to the documentation in /usr/share/doc/python3.9.
   * Refresh patches.
 
