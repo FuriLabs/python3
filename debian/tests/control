@@ -1,5 +1,6 @@
 Tests: testsuite
 Depends: build-essential,
+  ca-certificates,
   locales-all,
   python3.9-dev,
   libpython3.9-testsuite:native,
@@ -13,6 +14,7 @@ Restrictions: needs-root, allow-stderr
 
 Tests: testsuite-dbg
 Depends: build-essential,
+  ca-certificates,
   locales-all, python3.9-dev,
   python3.9-dbg,
   libpython3.9-testsuite:native,
@@ -27,17 +29,20 @@ Restrictions: needs-root, allow-stderr
 
 Tests: failing-tests
 Depends: build-essential,
+  ca-certificates,
   locales-all,
   python3.9-dev,
   libpython3.9-testsuite:native,
   python3-gdbm,
   python3-distutils,
   python3-tk,
+  python3.9-venv,
 # need to turn off apport
 Restrictions: needs-root, allow-stderr
 
 Tests: failing-tests-dbg
 Depends: build-essential,
+  ca-certificates,
   locales-all,
   python3.9-dev,
   python3.9-dbg,
@@ -46,6 +51,7 @@ Depends: build-essential,
   gdb,
   python3-distutils,
   python3-tk-dbg,
+  python3.9-venv,
 # need to turn off apport
 Restrictions: needs-root, allow-stderr
 

@@ -2,9 +2,13 @@ python3.9 (3.9.2-1) unstable; urgency=medium
 
   * Python 3.9.2 release. No changes since 3.9.2~rc1-1.
   * Build idlelib/help.html from source, don't ship the pre-generated file.
-  * Run testsuite{,-dbg} autopkg tests with allow-stderr. Closes: #983305.
+  * Autopkg tests:
+    - Run testsuite{,-dbg} autopkg tests with allow-stderr. Closes: #983305.
+    - Run again in testsuite instead of failing-tests: test_ftplib,
+      test_httplib test_imaplib test_nntplib test_poplib test_ssl.
+    - Run test_distutils and test_site tests again.
 
- -- Matthias Klose <doko@debian.org>  Sat, 27 Feb 2021 11:18:02 +0100
+ -- Matthias Klose <doko@debian.org>  Sun, 28 Feb 2021 18:03:44 +0100
 
 python3.9 (3.9.2~rc1-1) experimental; urgency=medium
 
