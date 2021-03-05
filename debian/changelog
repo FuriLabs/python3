@@ -1,3 +1,9 @@
+python3.9 (3.9.2-2) UNRELEASED; urgency=medium
+
+  * Move zlib1g-dev dependency to libpython3.9-dev. Closes: #984580.
+
+ -- Matthias Klose <doko@debian.org>  Fri, 05 Mar 2021 20:53:58 +0100
+
 python3.9 (3.9.2-1) unstable; urgency=medium
 
   * Python 3.9.2 release. No changes since 3.9.2~rc1-1.

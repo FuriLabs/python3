@@ -133,7 +133,6 @@ Multi-Arch: allowed
 Depends: python3.9 (= ${binary:Version}),
   libpython3.9-dev (= ${binary:Version}),
   libpython3.9 (= ${binary:Version}),
-  libexpat1-dev, zlib1g-dev,
   ${shlibs:Depends}, ${misc:Depends}
 Recommends: libc6-dev | libc-dev
 Description: Header files and a static library for Python (v3.9)
@@ -148,7 +147,10 @@ Section: libdevel
 Architecture: any
 Multi-Arch: same
 Pre-Depends: ${misc:Pre-Depends}
-Depends: libpython3.9-stdlib (= ${binary:Version}), libpython3.9 (= ${binary:Version}), libexpat1-dev, ${shlibs:Depends}, ${misc:Depends}
+Depends: libpython3.9-stdlib (= ${binary:Version}),
+  libpython3.9 (= ${binary:Version}),
+  libexpat1-dev, zlib1g-dev,
+  ${shlibs:Depends}, ${misc:Depends}
 Recommends: libc6-dev | libc-dev
 Description: Header files and a static library for Python (v3.9)
  Header files, a static library and development tools for building
