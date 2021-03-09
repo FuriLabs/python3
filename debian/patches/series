@@ -39,3 +39,4 @@ sysconfigdata-name.diff
 hurd_kfreebsd_thread_native_id.diff
 sphinx3.diff
 mpdecimal-2.5.1.diff
+destshared-location.diff

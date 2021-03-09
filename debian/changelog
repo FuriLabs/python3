@@ -1,8 +1,12 @@
 python3.9 (3.9.2-2) UNRELEASED; urgency=medium
 
   * Move zlib1g-dev dependency to libpython3.9-dev. Closes: #984580.
+  * Configure with --libdir=/usr/lib/$(DEB_HOST_MULTIARCH), recording the
+    correct LIBDIR in _sysconfigdata.  Also adjust DESTSHARED to install
+    lib-dynload into the same location as before the configure change.
+    See issue #43229.
 
- -- Matthias Klose <doko@debian.org>  Fri, 05 Mar 2021 20:53:58 +0100
+ -- Matthias Klose <doko@debian.org>  Tue, 09 Mar 2021 14:05:59 +0100
 
 python3.9 (3.9.2-1) unstable; urgency=medium
 

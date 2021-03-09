@@ -35,12 +35,3 @@
  		-DSOABI='"$(SOABI)"' \
  		-o $@ $(srcdir)/Python/dynload_shlib.c
  
-@@ -1630,7 +1631,7 @@ inclinstall:
- LIBPL=		@LIBPL@
- 
- # pkgconfig directory
--LIBPC=		$(LIBDIR)/pkgconfig
-+LIBPC=		$(LIBDIR)/$(MULTIARCH)/pkgconfig
- 
- libainstall:	@DEF_MAKE_RULE@ python-config
- 	@for i in $(LIBDIR) $(LIBPL) $(LIBPC); \
