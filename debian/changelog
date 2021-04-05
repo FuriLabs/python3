@@ -1,3 +1,9 @@
+python3.9 (3.9.4-1) experimental; urgency=medium
+
+  * Python 3.9.4 release.
+
+ -- Matthias Klose <doko@debian.org>  Sun, 04 Apr 2021 21:38:44 +0200
+
 python3.9 (3.9.3-2) experimental; urgency=high
 
   * Fix flags substitutions for _sysconfigdata.
