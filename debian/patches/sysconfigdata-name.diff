@@ -13,7 +13,7 @@
  
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
-@@ -1537,8 +1537,10 @@ libinstall:	build_all $(srcdir)/Modules/
+@@ -1558,8 +1558,10 @@ libinstall:	build_all $(srcdir)/Modules/
  			esac; \
  		done; \
  	done
@@ -26,7 +26,7 @@
  	$(INSTALL_DATA) $(srcdir)/LICENSE $(DESTDIR)$(LIBDEST)/LICENSE.txt
  	if test -d $(DESTDIR)$(LIBDEST)/distutils/tests; then \
  		$(INSTALL_DATA) $(srcdir)/Modules/xxmodule.c \
-@@ -1693,6 +1695,7 @@ sharedinstall: sharedmods
+@@ -1714,6 +1716,7 @@ sharedinstall: sharedmods
  		--install-scripts=$(BINDIR) \
  		--install-platlib=$(DESTSHARED) \
  		--root=$(DESTDIR)/
@@ -49,7 +49,7 @@
      _temp = __import__(name, globals(), locals(), ['build_time_vars'], 0)
 --- a/configure.ac
 +++ b/configure.ac
-@@ -75,7 +75,7 @@ if test "$cross_compiling" = yes; then
+@@ -82,7 +82,7 @@ if test "$cross_compiling" = yes; then
  	    AC_MSG_ERROR([python$PACKAGE_VERSION interpreter not found])
  	fi
          AC_MSG_RESULT($interp)

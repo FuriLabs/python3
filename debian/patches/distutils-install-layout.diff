@@ -206,7 +206,7 @@
              sitepackages.append(prefix)
 --- a/Lib/test/test_site.py
 +++ b/Lib/test/test_site.py
-@@ -269,16 +269,16 @@ class HelperFunctionsTests(unittest.Test
+@@ -270,16 +270,16 @@ class HelperFunctionsTests(unittest.Test
          if os.sep == '/':
              # OS X, Linux, FreeBSD, etc
              if sys.platlibdir != "lib":

@@ -1,3 +1,11 @@
+python3.9 (3.9.5-1) experimental; urgency=medium
+
+  * Python 3.9.5 release.
+  * Refresh patches.
+  * Drop the unused build dependency on libdb-dev.
+
+ -- Matthias Klose <doko@debian.org>  Tue, 04 May 2021 06:08:53 +0200
+
 python3.9 (3.9.4-1) experimental; urgency=medium
 
   * Python 3.9.4 release.
