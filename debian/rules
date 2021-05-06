@@ -488,14 +488,14 @@ ifeq ($(DEB_HOST_GNU_TYPE),$(DEB_BUILD_GNU_TYPE))
 	for m in $(MIN_MODS) $(MIN_PACKAGES) $(MIN_EXTS) $(MIN_BUILTINS); do \
 	  echo "import $$m"; \
 	done > $(buildd_static)/minmods.py
-	cd $(buildd_static) && ./python ../debian/pymindeps.py minmods.py \
+	cd $(buildd_static) && ./python -S ../debian/pymindeps.py minmods.py \
 	  > mindeps.txt
 	-if [ -x /usr/bin/dot ]; then \
-	  cd $(buildd_static) && ./python ../debian/depgraph.py \
+	  cd $(buildd_static) && ./python -S ../debian/depgraph.py \
 	    < mindeps.txt > mindeps.dot; \
 	  dot -Tpng -o mindeps.png mindeps.dot; \
 	else true; fi
-	cd $(buildd_static) && ./python ../debian/mincheck.py \
+	cd $(buildd_static) && ./python -S ../debian/mincheck.py \
 		minmods.py mindeps.txt
 endif
 	touch stamps/stamp-mincheck

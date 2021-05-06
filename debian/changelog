@@ -3,6 +3,7 @@ python3.9 (3.9.5-2) UNRELEASED; urgency=medium
   * Re-add the dependency on libdb-dev.  With Python 3.10, building
     the _dbm extension using libgdbm-compat-dev, and moving the _dbm
     extension into the python3-gdbm package.
+  * Call python with -S when checking the minimal set of modules.
 
  -- Matthias Klose <doko@x1e>  Thu, 06 May 2021 10:05:45 +0200
 
