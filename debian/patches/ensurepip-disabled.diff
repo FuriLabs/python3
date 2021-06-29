@@ -2,7 +2,7 @@
 
 --- a/Lib/ensurepip/__init__.py
 +++ b/Lib/ensurepip/__init__.py
-@@ -9,6 +9,34 @@ import tempfile
+@@ -8,6 +8,34 @@ import subprocess
  from importlib import resources
  
  
@@ -37,7 +37,7 @@
  
  __all__ = ["version", "bootstrap"]
  
-@@ -79,6 +107,11 @@ def _bootstrap(*, root=None, upgrade=Fal
+@@ -78,6 +106,11 @@ def _bootstrap(*, root=None, upgrade=Fal
  
      Note that calling this function will alter both sys.path and os.environ.
      """

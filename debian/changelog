@@ -1,3 +1,10 @@
+python3.9 (3.9.6-1) experimental; urgency=medium
+
+  * Python 3.9.6 release.
+  * Refresh patches.
+
+ -- Matthias Klose <doko@debian.org>  Tue, 29 Jun 2021 12:19:25 +0200
+
 python3.9 (3.9.5-3) experimental; urgency=medium
 
   * Tighten python3-tk autopkg test dependency.
