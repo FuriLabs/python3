@@ -4,6 +4,7 @@ python3.9 (3.9.7-2) UNRELEASED; urgency=medium
   * Support arc-linux-gnu in the multiarch header. Closes: #992091.
   * Don't run the test_concurrent_futures test on alpha. Closes: #991110.
   * Fix path to mkdir on a unified-/usr system. Closes: #992775.
+  * Use command -v instead of which in shell scripts. Closes: #993413.
 
  -- Matthias Klose <doko@debian.org>  Thu, 02 Sep 2021 14:55:55 +0200
 
