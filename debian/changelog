@@ -1,4 +1,4 @@
-python3.9 (3.9.7-2) UNRELEASED; urgency=medium
+python3.9 (3.9.7-2) unstable; urgency=medium
 
   * Fix CFLAGS in the python3.x-config scripts. Closes: #992669, #989000.
   * Support arc-linux-gnu in the multiarch header. Closes: #992091.
