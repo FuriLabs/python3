@@ -1,3 +1,9 @@
+python3.9 (3.9.8-1) unstable; urgency=medium
+
+  * New upstream version.
+
+ -- Matthias Klose <doko@debian.org>  Sun, 07 Nov 2021 16:47:09 +0100
+
 python3.9 (3.9.7-4) unstable; urgency=medium
 
   * Bump standards version.

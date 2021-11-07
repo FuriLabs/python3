@@ -36,8 +36,8 @@
 +
  
  __all__ = ["version", "bootstrap"]
- 
-@@ -78,6 +106,11 @@ def _bootstrap(*, root=None, upgrade=Fal
+ _PROJECTS = [
+@@ -76,6 +104,11 @@ def _bootstrap(*, root=None, upgrade=Fal
  
      Note that calling this function will alter both sys.path and os.environ.
      """
@@ -51,10 +51,10 @@
  
 --- a/Lib/venv/__init__.py
 +++ b/Lib/venv/__init__.py
-@@ -295,7 +295,31 @@ class EnvBuilder:
+@@ -309,7 +309,31 @@ class EnvBuilder:
          # intended for the global Python environment
-         cmd = [context.env_exe, '-Im', 'ensurepip', '--upgrade',
-                                                     '--default-pip']
+         cmd = [context.env_exec_cmd, '-Im', 'ensurepip', '--upgrade',
+                                                          '--default-pip']
 -        subprocess.check_output(cmd, stderr=subprocess.STDOUT)
 +        # Debian 2015-09-18 barry@debian.org: <python>-venv is a separate
 +        # binary package which might not be installed.  In that case, the

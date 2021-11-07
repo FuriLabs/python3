@@ -545,7 +545,7 @@ ifneq (,$(filter $(DEB_HOST_ARCH), sparc sparc64))
   TEST_EXCLUDES += test_gdb
 endif
 
-ifneq (,$(filter $(DEB_HOST_ARCH), alpha riscv64 sparc64))
+ifneq (,$(filter $(DEB_HOST_ARCH), alpha armhf riscv64 sparc64))
   TEST_EXCLUDES += test_concurrent_futures
 endif
 
@@ -1051,7 +1051,7 @@ endif
 		$(scriptdir)/test/{ann_module,ann_module2,ann_module3}.py \
 		$(scriptdir)/test/{regrtest,test_support,__init__,__main__}.py
 
-	: # The complete testsuite into $(p_lbase)
+	: # The complete testsuite into $(p_ltst)
 	$(dh_compat2) dh_movefiles -p$(p_ltst) --sourcedir=$(d) \
 		$(scriptdir)/test \
 		$(scriptdir)/ctypes/test \
