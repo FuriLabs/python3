@@ -1,3 +1,16 @@
+python3.9 (3.9.9-2) unstable; urgency=medium
+
+  * Run the module-install-local and module-install-user tests with
+    allow-stderr. Addresses: #1001722.
+
+ -- Matthias Klose <doko@debian.org>  Fri, 17 Dec 2021 00:13:29 +0100
+
+python3.9 (3.9.9-1) unstable; urgency=medium
+
+  * New upstream version.
+
+ -- Matthias Klose <doko@debian.org>  Tue, 16 Nov 2021 11:24:31 +0100
+
 python3.9 (3.9.8-2) unstable; urgency=medium
 
   * Revert the backport for issue #45235 (argparse does not preserve
