@@ -1,3 +1,11 @@
+python3.9 (3.9.9-3) unstable; urgency=medium
+
+  * d/p/openssl-3.0.1-version-check.diff: cherry-picked from upstream
+    to fix the test suite against OpenSSL 3.0.1 (Simon Chopin).
+    LP: #1956765.
+
+ -- Matthias Klose <doko@debian.org>  Mon, 10 Jan 2022 11:55:59 +0100
+
 python3.9 (3.9.9-2) unstable; urgency=medium
 
   * Run the module-install-local and module-install-user tests with
