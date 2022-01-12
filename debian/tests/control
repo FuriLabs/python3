@@ -65,6 +65,7 @@ Restrictions: allow-stderr
 
 Tests: module-install-venv
 Depends: build-essential, python3.9-dev, python3.9-venv, shunit2
+Restrictions: allow-stderr
 
 Tests: module-install-virtualenv
 Depends: build-essential, python3.9-dev, shunit2, virtualenv

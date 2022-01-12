@@ -1,3 +1,9 @@
+python3.9 (3.9.9-4) unstable; urgency=medium
+
+  * Allow stderr in the module-install-venv autopkg test.
+
+ -- Matthias Klose <doko@debian.org>  Wed, 12 Jan 2022 17:10:51 +0100
+
 python3.9 (3.9.9-3) unstable; urgency=medium
 
   * d/p/openssl-3.0.1-version-check.diff: cherry-picked from upstream
