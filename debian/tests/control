@@ -69,3 +69,4 @@ Restrictions: allow-stderr
 
 Tests: module-install-virtualenv
 Depends: build-essential, python3.9-dev, shunit2, virtualenv
+Restrictions: allow-stderr
