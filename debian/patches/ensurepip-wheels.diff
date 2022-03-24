@@ -5,7 +5,7 @@
  import os
  import os.path
  import sys
-@@ -6,16 +7,12 @@
+@@ -6,16 +7,12 @@ import tempfile
  import subprocess
  from importlib import resources
  
@@ -15,7 +15,7 @@
  
  __all__ = ["version", "bootstrap"]
 -_SETUPTOOLS_VERSION = "58.1.0"
--_PIP_VERSION = "21.2.4"
+-_PIP_VERSION = "22.0.4"
  _PROJECTS = [
 -    ("setuptools", _SETUPTOOLS_VERSION, "py3"),
 -    ("pip", _PIP_VERSION, "py3"),
@@ -24,7 +24,7 @@
  ]
  
  
-@@ -38,7 +35,9 @@
+@@ -38,7 +35,9 @@ def version():
      """
      Returns a string specifying the bundled version of pip.
      """
@@ -35,7 +35,7 @@
  
  def _disable_pip_configuration_settings():
      # We deliberately ignore all pip environment variables
-@@ -96,20 +95,44 @@
+@@ -96,20 +95,44 @@ def _bootstrap(*, root=None, upgrade=Fal
          # omit pip and easy_install
          os.environ["ENSUREPIP_OPTIONS"] = "install"
  
@@ -90,7 +90,7 @@
  
          # Construct the arguments to be passed to the pip command
          args = ["install", "--no-cache-dir", "--no-index", "--find-links", tmpdir]
-@@ -122,7 +145,7 @@
+@@ -122,7 +145,7 @@ def _bootstrap(*, root=None, upgrade=Fal
          if verbosity:
              args += ["-" + "v" * verbosity]
  
@@ -99,7 +99,7 @@
  
  def _uninstall_helper(*, verbosity=0):
      """Helper to support a clean default uninstall process on Windows
-@@ -136,7 +159,8 @@
+@@ -136,7 +159,8 @@ def _uninstall_helper(*, verbosity=0):
          return
  
      # If the pip version doesn't match the bundled one, leave it alone
@@ -109,7 +109,7 @@
          msg = ("ensurepip will only uninstall a matching version "
                 "({!r} installed, {!r} bundled)")
          print(msg.format(pip.__version__, _PIP_VERSION), file=sys.stderr)
-@@ -149,7 +173,7 @@
+@@ -149,7 +173,7 @@ def _uninstall_helper(*, verbosity=0):
      if verbosity:
          args += ["-" + "v" * verbosity]
  
