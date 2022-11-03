@@ -504,7 +504,8 @@ stamps/stamp-configure-debug: stamps/stamp-patch
 	    $(config_site) \
 	    ../configure \
 		$(common_configure_args) \
-		--with-pydebug
+		--with-pydebug \
+		--with-valgrind
 
 	$(call __post_configure,$(buildd_debug))
 	touch $@
@@ -519,7 +520,8 @@ stamps/stamp-configure-shared-debug: stamps/stamp-patch
 	    ../configure \
 		$(common_configure_args) \
 		--enable-shared \
-		--with-pydebug
+		--with-pydebug \
+		--with-valgrind
 
 	$(call __post_configure,$(buildd_shdebug))
 	touch $@
