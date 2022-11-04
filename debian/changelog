@@ -1,3 +1,9 @@
+python3.10 (3.10.8-3) unstable; urgency=medium
+
+  * Fix valgrind detection.
+
+ -- Matthias Klose <doko@debian.org>  Fri, 04 Nov 2022 10:21:25 +0100
+
 python3.10 (3.10.8-2) unstable; urgency=medium
 
   * Fix GDB auto-load files. Closes: #1017913.
