@@ -40,4 +40,3 @@ fix-py_compile.diff
 reproducible-pyc.diff
 fix-ia64.diff
 gh-78214.diff
-CVE-2022-42919.patch
