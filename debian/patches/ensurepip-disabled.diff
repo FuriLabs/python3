@@ -64,7 +64,7 @@ Forwarded: not-needed
 +        try:
 +            self._call_new_python(context, '-m', 'ensurepip', '--upgrade',
 +                                  '--default-pip', stderr=subprocess.STDOUT)
-+        except subprocess.CalledProcessError:
++        except subprocess.CalledProcessError as err:
 +            stdlib = sysconfig.get_path('stdlib')
 +            if not os.path.exists(f'{stdlib}/ensurepip/__main__.py'):
 +                print("""\
@@ -78,7 +78,7 @@ Forwarded: not-needed
 +package, recreate your virtual environment.
 +
 +Failing command: {}
-+""".format(sysconfig.get_python_version(), cmd))
++""".format(sysconfig.get_python_version(), err.cmd))
 +                sys.exit(1)
 +            raise
  
