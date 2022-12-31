@@ -1,6 +1,7 @@
-python3.11 (3.11.1-2) UNRELEASED; urgency=medium
+python3.11 (3.11.1-2) unstable; urgency=medium
 
   * Fix NameError exception in venv init (Daniel Andersson). Closes: #1026448.
+  * Fix FTCBFS: Pass --with-build-python (Helmut Grohne). Closes: #1024297.
 
  -- Matthias Klose <doko@debian.org>  Sat, 31 Dec 2022 11:23:59 +0100
 

@@ -448,6 +448,7 @@ endif
 
 ifneq ($(DEB_HOST_GNU_TYPE),$(DEB_BUILD_GNU_TYPE))
   common_configure_args += --host=$(DEB_HOST_GNU_TYPE) --build=$(DEB_BUILD_GNU_TYPE)
+  common_configure_args += --with-build-python
   config_site = ac_cv_file__dev_ptmx=yes ac_cv_file__dev_ptc=yes
   ifeq (,$(filter $(DEB_HOST_ARCH),arm m68k))
     ifeq ($(DEB_HOST_ARCH_ENDIAN),little)
