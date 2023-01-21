@@ -28,3 +28,21 @@ library modules into the virtual environment.
 
 If needed, the isolated environment can also have access to system Python
 modules, with the "--system-site-packages" flag.
+
+Installing things system-wide
+-----------------------------
+
+Because Debian declares it's Python install to be PEP-668 [0]
+EXTERNALLY-MANAGED, pip (and other installers) will refuse to install packages
+system-wide.  Installation is only possible in virtual environments.
+
+[0]: https://peps.python.org/pep-0668/
+
+This is because Python package installers (like pip) are unaware of the
+constraints that APT-managed packages have on libraries and versions. See
+PEP-668 for a full discussion of the problems that can occur when multiple
+installers operate on the same Python install.
+
+At this time, pip doesn't provide any mechanism to override this behaviour. It
+may be technically possible to dpkg-divert the EXTERNALLY-MANAGED file away.
+But this is not a supported configuration for Debian's Python packages.
