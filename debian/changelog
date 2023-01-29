@@ -2,6 +2,7 @@ python3.11 (3.11.1-3) UNRELEASED; urgency=medium
 
   * Revert pip importlib.metadata workaround, fixed in pip 22.2.
   * Declare python3.11 to be PEP 668 EXTERNALLY-MANAGED.
+  * Recommend ca-certificates from python3.11. Closes: #960869.
 
  -- Stefano Rivera <stefanor@debian.org>  Mon, 19 Dec 2022 17:08:44 -0400
 
