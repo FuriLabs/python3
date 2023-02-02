@@ -3,13 +3,10 @@
 cp -a debian/tests/packages "$AUTOPKGTEST_TMP"
 dist_packages=/usr/local/lib/python3.11/dist-packages
 
-setUp() {
-	mount -t tmpfs tmpfs $dist_packages
-}
-
-tearDown() {
-	umount $dist_packages
-}
+if [ -e /usr/lib/python3.11/EXTERNALLY-MANAGED ]; then
+    echo "Removing EXTERNALLY-MANAGED marker to test behaviour"
+    rm /usr/lib/python3.11/EXTERNALLY-MANAGED
+fi
 
 testFibPy() {
 	cd "$AUTOPKGTEST_TMP/packages/fibpy"
