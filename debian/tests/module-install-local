@@ -3,10 +3,13 @@
 cp -a debian/tests/packages "$AUTOPKGTEST_TMP"
 dist_packages=/usr/local/lib/python3.11/dist-packages
 
-if [ -e /usr/lib/python3.11/EXTERNALLY-MANAGED ]; then
-    echo "Removing EXTERNALLY-MANAGED marker to test behaviour"
-    rm /usr/lib/python3.11/EXTERNALLY-MANAGED
-fi
+setUp() {
+	mount -t tmpfs tmpfs $dist_packages
+}
+
+tearDown() {
+	umount $dist_packages
+}
 
 testFibPy() {
 	cd "$AUTOPKGTEST_TMP/packages/fibpy"
@@ -43,7 +46,8 @@ testFibPyDevelop() {
 
 testFibPyPip() {
 	cd "$AUTOPKGTEST_TMP"
-	python3.11 -m pip install --no-build-isolation -v "$AUTOPKGTEST_TMP/packages/fibpy"
+	python3.11 -m pip install --break-system-packages --no-build-isolation \
+		-v "$AUTOPKGTEST_TMP/packages/fibpy"
 	assertTrue 'Install fibpy via pip in /usr/local' $?
 	assertTrue 'fibpy was installed to /usr/local' "[ -e $dist_packages/fibpy.py ]"
 	stdout=$(python3.11 -m fibpy 5)
@@ -53,7 +57,8 @@ testFibPyPip() {
 
 testFibPyPipEditable() {
 	cd "$AUTOPKGTEST_TMP"
-	python3.11 -m pip install --no-build-isolation -v -e "$AUTOPKGTEST_TMP/packages/fibpy"
+	python3.11 -m pip install --no-build-isolation --break-system-packages\
+		-v -e "$AUTOPKGTEST_TMP/packages/fibpy"
 	assertTrue 'Install editable fibpy via pip in /usr/local' $?
 	assertTrue 'fibpy was linked to /usr/local' "[ -e $dist_packages/__editable__.fibpy-42.0.0.pth ]"
 	stdout=$(python3.11 -m fibpy 5)

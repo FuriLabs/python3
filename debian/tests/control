@@ -63,7 +63,7 @@ Depends: build-essential,
   python3-pip,
   python3-setuptools,
   shunit2,
-Restrictions: breaks-testbed, needs-root, allow-stderr
+Restrictions: needs-root, allow-stderr
 
 Tests: module-install-user
 Depends: build-essential,
@@ -71,7 +71,7 @@ Depends: build-essential,
   python3-pip,
   python3-setuptools,
   shunit2
-Restrictions: breaks-testbed, needs-root, allow-stderr
+Restrictions: allow-stderr
 
 Tests: module-install-venv
 Depends: build-essential,

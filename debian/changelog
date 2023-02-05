@@ -2,9 +2,7 @@ python3.11 (3.11.1-3) UNRELEASED; urgency=medium
 
   * Revert pip importlib.metadata workaround, fixed in pip 22.2.
   * Declare python3.11 to be PEP 668 EXTERNALLY-MANAGED.
-    - Update and install README.venv, explaining this.
-    - Remove EXTERNALLY-MANAGED in autopkgtests that test behaviour without
-      it.
+  * Update and install README.venv, explaining this.
   * Recommend ca-certificates from python3.11. Closes: #960869.
   * Configure --with-ssl-default-suites=openssl. Closes: #1026802.
 
