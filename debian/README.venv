@@ -32,9 +32,10 @@ modules, with the "--system-site-packages" flag.
 Installing things system-wide
 -----------------------------
 
-Because Debian declares it's Python install to be PEP-668 [0]
-EXTERNALLY-MANAGED, pip (and other installers) will refuse to install packages
-system-wide.  Installation is only possible in virtual environments.
+Because Debian declares its Python install to be EXTERNALLY-MANAGED [0], pip
+(and other installers) will refuse to install packages system-wide.
+Installation is only possible in virtual environments or separate Python
+installs.
 
 [0]: https://peps.python.org/pep-0668/
 
@@ -46,3 +47,6 @@ installers operate on the same Python install.
 At this time, pip doesn't provide any mechanism to override this behaviour. It
 may be technically possible to dpkg-divert the EXTERNALLY-MANAGED file away.
 But this is not a supported configuration for Debian's Python packages.
+
+Another option is to install your own Python (from source) in /usr/local, that
+isn't EXTERNALLY-MANAGED.
