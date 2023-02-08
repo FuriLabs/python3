@@ -47,7 +47,7 @@ Architecture: any
 Multi-Arch: allowed
 Priority: @PRIO@
 Depends: @PVER@ (= ${binary:Version}),
- python3-pip-whl,
+ python3-pip-whl (>= 22.2),
  python3-setuptools-whl,
  @PVER@-distutils,
  ${shlibs:Depends}, ${misc:Depends},

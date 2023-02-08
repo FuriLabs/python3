@@ -436,6 +436,7 @@ common_configure_args = \
 		--without-ensurepip \
 		--with-system-expat \
 		--with-dtrace \
+		--with-ssl-default-suites=openssl \
 		--with-system-libmpdec \
 		--with-wheel-pkg-dir=/usr/share/python-wheels/ \
 		--with-ssl-default-suites=openssl \
@@ -1204,7 +1205,7 @@ endif
 	: # Move the docs into $(p_base)'s /usr/share/doc/$(PVER) directory,
 	: # all other packages only have a copyright file.
 	dh_installdocs -p$(p_base) \
-		README.rst Misc/NEWS Misc/ACKS
+		README.rst Misc/NEWS Misc/ACKS debian/README.venv
 	ln -sf NEWS.gz $(d_base)/usr/share/doc/$(p_base)/changelog.gz
 	dh_installdocs --all \
 		-N$(p_base) -N$(p_dev) -N$(p_dbg) -N$(p_lib) \
@@ -1238,6 +1239,10 @@ endif
 		usr/lib
 	dh_movefiles -p$(p_lbase) \
 		usr/lib/python$(VER)
+
+	# Mark the interpreter as being PEP668 EXTERNALLY-MANAGED
+	install -m 644 debian/EXTERNALLY-MANAGED \
+		$(d_lbase)/$(scriptdir)
 
 	: # The rest goes into $(p_base)
 	mkdir -p $(d)/usr/lib/python3/dist-packages

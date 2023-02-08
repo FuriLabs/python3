@@ -33,6 +33,7 @@ Depends: python3.11-minimal (= ${binary:Version}),
  libpython3.11-stdlib (= ${binary:Version}),
  media-types | mime-support,
  ${shlibs:Depends}, ${misc:Depends}
+Recommends: ca-certificates
 Suggests: python3.11-venv, python3.11-doc, binutils
 Breaks: python3-all (<< 3.6.5~rc1-1),
   python3-dev (<< 3.6.5~rc1-1),
