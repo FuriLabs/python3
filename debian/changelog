@@ -8,6 +8,7 @@ python3.11 (3.11.2-1) UNRELEASED; urgency=medium
   * Recommend ca-certificates from python3.11. Closes: #960869.
   * Configure --with-ssl-default-suites=openssl. Closes: #1026802.
   * Update watch file.
+  * Include CCSHARED override in distutils test_customize_compiler.
 
  -- Stefano Rivera <stefanor@debian.org>  Mon, 19 Dec 2022 17:08:44 -0400
 
