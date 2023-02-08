@@ -1,3 +1,17 @@
+python3.11 (3.11.2-2) unstable; urgency=medium
+
+  * Really new upstream version.
+  * Configure --with-ssl-default-suites=openssl. Closes: #1009189.
+  * Build-depend on libb2-dev.
+
+ -- Matthias Klose <doko@debian.org>  Wed, 08 Feb 2023 22:22:32 +0100
+
+python3.11 (3.11.2-1) unstable; urgency=medium
+
+  * New upstream version.
+
+ -- Matthias Klose <doko@debian.org>  Mon, 06 Feb 2023 21:27:04 +0100
+
 python3.11 (3.11.1-2) unstable; urgency=medium
 
   * Fix NameError exception in venv init (Daniel Andersson). Closes: #1026448.
