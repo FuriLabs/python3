@@ -1,6 +1,7 @@
 python3.11 (3.11.2-1) UNRELEASED; urgency=medium
 
   * Python 3.11.2 release.
+  * Refresh patches.
   * Revert pip importlib.metadata workaround, fixed in pip 22.2.
   * Declare python3.11 to be PEP 668 EXTERNALLY-MANAGED.
   * Update and install README.venv, explaining this.
