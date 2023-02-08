@@ -48,7 +48,7 @@ Architecture: any
 Multi-Arch: allowed
 Priority: optional
 Depends: python3.11 (= ${binary:Version}),
- python3-pip-whl,
+ python3-pip-whl (>= 22.2),
  python3-setuptools-whl,
  python3.11-distutils,
  ${shlibs:Depends}, ${misc:Depends},

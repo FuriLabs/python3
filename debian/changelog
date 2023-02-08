@@ -1,5 +1,6 @@
 python3.11 (3.11.2-3) UNRELEASED; urgency=medium
 
+  [ Stefano Rivera ]
   * Refresh patches.
   * Revert pip importlib.metadata workaround, fixed in pip 22.2.
   * Declare python3.11 to be PEP 668 EXTERNALLY-MANAGED.
@@ -9,15 +10,12 @@ python3.11 (3.11.2-3) UNRELEASED; urgency=medium
   * Update watch file.
   * Include CCSHARED override in distutils test_customize_compiler.
 
- -- Stefano Rivera <stefanor@debian.org>  Mon, 19 Dec 2022 17:08:44 -0400
-
-python3.11 (3.11.2-2) unstable; urgency=medium
-
+  [Matthias Klose]
   * Really new upstream version.
   * Configure --with-ssl-default-suites=openssl. Closes: #1009189.
   * Build-depend on libb2-dev.
 
- -- Matthias Klose <doko@debian.org>  Wed, 08 Feb 2023 22:22:32 +0100
+ -- Matthias Klose <doko@debian.org>  Wed, 08 Feb 2023 23:06:05 +0100
 
 python3.11 (3.11.2-1) unstable; urgency=medium
 
