@@ -243,15 +243,14 @@ ifeq ($(with_lto),yes)
 endif
 
 sysconfig_substflags = \
-	-e 's,gcc-8,gcc,;s,g++-8,g++,' \
 	$(if $(with_lto),$(foreach i,-flto=auto -flto -fuse-linker-plugin -ffat-lto-objects,-e 's/$(i)//g')) \
 	-e '/^OPT/s,-O3,-O2,' \
 	-e 's/-O3/-O2/g' \
 	-e 's/-fprofile-use *-fprofile-correction//g' \
 	-e 's/-fstack-protector /-fstack-protector-strong /g' \
-	-e 's/-specs=[^ ]*//g' \
-	-e 's/-fdebug-prefix-map=[^ ]*//g' \
-	-e 's/-ffile-prefix-map=[^ ]*//g' \
+	-e "s/-specs=[^ ']*//g" \
+	-e "s/-fdebug-prefix-map=[^ ']*//g" \
+	-e "s/-ffile-prefix-map=[^ ']*//g" \
 	-e 's/-Wl,-z,relro//g' \
 	-e 's,^RUNSHARED *=.*,RUNSHARED=,' \
 	-e '/BLDLIBRARY/s/-L\. //'

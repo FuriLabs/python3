@@ -14,8 +14,9 @@ python3.11 (3.11.2-3) UNRELEASED; urgency=medium
   * Really new upstream version.
   * Configure --with-ssl-default-suites=openssl. Closes: #1009189.
   * Build-depend on libb2-dev.
+  * Fix removing Debian build flags from _sysconfigdata. LP: #2006738.
 
- -- Matthias Klose <doko@debian.org>  Wed, 08 Feb 2023 23:06:05 +0100
+ -- Matthias Klose <doko@debian.org>  Fri, 10 Feb 2023 05:11:03 +0100
 
 python3.11 (3.11.2-1) unstable; urgency=medium
 
