@@ -1,4 +1,4 @@
-python3.11 (3.11.2-3) UNRELEASED; urgency=medium
+python3.11 (3.11.2-3) unstable; urgency=medium
 
   [ Stefano Rivera ]
   * Refresh patches.
@@ -16,7 +16,7 @@ python3.11 (3.11.2-3) UNRELEASED; urgency=medium
   * Build-depend on libb2-dev.
   * Fix removing Debian build flags from _sysconfigdata. LP: #2006738.
 
- -- Matthias Klose <doko@debian.org>  Fri, 10 Feb 2023 05:11:03 +0100
+ -- Matthias Klose <doko@debian.org>  Fri, 10 Feb 2023 05:59:34 +0100
 
 python3.11 (3.11.2-1) unstable; urgency=medium
 
