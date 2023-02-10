@@ -70,6 +70,7 @@ debian/tmp-dbg
 debian/tmp-shdbg
 debian/tmp
 
+debian/EXTERNALLY-MANAGED
 debian/README.Debian
 debian/README.idle-python3.11
 debian/README.maintainers
