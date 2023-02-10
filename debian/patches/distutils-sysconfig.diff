@@ -55,24 +55,7 @@ Forwarded: no
  
 --- a/Lib/distutils/tests/test_sysconfig.py
 +++ b/Lib/distutils/tests/test_sysconfig.py
-@@ -129,6 +129,7 @@
-         os.environ['ARFLAGS'] = '--env-arflags'
-         os.environ['CFLAGS'] = '--env-cflags'
-         os.environ['CPPFLAGS'] = '--env-cppflags'
-+        os.environ['CCSHARED'] = '--env-ccshared'
- 
-         comp = self.customize_compiler()
-         self.assertEqual(comp.exes['archiver'],
-@@ -146,7 +147,7 @@
-                          'env_cc')
-         self.assertEqual(comp.exes['linker_so'],
-                          ('env_ldshared --env-ldflags --env-cflags'
--                          ' --env-cppflags'))
-+                          ' --env-cppflags --env-ccshared'))
-         self.assertEqual(comp.shared_lib_extension, 'sc_shutil_suffix')
- 
-         del os.environ['AR']
-@@ -162,18 +163,18 @@
+@@ -162,18 +162,18 @@
          comp = self.customize_compiler()
          self.assertEqual(comp.exes['archiver'],
                           'sc_ar --sc-arflags')
