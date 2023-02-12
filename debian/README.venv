@@ -13,10 +13,6 @@ package). pipx will set up an environment isolated from other applications and
 system Python modules, and install the application and its dependencies into
 that.
 
-pipx will create an isolated environment to install the application
-and its dependencies in, separate from all other applications and system Python
-modules.
-
 Python library modules
 ----------------------
 
