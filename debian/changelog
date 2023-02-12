@@ -4,6 +4,9 @@ python3.11 (3.11.2-4) unstable; urgency=medium
   * Revert the CCSHARED patch to test_customize_compiler, this was WIP and
     didn't work.
 
+  [Matthias Klose]
+  * Remove build dependency on libb2-dev, oldish library.
+
  -- Matthias Klose <doko@debian.org>  Fri, 10 Feb 2023 05:59:34 +0100
 
 python3.11 (3.11.2-3) unstable; urgency=medium
