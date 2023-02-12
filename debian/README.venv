@@ -9,7 +9,11 @@ Python applications
 
 If you need to install a Python application (or version) that isn't packaged in
 Debian, we recommend that you install it with pipx (in the "pipx" Debian
-package). pipx will create an isolated environment to install the application
+package). pipx will set up an environment isolated from other applications and
+system Python modules, and install the application and its dependencies into
+that.
+
+pipx will create an isolated environment to install the application
 and its dependencies in, separate from all other applications and system Python
 modules.
 
