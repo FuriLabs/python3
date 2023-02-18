@@ -1,3 +1,10 @@
+python3.12 (3.12.0~a5-2) UNRELEASED; urgency=medium
+
+  * Fix error message for 'python3 -m venv dir`, when python3-venv
+    is not installed. Closes: #1026268.
+
+ -- Matthias Klose <doko@debian.org>  Sat, 18 Feb 2023 14:02:17 +0100
+
 python3.12 (3.12.0~a5-1) experimental; urgency=medium
 
   * Python 3.12.0 alpha 5 snapshot.
