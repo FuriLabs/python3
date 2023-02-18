@@ -1,8 +1,10 @@
 python3.11 (3.11.2-5) UNRELEASED; urgency=medium
 
   * Update VCS attributes.
+  * Fix error message for 'python3 -m venv dir`, when python3-venv
+    is not installed. Closes: #1026268.
 
- -- Matthias Klose <doko@debian.org>  Wed, 15 Feb 2023 05:15:43 +0100
+ -- Matthias Klose <doko@debian.org>  Sat, 18 Feb 2023 14:02:17 +0100
 
 python3.11 (3.11.2-4) unstable; urgency=medium
 
