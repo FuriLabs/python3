@@ -55,11 +55,13 @@ This can be overriden by passing the --break-system-packages option to pip. You
 do this at your own risk: pip may break Python modules that part of your Debian
 system depends on.
 
-You can also override this system-wide by deleting
-/usr/lib/python3.*/EXTERNALLY-MANAGED (or preferably, moving it with
-dpkg-divert, which will survive security updates). Again, you do this at your
-own risk, with the understanding that Debian-provided Python modules may be
-broken by pip / other installers.
+You can also override this system-wide by removing
+/usr/lib/python3.*/EXTERNALLY-MANAGED. Again, you do this at your own risk,
+with the understanding that Debian-provided Python modules may be broken by pip
+/ other installers. The best way to do this is to move it with dpkg-divert,
+which will survive security updates):
+
+# dpkg-divert --rename --add /usr/lib/$(py3versions -d)/EXTERNALLY-MANAGED
 
 A clean option is to install your own Python (from source) in /usr/local, that
 isn't EXTERNALLY-MANAGED.
