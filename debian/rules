@@ -99,9 +99,9 @@ ifneq (,$(filter valgrind, $(shell dpkg-query --show -f '$${Depends}\n' valgrind
   valgrind_configure_args = --with-valgrind
 endif
 
-VER=3.11
-SVER=3.11.0
-NVER=3.12
+VER=3.12
+SVER=3.12.0~a5
+NVER=3.13
 PVER=python$(VER)
 EXT_VER=$(subst .,,$(VER))
 PRIORITY=$(shell echo $(VER) | tr -d '.')0
@@ -439,6 +439,10 @@ common_configure_args = \
 		--with-wheel-pkg-dir=/usr/share/python-wheels/ \
 		--with-ssl-default-suites=openssl \
 		MKDIR_P="/bin/mkdir -p" \
+
+# FIXME, only temporaray
+#common_configure_args += \
+#		--without-builtin-hashlib-hashes
 
 ifneq (,$(filter $(DEB_HOST_ARCH), avr32 or1k))
   common_configure_args += --without-ffi
@@ -893,6 +897,7 @@ stamps/stamp-install: stamps/stamp-build control-file stamps/stamp-control
 	: # make install into tmp and subsequently move the files into
 	: # their packages' directories.
 	install -d $(d)/usr
+	install -d $(d)/$(scriptdir)/lib-dynload
 ifeq ($(with_interp),static)
 	$(MAKE) -C $(buildd_static) install DESTDIR=$(CURDIR)/$(d)
 	ls -l $(d)/$(scriptdir)/_sysconfigdata*
@@ -1128,29 +1133,13 @@ endif
 
 	: # The complete testsuite into $(p_ltst)
 	$(dh_compat2) dh_movefiles -p$(p_ltst) --sourcedir=$(d) \
-		$(scriptdir)/test \
-		$(scriptdir)/ctypes/test \
-		$(scriptdir)/distutils/tests \
-		$(scriptdir)/lib2to3/tests \
-		$(scriptdir)/idlelib/idle_test \
-		$(scriptdir)/tkinter/test \
-		$(scriptdir)/unittest/test
-	: # test_ctypes fails with test_macholib.py installed
-	rm -f $(d_ltst)/$(scriptdir)/ctypes/test/test_macholib.py
-	: # test_bdist_wininst fails, '*.exe' files are not installed
-	rm -f $(d_ltst)/$(scriptdir)/distutils/tests/test_bdist_wininst.py
+		$(scriptdir)/test
 
 	: # fixed upstream ...
 	chmod -x $(d_ltst)/$(scriptdir)/test/{test_dbm_gnu,test_dbm_ndbm}.py
 
 	: # Tkinter library files shipped in python3-tk
 	rm -rf $(d)/usr/lib/python$(VER)/tkinter
-
-	: # distutils shipped in python3-distutils
-	rm -rf $(d)/usr/lib/python$(VER)/distutils/*
-	: # ... except for distutils.version
-	cp Lib/distutils/{__init__,version}.py \
-		$(d)/usr/lib/python$(VER)/distutils/.
 
 	: # lib2to3 shipped in python3-lib2to3
 	rm -rf \
@@ -1278,6 +1267,7 @@ endif
 
 	: # install debug package
 	rm -rf $(d)-dbg
+	install -d $(d)-dbg/$(scriptdir)/lib-dynload
 	$(MAKE) -C $(buildd_debug) install DESTDIR=$(CURDIR)/$(d)-dbg
 	: # install the Makefile of the shared python debug build
 	sed $(sysconfig_substflags) \

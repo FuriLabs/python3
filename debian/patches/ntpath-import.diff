@@ -1,8 +1,10 @@
 # ntpath not in python-minimal
 
+Index: b/Lib/pathlib.py
+===================================================================
 --- a/Lib/pathlib.py
 +++ b/Lib/pathlib.py
-@@ -1,7 +1,6 @@
+@@ -8,7 +8,6 @@ operating systems.
  import fnmatch
  import functools
  import io
@@ -10,12 +12,19 @@
  import os
  import posixpath
  import re
-@@ -113,6 +112,8 @@ class _WindowsFlavour(_Flavour):
-     # Reference for Windows paths can be found at
-     # http://msdn.microsoft.com/en-us/library/aa365247%28v=vs.85%29.aspx
- 
+@@ -619,6 +618,7 @@ class PurePath(object):
+         """True if the path is absolute (has both a root and, if applicable,
+         a drive)."""
+         # ntpath.isabs() is defective - see GH-44626 .
++        import ntpath
+         if self._flavour is ntpath:
+             return bool(self._drv and self._root)
+         return self._flavour.isabs(self)
+@@ -684,6 +684,7 @@ class PureWindowsPath(PurePath):
+     On a Windows system, instantiating a PurePath should return this object.
+     However, you can also instantiate it directly on any system.
+     """
 +    import ntpath
-+
-     sep = '\\'
-     altsep = '/'
-     has_drv = True
+     _flavour = ntpath
+     __slots__ = ()
+ 

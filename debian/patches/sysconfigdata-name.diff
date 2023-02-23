@@ -5,9 +5,11 @@ Description: Don't encode the MACHDEP into the _sysconfigdata file name.
 Bug-cpython: https://bugs.python.org/issue37561
 Forwarded: no
 
+Index: b/Lib/sysconfig.py
+===================================================================
 --- a/Lib/sysconfig.py
 +++ b/Lib/sysconfig.py
-@@ -493,7 +493,7 @@
+@@ -498,7 +498,7 @@ def _get_sysconfigdata_name():
      multiarch = getattr(sys.implementation, '_multiarch', '')
      return os.environ.get(
          '_PYTHON_SYSCONFIGDATA_NAME',
@@ -16,9 +18,11 @@ Forwarded: no
      )
  
  
+Index: b/Makefile.pre.in
+===================================================================
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
-@@ -2090,8 +2090,10 @@
+@@ -2160,8 +2160,10 @@ libinstall:	all $(srcdir)/Modules/xxmodu
  			esac; \
  		done; \
  	done
@@ -29,19 +33,13 @@ Forwarded: no
 +	$(LN) -s _sysconfigdata_$(ABIFLAGS)_$(MULTIARCH).py \
 +		$(DESTDIR)$(LIBDEST)/_sysconfigdata_$(ABIFLAGS)_$(MACHDEP)_$(MULTIARCH).py
  	$(INSTALL_DATA) $(srcdir)/LICENSE $(DESTDIR)$(LIBDEST)/LICENSE.txt
- 	if test -d $(DESTDIR)$(LIBDEST)/distutils/tests; then \
- 		$(INSTALL_DATA) $(srcdir)/Modules/xxmodule.c \
-@@ -2250,6 +2252,7 @@
- 		--install-scripts=$(BINDIR) \
- 		--install-platlib=$(DESTSHARED) \
- 		--root=$(DESTDIR)/
-+	-rm $(DESTDIR)$(DESTSHARED)/_sysconfigdata_$(ABIFLAGS)_$(MULTIARCH).py
- 	-rm $(DESTDIR)$(DESTSHARED)/_sysconfigdata_$(ABIFLAGS)_$(MACHDEP)_$(MULTIARCH).py
- 	-rm -r $(DESTDIR)$(DESTSHARED)/__pycache__
- 
+ 	@ # Build PYC files for the 3 optimization levels (0, 1, 2)
+ 	-PYTHONPATH=$(DESTDIR)$(LIBDEST) $(RUNSHARED) \
+Index: b/configure.ac
+===================================================================
 --- a/configure.ac
 +++ b/configure.ac
-@@ -162,7 +162,7 @@
+@@ -162,7 +162,7 @@ AC_ARG_WITH(
      dnl Build Python interpreter is used for regeneration and freezing.
      ac_cv_prog_PYTHON_FOR_REGEN=$with_build_python
      PYTHON_FOR_FREEZE="$with_build_python"
