@@ -1,6 +1,8 @@
 python3.10 (3.10.10-2) unstable; urgency=medium
 
   * Fix removing Debian build flags from _sysconfigdata.
+  * Fix error message for 'python3 -m venv dir`, when python3-venv
+    is not installed. Closes: #1026268.
 
  -- Matthias Klose <doko@debian.org>  Fri, 24 Feb 2023 12:37:34 +0100
 
