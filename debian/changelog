@@ -10,6 +10,7 @@ python3.12 (3.12.0~a5-2) UNRELEASED; urgency=medium
   * Override expat embedded-library lintian false-positives. (See: #1031859)
   * Update lintian overrides for reorganization in lintian 2.100.0.
   * Override depends-on-python-minimal in python3.12-nopie.
+  * Override python3-script-but-no-python3-dep in python3.12.
 
  -- Matthias Klose <doko@debian.org>  Sat, 18 Feb 2023 14:02:17 +0100
 
