@@ -9,6 +9,7 @@ python3.11 (3.11.2-5) UNRELEASED; urgency=medium
   * Mention that deleting EXTERNALLY-MANAGED is an option, in README.venv.
   * Patch: fix deadlock at shutdown when clearing thread states.
     Closes: #1032019.
+  * Override expat embedded-library lintian false-positives. (See: #1031859)
 
  -- Matthias Klose <doko@debian.org>  Sat, 18 Feb 2023 14:02:17 +0100
 
