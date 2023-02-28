@@ -5,7 +5,7 @@ lib@PVER@-dbg binary: non-dev-pkg-with-shlib-symlink
 lib@PVER@-dbg binary: unusual-interpreter
 
 # just the gdb debug file
-lib@PVER@-dbg binary: python-script-but-no-python-dep
+lib@PVER@-dbg binary: python3-script-but-no-python3-dep
 
 # pointless lintian ...
 lib@PVER@-dbg binary: hardening-no-fortify-functions

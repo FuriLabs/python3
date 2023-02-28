@@ -8,6 +8,7 @@ python3.12 (3.12.0~a5-2) UNRELEASED; urgency=medium
   * Mention that deleting EXTERNALLY-MANAGED is an option, in README.venv.
   * Update watch file for Python 3.12.
   * Override expat embedded-library lintian false-positives. (See: #1031859)
+  * Update lintian overrides for reorganization in lintian 2.100.0.
 
  -- Matthias Klose <doko@debian.org>  Sat, 18 Feb 2023 14:02:17 +0100
 

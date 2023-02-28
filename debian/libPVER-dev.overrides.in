@@ -1,4 +1,4 @@
-lib@PVER@-dev binary: python-script-but-no-python-dep
+lib@PVER@-dev binary: python3-script-but-no-python3-dep
 
 lib@PVER@-dev binary: arch-dependent-file-not-in-arch-specific-directory
 
