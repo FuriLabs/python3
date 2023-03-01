@@ -1,6 +1,7 @@
 python3.12 (3.12.0~a5-1) experimental; urgency=medium
 
   * Python 3.12.0 alpha 5 snapshot.
+  * Override expat embedded-library lintian false-positives. (See: #1031859)
 
  -- Matthias Klose <doko@debian.org>  Thu, 23 Feb 2023 14:35:06 +0100
 
