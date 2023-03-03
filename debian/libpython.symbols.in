@@ -1691,8 +1691,8 @@
  _Py_strhex_bytes_with_sep@Base @SVER@
  _Py_strhex_with_sep@Base @SVER@
  _Py_string_to_number_with_underscores@Base @SVER@
- _Py_trampoline_func_end@Base @SVER@
- _Py_trampoline_func_start@Base @SVER@
+ (arch=amd64 arm64)_Py_trampoline_func_end@Base @SVER@
+ (arch=amd64 arm64)_Py_trampoline_func_start@Base @SVER@
  _Py_wfopen@Base @SVER@
  _Py_wgetcwd@Base @SVER@
  _Py_wreadlink@Base @SVER@

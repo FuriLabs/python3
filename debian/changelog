@@ -14,7 +14,7 @@ python3.12 (3.12.0~a5-1) experimental; urgency=medium
   * Override depends-on-python-minimal in python3.12-nopie.
   * Override python3-script-but-no-python3-dep in python3.12.
 
- -- Matthias Klose <doko@debian.org>  Wed, 01 Mar 2023 11:55:02 +0100
+ -- Matthias Klose <doko@debian.org>  Thu, 02 Mar 2023 19:00:33 +0100
 
 python3.11 (3.11.2-4) unstable; urgency=medium
 
