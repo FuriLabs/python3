@@ -1,4 +1,4 @@
-python3.11 (3.11.2-5) UNRELEASED; urgency=medium
+python3.11 (3.11.2-5) unstable; urgency=medium
 
   [ Matthias Klose ]
   * Update VCS attributes.
@@ -11,7 +11,7 @@ python3.11 (3.11.2-5) UNRELEASED; urgency=medium
     Closes: #1032019.
   * Override expat embedded-library lintian false-positives. (See: #1031859)
 
- -- Matthias Klose <doko@debian.org>  Sat, 18 Feb 2023 14:02:17 +0100
+ -- Matthias Klose <doko@debian.org>  Sun, 05 Mar 2023 09:28:49 +0100
 
 python3.11 (3.11.2-4) unstable; urgency=medium
 
