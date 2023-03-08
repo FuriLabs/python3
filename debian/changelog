@@ -1,3 +1,9 @@
+python3.11 (3.11.2-6) UNRELEASED; urgency=medium
+
+  * Explain more ways to pass --break-system-packages to pip.
+
+ -- Stefano Rivera <stefanor@debian.org>  Wed, 08 Mar 2023 11:39:42 -0400
+
 python3.11 (3.11.2-5) unstable; urgency=medium
 
   [ Matthias Klose ]
