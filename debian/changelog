@@ -1,3 +1,9 @@
+python3.11 (3.11.2-6) unstable; urgency=high
+
+  * Fix syntax error in python3-dbg-config script. LP: #2009967.
+
+ -- Matthias Klose <doko@debian.org>  Mon, 13 Mar 2023 13:18:29 +0100
+
 python3.11 (3.11.2-5) unstable; urgency=medium
 
   [ Matthias Klose ]
