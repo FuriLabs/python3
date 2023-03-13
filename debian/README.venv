@@ -53,7 +53,12 @@ installers operate on the same Python install.
 
 This can be overriden by passing the --break-system-packages option to pip. You
 do this at your own risk: pip may break Python modules that part of your Debian
-system depends on.
+system depends on. This option can also be specified by exporting
+PIP_BREAK_SYSTEM_PACKAGES=1 or configuring the following in
+~/.config/pip/pip.conf or /etc/pip.conf:
+
+[global]
+break-system-packages = true
 
 You can also override this system-wide by removing
 /usr/lib/python3.*/EXTERNALLY-MANAGED. Again, you do this at your own risk,
