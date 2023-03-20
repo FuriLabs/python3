@@ -102,7 +102,7 @@ Forwarded: not-needed
              if docloc.startswith(("http://", "https://")):
 --- /dev/null
 +++ b/Lib/_distutils_system_mod.py
-@@ -0,0 +1,180 @@
+@@ -0,0 +1,164 @@
 +"""
 +Apply Debian-specific patches to distutils commands.
 +
@@ -115,7 +115,6 @@ Forwarded: not-needed
 +
 +import os
 +import sys
-+import sysconfig
 +
 +import distutils.sysconfig
 +import distutils.command.install as orig_install
@@ -254,16 +253,6 @@ Forwarded: not-needed
 +    return wrapped_load_schemes
 +
 +
-+def add_debian_schemes(schemes):
-+    """
-+    Ensure that the custom schemes we refer to above are present in schemes.
-+    """
-+    for name in ('posix_prefix', 'posix_local', 'deb_system'):
-+        if name not in schemes:
-+            scheme = sysconfig.get_paths(name, expand=False)
-+            schemes[name] = _inject_headers(name, scheme)
-+
-+
 +def apply_customizations():
 +    orig_install.install = install
 +    orig_install_egg_info.install_egg_info = install_egg_info
@@ -275,11 +264,6 @@ Forwarded: not-needed
 +    elif hasattr(orig_install, '_load_schemes'):
 +        # setuptools-bundled distutils >= 59.2.0
 +        orig_install._load_schemes = load_schemes_wrapper(orig_install._load_schemes)
-+    else:
-+        # older version with only statically defined schemes
-+        # this includes the version bundled with Python 3.10 that has our
-+        # schemes already included
-+        add_debian_schemes(orig_install.INSTALL_SCHEMES)
 +
 +
 +apply_customizations()
