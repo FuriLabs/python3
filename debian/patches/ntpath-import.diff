@@ -12,15 +12,15 @@ Index: b/Lib/pathlib.py
  import os
  import posixpath
  import re
-@@ -619,6 +618,7 @@ class PurePath(object):
+@@ -617,6 +616,7 @@ class PurePath(object):
          """True if the path is absolute (has both a root and, if applicable,
          a drive)."""
          # ntpath.isabs() is defective - see GH-44626 .
 +        import ntpath
          if self._flavour is ntpath:
-             return bool(self._drv and self._root)
+             return bool(self.drive and self.root)
          return self._flavour.isabs(self)
-@@ -684,6 +684,7 @@ class PureWindowsPath(PurePath):
+@@ -677,6 +677,7 @@ class PureWindowsPath(PurePath):
      On a Windows system, instantiating a PurePath should return this object.
      However, you can also instantiate it directly on any system.
      """

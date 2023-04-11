@@ -10,6 +10,7 @@ locales
 
 .azure-pipelines
 .editorconfig
+.devcontainer
 CODE_OF_CONDUCT.md
 Demo
 Doc

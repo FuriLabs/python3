@@ -4,9 +4,11 @@ Description: Debian: Degrade tempfile gracefully without shutil
 
 Forwarded: not-needed
 
+Index: b/Lib/tempfile.py
+===================================================================
 --- a/Lib/tempfile.py
 +++ b/Lib/tempfile.py
-@@ -40,7 +40,146 @@
+@@ -40,7 +40,146 @@ import functools as _functools
  import warnings as _warnings
  import io as _io
  import os as _os
@@ -154,12 +156,12 @@ Forwarded: not-needed
  import errno as _errno
  from random import Random as _Random
  import sys as _sys
-@@ -887,7 +1026,7 @@
+@@ -900,7 +1039,7 @@ class TemporaryDirectory:
                  if not ignore_errors:
                      raise
  
--        _shutil.rmtree(name, onerror=onerror)
-+        _rmtree(name, onerror=onerror)
+-        _shutil.rmtree(name, onexc=onexc)
++        _rmtree(name, onexc=onexc)
  
      @classmethod
-     def _cleanup(cls, name, warn_message, ignore_errors=False):
+     def _cleanup(cls, name, warn_message, ignore_errors=False, delete=True):
