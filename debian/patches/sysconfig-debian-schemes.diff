@@ -1,6 +1,8 @@
+Index: b/Lib/sysconfig.py
+===================================================================
 --- a/Lib/sysconfig.py
 +++ b/Lib/sysconfig.py
-@@ -36,6 +36,30 @@
+@@ -37,6 +37,30 @@ _INSTALL_SCHEMES = {
          'scripts': '{base}/bin',
          'data': '{base}',
          },
@@ -31,7 +33,7 @@
      'posix_home': {
          'stdlib': '{installed_base}/lib/python',
          'platstdlib': '{base}/lib/python',
-@@ -229,7 +253,7 @@
+@@ -234,7 +258,7 @@ def is_python_build(check_home=None):
  _PYTHON_BUILD = is_python_build()
  
  if _PYTHON_BUILD:
@@ -40,7 +42,7 @@
          # On POSIX-y platforms, Python will:
          # - Build from .h files in 'headers' (which is only added to the
          #   scheme when building CPython)
-@@ -289,8 +313,20 @@
+@@ -294,8 +318,20 @@ def _get_preferred_schemes():
              'home': 'posix_home',
              'user': 'osx_framework_user',
          }
@@ -62,7 +64,7 @@
          'home': 'posix_home',
          'user': 'posix_user',
      }
-@@ -592,7 +628,7 @@
+@@ -602,7 +638,7 @@ def get_config_h_filename():
          else:
              inc_dir = _PROJECT_BASE
      else:
@@ -71,9 +73,11 @@
      return os.path.join(inc_dir, 'pyconfig.h')
  
  
+Index: b/Lib/test/test_sysconfig.py
+===================================================================
 --- a/Lib/test/test_sysconfig.py
 +++ b/Lib/test/test_sysconfig.py
-@@ -336,7 +336,7 @@
+@@ -335,7 +335,7 @@ class TestSysConfig(unittest.TestCase):
          self.assertTrue(os.path.isfile(config_h), config_h)
  
      def test_get_scheme_names(self):

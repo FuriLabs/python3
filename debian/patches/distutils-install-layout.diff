@@ -12,6 +12,8 @@ Description: Debian: Add a distutils option --install-layout=deb
 
 Forwarded: not-needed
 
+Index: b/Lib/site.py
+===================================================================
 --- a/Lib/site.py
 +++ b/Lib/site.py
 @@ -7,12 +7,18 @@
@@ -34,7 +36,7 @@ Forwarded: not-needed
  If a file named "pyvenv.cfg" exists one directory above sys.executable,
  sys.prefix and sys.exec_prefix are set to that directory and
  it is also checked for site-packages (sys.base_prefix and
-@@ -356,6 +362,8 @@
+@@ -356,6 +362,8 @@ def getsitepackages(prefixes=None):
      if prefixes is None:
          prefixes = PREFIXES
  
@@ -43,7 +45,7 @@ Forwarded: not-needed
      for prefix in prefixes:
          if not prefix or prefix in seen:
              continue
-@@ -366,10 +374,21 @@
+@@ -366,10 +374,21 @@ def getsitepackages(prefixes=None):
              if sys.platlibdir != "lib":
                  libdirs.append("lib")
  
@@ -66,9 +68,11 @@ Forwarded: not-needed
                  sitepackages.append(path)
          else:
              sitepackages.append(prefix)
+Index: b/Lib/test/test_site.py
+===================================================================
 --- a/Lib/test/test_site.py
 +++ b/Lib/test/test_site.py
-@@ -285,16 +285,16 @@
+@@ -285,16 +285,16 @@ class HelperFunctionsTests(unittest.Test
          if os.sep == '/':
              # OS X, Linux, FreeBSD, etc
              if sys.platlibdir != "lib":
@@ -90,9 +94,11 @@ Forwarded: not-needed
              self.assertEqual(dirs[-1], wanted)
          else:
              # other platforms
+Index: b/Lib/pydoc.py
+===================================================================
 --- a/Lib/pydoc.py
 +++ b/Lib/pydoc.py
-@@ -512,6 +512,7 @@
+@@ -520,6 +520,7 @@ class Doc:
                                   'marshal', 'posix', 'signal', 'sys',
                                   '_thread', 'zipimport') or
               (file.startswith(basedir) and
@@ -100,6 +106,8 @@ Forwarded: not-needed
                not file.startswith(os.path.join(basedir, 'site-packages')))) and
              object.__name__ not in ('xml.etree', 'test.pydoc_mod')):
              if docloc.startswith(("http://", "https://")):
+Index: b/Lib/_distutils_system_mod.py
+===================================================================
 --- /dev/null
 +++ b/Lib/_distutils_system_mod.py
 @@ -0,0 +1,164 @@

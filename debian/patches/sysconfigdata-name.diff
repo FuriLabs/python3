@@ -22,7 +22,7 @@ Index: b/Makefile.pre.in
 ===================================================================
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
-@@ -2160,8 +2160,10 @@ libinstall:	all $(srcdir)/Modules/xxmodu
+@@ -2194,8 +2194,10 @@ libinstall:	all $(srcdir)/Modules/xxmodu
  			esac; \
  		done; \
  	done
