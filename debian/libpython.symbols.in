@@ -80,9 +80,7 @@
  PyCode_GetCode@Base @SVER@
  PyCode_GetFreevars@Base @SVER@
  PyCode_GetVarnames@Base @SVER@
- PyCode_New@Base @SVER@
  PyCode_NewEmpty@Base @SVER@
- PyCode_NewWithPosOnlyArgs@Base @SVER@
  PyCode_Optimize@Base @SVER@
  PyCode_Type@Base @SVER@
  PyCodec_BackslashReplaceErrors@Base @SVER@
@@ -184,12 +182,14 @@
  PyErr_CheckSignals@Base @SVER@
  PyErr_Clear@Base @SVER@
  PyErr_Display@Base @SVER@
+ PyErr_DisplayException@Base @SVER@
  PyErr_ExceptionMatches@Base @SVER@
  PyErr_Fetch@Base @SVER@
  PyErr_Format@Base @SVER@
  PyErr_FormatV@Base @SVER@
  PyErr_GetExcInfo@Base @SVER@
  PyErr_GetHandledException@Base @SVER@
+ PyErr_GetRaisedException@Base @SVER@
  PyErr_GivenExceptionMatches@Base @SVER@
  PyErr_NewException@Base @SVER@
  PyErr_NewExceptionWithDoc@Base @SVER@
@@ -215,6 +215,7 @@
  PyErr_SetInterruptEx@Base @SVER@
  PyErr_SetNone@Base @SVER@
  PyErr_SetObject@Base @SVER@
+ PyErr_SetRaisedException@Base @SVER@
  PyErr_SetString@Base @SVER@
  PyErr_SyntaxLocation@Base @SVER@
  PyErr_SyntaxLocationEx@Base @SVER@
@@ -320,9 +321,11 @@
  PyExc_Warning@Base @SVER@
  PyExc_ZeroDivisionError@Base @SVER@
  PyExceptionClass_Name@Base @SVER@
+ PyException_GetArgs@Base @SVER@
  PyException_GetCause@Base @SVER@
  PyException_GetContext@Base @SVER@
  PyException_GetTraceback@Base @SVER@
+ PyException_SetArgs@Base @SVER@
  PyException_SetCause@Base @SVER@
  PyException_SetContext@Base @SVER@
  PyException_SetTraceback@Base @SVER@
@@ -390,6 +393,7 @@
  PyGILState_Ensure@Base @SVER@
  PyGILState_GetThisThreadState@Base @SVER@
  PyGILState_Release@Base @SVER@
+ PyGen_GetCode@Base @SVER@
  PyGen_New@Base @SVER@
  PyGen_NewWithQualName@Base @SVER@
  PyGen_Type@Base @SVER@
@@ -440,9 +444,7 @@
  PyInit__posixsubprocess@Base @SVER@
  PyInit__random@Base @SVER@
  PyInit__sha1@Base @SVER@
- PyInit__sha256@Base @SVER@
  PyInit__sha3@Base @SVER@
- PyInit__sha512@Base @SVER@
  PyInit__signal@Base @SVER@
  PyInit__socket@Base @SVER@
  PyInit__sre@Base @SVER@
@@ -1026,6 +1028,12 @@
  PyUnicode_Translate@Base @SVER@
  PyUnicode_Type@Base @SVER@
  PyUnicode_WriteChar@Base @SVER@
+ PyUnstable_Code_GetExtra@Base @SVER@
+ PyUnstable_Code_New@Base @SVER@
+ PyUnstable_Code_NewWithPosOnlyArgs@Base @SVER@
+ PyUnstable_Code_SetExtra@Base @SVER@
+ PyUnstable_Eval_RequestCodeExtraIndex@Base @SVER@
+ PyUnstable_GC_VisitObjects@Base @SVER@
  PyVectorcall_Call@Base @SVER@
  PyVectorcall_Function@Base @SVER@
  PyVectorcall_NARGS@Base @SVER@
@@ -1171,9 +1179,7 @@
  _PyBytes_ReverseFind@Base @SVER@
  _PyCode_CheckLineNumber@Base @SVER@
  _PyCode_ConstantKey@Base @SVER@
- _PyCode_GetExtra@Base @SVER@
  _PyCode_New@Base @SVER@
- _PyCode_SetExtra@Base @SVER@
  _PyCode_Validate@Base @SVER@
  _PyCodecInfo_GetIncrementalDecoder@Base @SVER@
  _PyCodecInfo_GetIncrementalEncoder@Base @SVER@
@@ -1222,12 +1228,14 @@
  _PyDict_SetItem_KnownHash@Base @SVER@
  _PyDict_SizeOf@Base @SVER@
  _PyErr_BadInternalCall@Base @SVER@
+ _PyErr_ChainExceptions1@Base @SVER@
  _PyErr_ChainExceptions@Base @SVER@
  _PyErr_ChainStackItem@Base @SVER@
  _PyErr_CheckSignals@Base @SVER@
  _PyErr_CheckSignalsTstate@Base @SVER@
  _PyErr_Clear@Base @SVER@
  _PyErr_Display@Base @SVER@
+ _PyErr_DisplayException@Base @SVER@
  _PyErr_ExceptionMatches@Base @SVER@
  _PyErr_Fetch@Base @SVER@
  _PyErr_Format@Base @SVER@
@@ -1241,20 +1249,19 @@
  _PyErr_Print@Base @SVER@
  _PyErr_ProgramDecodedTextObject@Base @SVER@
  _PyErr_Restore@Base @SVER@
+ _PyErr_SetFromPyStatus@Base @SVER@
  _PyErr_SetHandledException@Base @SVER@
  _PyErr_SetKeyError@Base @SVER@
  _PyErr_SetNone@Base @SVER@
  _PyErr_SetObject@Base @SVER@
  _PyErr_SetString@Base @SVER@
  _PyErr_StackItemToExcInfoTuple@Base @SVER@
- _PyErr_TrySetFromCause@Base @SVER@
  _PyErr_WriteUnraisableMsg@Base @SVER@
  _PyEval_AddPendingCall@Base @SVER@
  _PyEval_EvalFrameDefault@Base @SVER@
  _PyEval_GetBuiltin@Base @SVER@
  _PyEval_GetBuiltinId@Base @SVER@
  _PyEval_GetSwitchInterval@Base @SVER@
- _PyEval_RequestCodeExtraIndex@Base @SVER@
  _PyEval_SetProfile@Base @SVER@
  _PyEval_SetSwitchInterval@Base @SVER@
  _PyEval_SetTrace@Base @SVER@
@@ -1262,6 +1269,9 @@
  _PyEval_SignalReceived@Base @SVER@
  _PyEval_SliceIndex@Base @SVER@
  _PyEval_SliceIndexNotNone@Base @SVER@
+ _PyExc_CreateExceptionGroup@Base @SVER@
+ _PyExc_PrepReraiseStar@Base @SVER@
+ _PyException_AddNote@Base @SVER@
  _PyFloat_DebugMallocStats@Base @SVER@
  _PyFloat_FormatAdvancedWriter@Base @SVER@
  _PyFrame_IsEntryFrame@Base @SVER@
@@ -1271,6 +1281,8 @@
  _PyGen_Finalize@Base @SVER@
  _PyGen_SetStopIterationValue@Base @SVER@
  _PyImport_AcquireLock@Base @SVER@
+ _PyImport_CheckSubinterpIncompatibleExtensionAllowed@Base @SVER@
+ _PyImport_ClearExtension@Base @SVER@
  _PyImport_FixupBuiltin@Base @SVER@
  _PyImport_FixupExtensionObject@Base @SVER@
  _PyImport_FrozenBootstrap@Base @SVER@
@@ -1317,6 +1329,7 @@
  _PyLong_Frexp@Base @SVER@
  _PyLong_FromByteArray@Base @SVER@
  _PyLong_FromBytes@Base @SVER@
+ _PyLong_FromDigits@Base @SVER@
  _PyLong_FromGid@Base @SVER@
  _PyLong_FromTime_t@Base @SVER@
  _PyLong_FromUid@Base @SVER@
@@ -1614,6 +1627,7 @@
  _Py_LegacyLocaleDetected@Base @SVER@
  _Py_NewInterpreterFromConfig@Base @SVER@
  _Py_NewReference@Base @SVER@
+ _Py_NewReferenceNoTotal@Base @SVER@
  _Py_NoneStruct@Base @SVER@
  _Py_NotImplementedStruct@Base @SVER@
  _Py_PreInitializeFromConfig@Base @SVER@
