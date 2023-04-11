@@ -1,5 +1,8 @@
-python3.12 (3.12.0~a5-2) UNRELEASED; urgency=medium
+python3.12 (3.12.0~a7-1) UNRELEASED; urgency=medium
 
+  * Python 3.12.0 alpha 7 snapshot.
+
+  [ Stefano Rivera ]
   * Explain more ways to pass --break-system-packages to pip.
   * In distutils-install-layout.diff:
     - Restore _distutils_system_mod, this is how we configure setuptools'
@@ -7,7 +10,10 @@ python3.12 (3.12.0~a5-2) UNRELEASED; urgency=medium
       missing.
     - Remove support for patching the stdlib distutils, no longer needed.
 
- -- Stefano Rivera <stefanor@debian.org>  Wed, 08 Mar 2023 11:39:42 -0400
+  [ Matthias Klose ]
+  * Package _sha2 instead of _sha256 and _sha512.
+
+ -- Matthias Klose <doko@debian.org>  Tue, 11 Apr 2023 10:54:41 +0200
 
 python3.12 (3.12.0~a5-1) experimental; urgency=medium
 
