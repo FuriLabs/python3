@@ -12,6 +12,7 @@ python3.12 (3.12.0~a7-1) UNRELEASED; urgency=medium
 
   [ Matthias Klose ]
   * Package _sha2 instead of _sha256 and _sha512.
+  * Don't ship gdbinit anymore, removed upstream.
 
  -- Matthias Klose <doko@debian.org>  Tue, 11 Apr 2023 10:54:41 +0200
 

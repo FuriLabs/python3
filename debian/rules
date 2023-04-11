@@ -1095,7 +1095,7 @@ endif
 		usr/share/man/man1 \
 		$(scriptdir) \
 		$(scriptdir)/doc/html
-	cp -p Misc/HISTORY Misc/README.valgrind Misc/gdbinit \
+	cp -p Misc/HISTORY Misc/README.valgrind \
 		debian/README.maintainers \
 		debian/test_results $(buildd_static)/pybench.log \
 	    $(d_dev)/usr/share/doc/python$(VER)/
@@ -1474,7 +1474,7 @@ binary-indep: build-indep install stamps/stamp-control
 	-dh_icons -i $(dh_args) || dh_iconcache -i $(dh_args)
 	dh_installchangelogs -i $(dh_args)
 	dh_link -i $(dh_args)
-	dh_compress -i $(dh_args) -X.py -X.cls -X.css -X.txt -X.json -X.js -Xobjects.inv -Xgdbinit
+	dh_compress -i $(dh_args) -X.py -X.cls -X.css -X.txt -X.json -X.js -Xobjects.inv
 	dh_fixperms -i $(dh_args)
 
 	: # make python scripts starting with '#!' executable
