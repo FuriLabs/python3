@@ -1590,17 +1590,9 @@ stamps/stamp-patch:
 	  sed -n 's/^# *DP: */  /p' $(patchdir)/$$i; \
 	done >> stamps/pxx
 
-	touch Parser/acceler.c Parser/grammar1.c Parser/listnode.c \
-	  Parser/node.c Parser/parser.c Parser/token.c
-
+	touch Parser/parser.c Parser/token.c
 	touch Objects/obmalloc.c Python/dynamic_annotations.c \
 	  Python/mysnprintf.c Python/pyctype.c
-	@sleep 1
-	touch Grammar/Grammar 
-	@sleep 1
-	touch Include/graminit.h
-	@sleep 1
-	touch Python/graminit.c
 
 	ln -sf site-packages Lib/dist-packages
 
