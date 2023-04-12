@@ -1,3 +1,9 @@
+python3.10 (3.10.11-1) unstable; urgency=medium
+
+  * Python 3.10.11 release.
+
+ -- Matthias Klose <doko@debian.org>  Wed, 12 Apr 2023 07:50:02 +0200
+
 python3.10 (3.10.10-2) unstable; urgency=medium
 
   * Fix removing Debian build flags from _sysconfigdata.
