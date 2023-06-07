@@ -94,7 +94,6 @@ are:
   grp			extension
   hashlib		module
   heapq			module
-  imp			module
   importlib		package
   inspect		module
   io			module

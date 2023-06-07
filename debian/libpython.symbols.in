@@ -704,7 +704,9 @@
  PyObject_GetAttrString@Base @SVER@
  PyObject_GetBuffer@Base @SVER@
  PyObject_GetItem@Base @SVER@
+ PyObject_GetItemData@Base @SVER@
  PyObject_GetIter@Base @SVER@
+ PyObject_GetTypeData@Base @SVER@
  PyObject_HasAttr@Base @SVER@
  PyObject_HasAttrString@Base @SVER@
  PyObject_Hash@Base @SVER@
@@ -910,6 +912,7 @@
  PyType_GetName@Base @SVER@
  PyType_GetQualName@Base @SVER@
  PyType_GetSlot@Base @SVER@
+ PyType_GetTypeDataSize@Base @SVER@
  PyType_IsSubtype@Base @SVER@
  PyType_Modified@Base @SVER@
  PyType_Ready@Base @SVER@
@@ -1034,6 +1037,16 @@
  PyUnstable_Code_SetExtra@Base @SVER@
  PyUnstable_Eval_RequestCodeExtraIndex@Base @SVER@
  PyUnstable_GC_VisitObjects@Base @SVER@
+ PyUnstable_InterpreterFrame_GetCode@Base @SVER@
+ PyUnstable_InterpreterFrame_GetLasti@Base @SVER@
+ PyUnstable_InterpreterFrame_GetLine@Base @SVER@
+ PyUnstable_Long_CompactValue@Base @SVER@
+ PyUnstable_Long_IsCompact@Base @SVER@
+ PyUnstable_Object_GC_NewWithExtraData@Base @SVER@
+ PyUnstable_PerfMapState_Fini@Base @SVER@
+ PyUnstable_PerfMapState_Init@Base @SVER@
+ PyUnstable_Type_AssignVersionTag@Base @SVER@
+ PyUnstable_WritePerfMapEntry@Base @SVER@
  PyVectorcall_Call@Base @SVER@
  PyVectorcall_Function@Base @SVER@
  PyVectorcall_NARGS@Base @SVER@
@@ -1106,6 +1119,7 @@
  Py_Main@Base @SVER@
  Py_MakePendingCalls@Base @SVER@
  Py_NewInterpreter@Base @SVER@
+ Py_NewInterpreterFromConfig@Base @SVER@
  Py_NewRef@Base @SVER@
  Py_NoSiteFlag@Base @SVER@
  Py_NoUserSiteDirectory@Base @SVER@
@@ -1160,8 +1174,8 @@
  _PyAsyncGenASend_Type@Base @SVER@
  _PyAsyncGenAThrow_Type@Base @SVER@
  _PyAsyncGenWrappedValue_Type@Base @SVER@
+ _PyBufferWrapper_Type@Base @SVER@
  _PyByteArray_empty_string@Base @SVER@
- _PyBytesIOBuffer_Type@Base @SVER@
  _PyBytesWriter_Alloc@Base @SVER@
  _PyBytesWriter_Dealloc@Base @SVER@
  _PyBytesWriter_Finish@Base @SVER@
@@ -1187,6 +1201,7 @@
  _PyCodec_EncodeText@Base @SVER@
  _PyCodec_Lookup@Base @SVER@
  _PyCodec_LookupTextEncoding@Base @SVER@
+ _PyCompile_Assemble@Base @SVER@
  _PyCompile_CodeGen@Base @SVER@
  _PyCompile_OptimizeCfg@Base @SVER@
  _PyConfig_AsDict@Base @SVER@
@@ -1430,13 +1445,13 @@
  _PySlice_GetLongIndices@Base @SVER@
  _PyStack_AsDict@Base @SVER@
  _PyState_AddModule@Base @SVER@
- _PyStructSequence_InitBuiltinWithFlags@Base @SVER@
  _PyStructSequence_NewType@Base @SVER@
  _PySys_GetAttr@Base @SVER@
  _PySys_GetSizeOf@Base @SVER@
  _PyThreadState_Bind@Base @SVER@
  _PyThreadState_DeleteCurrent@Base @SVER@
  _PyThreadState_DeleteExcept@Base @SVER@
+ _PyThreadState_GetCurrent@Base @SVER@
  _PyThreadState_GetDict@Base @SVER@
  _PyThreadState_Init@Base @SVER@
  _PyThreadState_New@Base @SVER@
@@ -1482,7 +1497,18 @@
  _PyToken_TwoChars@Base @SVER@
  _PyTraceBack_FromFrame@Base @SVER@
  _PyTraceBack_Print_Indented@Base @SVER@
+ _PyTraceMalloc_ClearTraces@Base @SVER@
+ _PyTraceMalloc_GetMemory@Base @SVER@
+ _PyTraceMalloc_GetObjectTraceback@Base @SVER@
  _PyTraceMalloc_GetTraceback@Base @SVER@
+ _PyTraceMalloc_GetTracebackLimit@Base @SVER@
+ _PyTraceMalloc_GetTracedMemory@Base @SVER@
+ _PyTraceMalloc_GetTraces@Base @SVER@
+ _PyTraceMalloc_Init@Base @SVER@
+ _PyTraceMalloc_IsTracing@Base @SVER@
+ _PyTraceMalloc_ResetPeak@Base @SVER@
+ _PyTraceMalloc_Start@Base @SVER@
+ _PyTraceMalloc_Stop@Base @SVER@
  _PyTraceback_Add@Base @SVER@
  _PyTrash_begin@Base @SVER@
  _PyTrash_cond@Base @SVER@
@@ -1492,6 +1518,7 @@
  _PyTuple_Resize@Base @SVER@
  _PyType_CalculateMetaclass@Base @SVER@
  _PyType_CheckConsistency@Base @SVER@
+ _PyType_GetDict@Base @SVER@
  _PyType_GetDocFromInternalDoc@Base @SVER@
  _PyType_GetTextSignatureFromInternalDoc@Base @SVER@
  _PyType_Lookup@Base @SVER@
@@ -1572,6 +1599,7 @@
  _PyWideStringList_Clear@Base @SVER@
  _PyWideStringList_Copy@Base @SVER@
  _PyWideStringList_Extend@Base @SVER@
+ _Py_AtExit@Base @SVER@
  _Py_BreakPoint@Base @SVER@
  _Py_BuildValue_SizeT@Base @SVER@
  _Py_CheckFunctionResult@Base @SVER@
@@ -1601,7 +1629,6 @@
  _Py_FatalRefcountErrorFunc@Base @SVER@
  _Py_FdIsInteractive@Base @SVER@
  _Py_FreeCharPArray@Base @SVER@
- _Py_GetAllocatedBlocks@Base @SVER@
  _Py_GetConfig@Base @SVER@
  _Py_GetConfigsAsDict@Base @SVER@
  _Py_GetEnv@Base @SVER@
@@ -1623,9 +1650,9 @@
  _Py_InitializeMain@Base @SVER@
  _Py_IsCoreInitialized@Base @SVER@
  _Py_IsFinalizing@Base @SVER@
+ _Py_IsInterpreterFinalizing@Base @SVER@
  _Py_IsLocaleCoercionTarget@Base @SVER@
  _Py_LegacyLocaleDetected@Base @SVER@
- _Py_NewInterpreterFromConfig@Base @SVER@
  _Py_NewReference@Base @SVER@
  _Py_NewReferenceNoTotal@Base @SVER@
  _Py_NoneStruct@Base @SVER@
@@ -1666,8 +1693,6 @@
  _Py_device_encoding@Base @SVER@
  _Py_dg_dtoa@Base @SVER@
  _Py_dg_freedtoa@Base @SVER@
- _Py_dg_infinity@Base @SVER@
- _Py_dg_stdnan@Base @SVER@
  _Py_dg_strtod@Base @SVER@
  _Py_dup@Base @SVER@
  _Py_fopen_obj@Base @SVER@

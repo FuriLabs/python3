@@ -347,7 +347,7 @@ PROFILE_EXCLUDES += \
 	test_multiprocessing_fork test_multiprocessing_forkserver test_multiprocessing_spawn
 
 # relying on external dependencies
-PROFILE_EXCLUDES += test_cppext
+PROFILE_EXCLUDES += test_cppext test_tools
 
 # TODO: update profiled-build.diff to support --next
 #       --next=20
@@ -861,6 +861,7 @@ clean: control-file
 	    rm -f $$f2; \
 	  fi; \
 	done
+	rm -rf debian/__pycache__
 
 	dh_clean
 

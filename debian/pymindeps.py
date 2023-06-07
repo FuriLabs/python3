@@ -111,6 +111,7 @@ excluded_imports = {
     'collections': set(('cPickle', 'pickle', 'doctest')),
     'compileall': set(('concurrent', 'multiprocessing')),
     'copy': set(('reprlib',)),
+    'datetime': set(('_pydatetime',)),
     #'functools': set(('_dummy_thread',)),
     'hashlib': set(('logging', '_hashlib')),
     #'hashlib': set(('_hashlib', '_md5', '_sha', '_sha256','_sha512',)),

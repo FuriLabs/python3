@@ -4,13 +4,11 @@ Description: Allow building with Sphinx >= 3.2
 Bug-cython: https://bugs.python.org/issue40204
 Origin: upstream, https://github.com/python/cpython/commit/423e77d6de497931585d1883805a9e3fa4096b0b
 
-Index: b/Doc/conf.py
-===================================================================
 --- a/Doc/conf.py
 +++ b/Doc/conf.py
-@@ -82,6 +82,10 @@ smartquotes_excludes = {
- # Avoid a warning with Sphinx >= 2.0
- master_doc = 'contents'
+@@ -96,6 +96,10 @@ gettext_additional_targets = [
+     'index',
+ ]
  
 +# Allow to build with Sphinx >= 3.2
 +c_allow_pre_v3 = True
@@ -19,14 +17,12 @@ Index: b/Doc/conf.py
  # Options for HTML output
  # -----------------------
  
-Index: b/Doc/Makefile
-===================================================================
 --- a/Doc/Makefile
 +++ b/Doc/Makefile
-@@ -13,7 +13,7 @@ JOBS         = auto
- PAPER        =
+@@ -14,7 +14,7 @@ PAPER        =
  SOURCES      =
  DISTVERSION  = $(shell $(PYTHON) tools/extensions/patchlevel.py)
+ REQUIREMENTS = requirements.txt
 -SPHINXERRORHANDLING = -W
 +#SPHINXERRORHANDLING = -W
  

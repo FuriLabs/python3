@@ -4,8 +4,6 @@ Description: Disable ensurepip for the system installation
 
 Forwarded: not-needed
 
-Index: b/Lib/ensurepip/__init__.py
-===================================================================
 --- a/Lib/ensurepip/__init__.py
 +++ b/Lib/ensurepip/__init__.py
 @@ -7,6 +7,34 @@ import sysconfig
@@ -42,8 +40,8 @@ Index: b/Lib/ensurepip/__init__.py
 +
  
  __all__ = ["version", "bootstrap"]
- _PACKAGE_NAMES = ('setuptools', 'pip')
-@@ -146,6 +174,11 @@ def _bootstrap(*, root=None, upgrade=Fal
+ _PACKAGE_NAMES = ('pip',)
+@@ -144,6 +172,11 @@ def _bootstrap(*, root=None, upgrade=Fal
  
      Note that calling this function will alter both sys.path and os.environ.
      """
@@ -55,8 +53,6 @@ Index: b/Lib/ensurepip/__init__.py
      if altinstall and default_pip:
          raise ValueError("Cannot use altinstall and default_pip together")
  
-Index: b/Lib/venv/__init__.py
-===================================================================
 --- a/Lib/venv/__init__.py
 +++ b/Lib/venv/__init__.py
 @@ -356,8 +356,26 @@ class EnvBuilder:

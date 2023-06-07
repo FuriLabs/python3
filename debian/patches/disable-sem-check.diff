@@ -4,11 +4,9 @@ Description: Debian: Don't autodetect whether semephores are present
 
 Forwarded: not-needed
 
-Index: b/configure.ac
-===================================================================
 --- a/configure.ac
 +++ b/configure.ac
-@@ -5625,10 +5625,15 @@ AC_CACHE_CHECK([whether POSIX semaphores
+@@ -5687,10 +5687,15 @@ AC_CACHE_CHECK([whether POSIX semaphores
    [ac_cv_posix_semaphores_enabled=yes])
  )
  AS_VAR_IF([ac_cv_posix_semaphores_enabled], [no], [

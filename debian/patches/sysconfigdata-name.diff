@@ -5,8 +5,6 @@ Description: Don't encode the MACHDEP into the _sysconfigdata file name.
 Bug-cpython: https://bugs.python.org/issue37561
 Forwarded: no
 
-Index: b/Lib/sysconfig.py
-===================================================================
 --- a/Lib/sysconfig.py
 +++ b/Lib/sysconfig.py
 @@ -498,7 +498,7 @@ def _get_sysconfigdata_name():
@@ -18,11 +16,9 @@ Index: b/Lib/sysconfig.py
      )
  
  
-Index: b/Makefile.pre.in
-===================================================================
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
-@@ -2194,8 +2194,10 @@ libinstall:	all $(srcdir)/Modules/xxmodu
+@@ -2306,8 +2306,10 @@ libinstall:	all $(srcdir)/Modules/xxmodu
  			esac; \
  		done; \
  	done
@@ -35,11 +31,9 @@ Index: b/Makefile.pre.in
  	$(INSTALL_DATA) $(srcdir)/LICENSE $(DESTDIR)$(LIBDEST)/LICENSE.txt
  	@ # Build PYC files for the 3 optimization levels (0, 1, 2)
  	-PYTHONPATH=$(DESTDIR)$(LIBDEST) $(RUNSHARED) \
-Index: b/configure.ac
-===================================================================
 --- a/configure.ac
 +++ b/configure.ac
-@@ -162,7 +162,7 @@ AC_ARG_WITH(
+@@ -161,7 +161,7 @@ AC_ARG_WITH(
      dnl Build Python interpreter is used for regeneration and freezing.
      ac_cv_prog_PYTHON_FOR_REGEN=$with_build_python
      PYTHON_FOR_FREEZE="$with_build_python"

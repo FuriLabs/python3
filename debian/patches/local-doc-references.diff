@@ -2,11 +2,9 @@ Description: Debian: Reference the local path to the documentation
 
 Forwarded: not-needed
 
-Index: b/Doc/tools/templates/layout.html
-===================================================================
 --- a/Doc/tools/templates/layout.html
 +++ b/Doc/tools/templates/layout.html
-@@ -31,7 +31,7 @@
+@@ -26,7 +26,7 @@
  {% endblock %}
  
  {% block extrahead %}
@@ -15,8 +13,6 @@ Index: b/Doc/tools/templates/layout.html
      {% if builder != "htmlhelp" %}
        {% if pagename == 'whatsnew/changelog' and not embedded %}
        <script type="text/javascript" src="{{ pathto('_static/changelog_search.js', 1) }}"></script>{% endif %}
-Index: b/Lib/idlelib/help.html
-===================================================================
 --- a/Lib/idlelib/help.html
 +++ b/Lib/idlelib/help.html
 @@ -28,7 +28,7 @@

@@ -5,8 +5,6 @@ Description: Debian: Configure multiarch tuple.
 
 Forwarded: no
 
-Index: b/Lib/sysconfig.py
-===================================================================
 --- a/Lib/sysconfig.py
 +++ b/Lib/sysconfig.py
 @@ -710,6 +710,12 @@ def _init_config_vars():
@@ -22,11 +20,9 @@ Index: b/Lib/sysconfig.py
      # Always convert srcdir to an absolute path
      srcdir = _CONFIG_VARS.get('srcdir', _PROJECT_BASE)
      if os.name == 'posix':
-Index: b/Makefile.pre.in
-===================================================================
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
-@@ -1318,6 +1318,7 @@ Modules/signalmodule.o: $(srcdir)/Module
+@@ -1374,6 +1374,7 @@ Modules/signalmodule.o: $(srcdir)/Module
  
  Python/dynload_shlib.o: $(srcdir)/Python/dynload_shlib.c Makefile
  	$(CC) -c $(PY_CORE_CFLAGS) \
