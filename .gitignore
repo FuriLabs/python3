@@ -10,6 +10,8 @@ locales
 
 .azure-pipelines
 .editorconfig
+.mailmap
+.readthedocs.yml
 CODE_OF_CONDUCT.md
 Demo
 Doc
