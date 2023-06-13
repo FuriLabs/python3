@@ -1036,6 +1036,7 @@
  PyUnstable_Code_NewWithPosOnlyArgs@Base @SVER@
  PyUnstable_Code_SetExtra@Base @SVER@
  PyUnstable_Eval_RequestCodeExtraIndex@Base @SVER@
+ PyUnstable_Exc_PrepReraiseStar@Base @SVER@
  PyUnstable_GC_VisitObjects@Base @SVER@
  PyUnstable_InterpreterFrame_GetCode@Base @SVER@
  PyUnstable_InterpreterFrame_GetLasti@Base @SVER@
