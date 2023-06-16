@@ -1135,6 +1135,7 @@ endif
 	: # The complete testsuite into $(p_ltst)
 	$(dh_compat2) dh_movefiles -p$(p_ltst) --sourcedir=$(d) \
 		$(scriptdir)/test
+	rm -f $(d_ltst)/$(scriptdir)/test/test_ctypes/test_macholib.py
 
 	: # fixed upstream ...
 	chmod -x $(d_ltst)/$(scriptdir)/test/{test_dbm_gnu,test_dbm_ndbm}.py

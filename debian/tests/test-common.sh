@@ -20,8 +20,8 @@ TESTOPTS="-j 1 -w -uall,-network,-urlfetch,-gui"
 #TESTEXCLUSIONS="$TESTEXCLUSIONS test_dbm"
 
 # test_ensurepip: not yet installed, http://bugs.debian.org/732703
-# ... and then test_venv fails too
-TESTEXCLUSIONS="$TESTEXCLUSIONS test_ensurepip test_venv "
+# ... and then test_venv and test_cppext fail too
+TESTEXCLUSIONS="$TESTEXCLUSIONS test_ensurepip test_venv test_cppext"
 
 # test_lib2to3: see https://bugs.python.org/issue34286
 TESTEXCLUSIONS="$TESTEXCLUSIONS test_lib2to3"
