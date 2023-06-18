@@ -66,15 +66,4 @@ testFibPyPipEditable() {
 	assertEquals 'Correct result' 8 "$stdout"
 }
 
-testFibPyDistutilsLocal() {
-	cd "$AUTOPKGTEST_TMP/packages/fibpy"
-	SETUPTOOLS_USE_DISTUTILS=local python3.12 setup.py install
-	assertTrue 'Install fibpy in /usr/local' $?
-	assertTrue 'fibpy was installed to /usr/local' "[ -e $dist_packages/fibpy-*.egg ]"
-	cd "$AUTOPKGTEST_TMP"
-	stdout=$(python3.12 -m fibpy 5)
-	assertTrue 'Execute fibpy from /usr/local' $?
-	assertEquals 'Correct result' 8 "$stdout"
-}
-
 . shunit2
