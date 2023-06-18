@@ -10,7 +10,7 @@ VP="$AUTOPKGTEST_TMP/ve/bin/python"
 
 tearDown() {
 	# Remove any fibpy/fibc installed in the venv
-	$VP -m pip uninstall --yes fibpy fibc
+	$VP -m pip uninstall --yes fibpy fibc setuptools
 	rm -f $site_packages/fibpy.egg-link
 }
 
@@ -21,6 +21,7 @@ testVirtualenvLayout() {
 
 testFibPy() {
 	cd "$AUTOPKGTEST_TMP/packages/fibpy"
+	$VP -m pip install --no-index -f /usr/share/python-wheels/ setuptools
 	$VP setup.py install
 	assertTrue 'Install fibpy in a virtualenv' $?
 	assertTrue 'fibpy was installed to virtualenv' "[ -e $site_packages/fibpy-*.egg ]"
@@ -32,6 +33,7 @@ testFibPy() {
 
 testFibC() {
 	cd "$AUTOPKGTEST_TMP/packages/fibc"
+	$VP -m pip install --no-index -f /usr/share/python-wheels/ setuptools
 	$VP setup.py install
 	assertTrue 'Install fibc in a virtualenv' $?
 	assertTrue 'fibc was installed to virtualenv' "[ -e $site_packages/fibc-*.egg ]"
@@ -43,6 +45,7 @@ testFibC() {
 
 testFibPyDevelop() {
 	cd "$AUTOPKGTEST_TMP/packages/fibpy"
+	$VP -m pip install --no-index -f /usr/share/python-wheels/ setuptools
 	$VP setup.py develop
 	assertTrue 'Install editable fibpy in a virtualenv' $?
 	assertTrue 'fibpy was linked to virtualenv' "[ -e $site_packages/fibpy.egg-link ]"
@@ -54,7 +57,8 @@ testFibPyDevelop() {
 
 testFibPyPip() {
 	cd "$AUTOPKGTEST_TMP"
-	$VP -m pip install --no-build-isolation -v "$AUTOPKGTEST_TMP/packages/fibpy"
+	$VP -m pip install --no-index -f /usr/share/python-wheels/ \
+	    -v "$AUTOPKGTEST_TMP/packages/fibpy"
 	assertTrue 'Install fibpy via pip in a virtualenv' $?
 	assertTrue 'fibpy was installed to virtualenv' "[ -e $site_packages/fibpy.py ]"
 	stdout=$($VP -m fibpy 5)
@@ -64,7 +68,8 @@ testFibPyPip() {
 
 testFibPyPipEditable() {
 	cd "$AUTOPKGTEST_TMP"
-	$VP -m pip install --no-build-isolation -v -e "$AUTOPKGTEST_TMP/packages/fibpy"
+	$VP -m pip install --no-index -f /usr/share/python-wheels/ \
+	    -v -e "$AUTOPKGTEST_TMP/packages/fibpy"
 	assertTrue 'Install editable fibpy via pip in a virtualenv' $?
 	assertTrue 'fibpy was linked to virtualenv' "[ -e $site_packages/__editable__.fibpy-42.0.0.pth ]"
 	stdout=$($VP -m fibpy 5)

@@ -77,10 +77,16 @@ Tests: module-install-venv
 Depends: build-essential,
   python3.12-dev,
   python3.12-venv,
+  python3-setuptools-whl,
   python3-wheel-whl,
   shunit2
 Restrictions: allow-stderr
 
 Tests: module-install-virtualenv
-Depends: build-essential, python3.12-dev, shunit2, virtualenv
+Depends: build-essential,
+  python3.12-dev,
+  shunit2,
+  virtualenv,
+  python3-setuptools-whl,
+  python3-wheel-whl
 Restrictions: allow-stderr
