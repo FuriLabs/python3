@@ -18,15 +18,15 @@
          paths = []
          for arg in args:
              if isinstance(arg, PurePath):
-@@ -734,6 +734,7 @@ class PurePath(object):
+@@ -736,6 +736,7 @@ class PurePath(object):
+     def is_absolute(self):
          """True if the path is absolute (has both a root and, if applicable,
          a drive)."""
-         # ntpath.isabs() is defective - see GH-44626 .
 +        import ntpath
          if self._flavour is ntpath:
+             # ntpath.isabs() is defective - see GH-44626.
              return bool(self.drive and self.root)
-         return self._flavour.isabs(self._raw_path)
-@@ -792,6 +793,7 @@ class PureWindowsPath(PurePath):
+@@ -802,6 +803,7 @@ class PureWindowsPath(PurePath):
      On a Windows system, instantiating a PurePath should return this object.
      However, you can also instantiate it directly on any system.
      """
