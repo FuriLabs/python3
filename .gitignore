@@ -125,6 +125,7 @@ debian/python3.11-minimal.postinst
 debian/python3.11-minimal.postrm
 debian/python3.11-minimal.preinst
 debian/python3.11-minimal.prerm
+debian/python3.11-nopie.overrides
 debian/python3.11-nopie.preinst
 debian/python3.11-nopie.postrm
 debian/python3.11.desktop
