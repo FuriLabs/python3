@@ -1,2 +1,0 @@
-# pyexpat.c contains expat error messages that lintian mis-attributes to embedding
-python3.11-nopie binary: embedded-library

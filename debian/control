@@ -65,7 +65,7 @@ Multi-Arch: same
 Priority: optional
 Pre-Depends: ${misc:Pre-Depends}
 Depends: libpython3.11-minimal (= ${binary:Version}),
-  media-types | mime-support,
+  media-types | mime-support, tzdata,
   ${shlibs:Depends}, ${misc:Depends}
 Breaks: python3-gdbm (<< 3.9.9-1~)
 Replaces: python3-gdbm (<< 3.9.9-1~)
