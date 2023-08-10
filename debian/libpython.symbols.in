@@ -905,6 +905,7 @@
  PyType_FromSpecWithBases@Base @SVER@
  PyType_GenericAlloc@Base @SVER@
  PyType_GenericNew@Base @SVER@
+ PyType_GetDict@Base @SVER@
  PyType_GetFlags@Base @SVER@
  PyType_GetModule@Base @SVER@
  PyType_GetModuleByDef@Base @SVER@
@@ -1278,6 +1279,7 @@
  _PyEval_GetBuiltin@Base @SVER@
  _PyEval_GetBuiltinId@Base @SVER@
  _PyEval_GetSwitchInterval@Base @SVER@
+ _PyEval_MakePendingCalls@Base @SVER@
  _PyEval_SetProfile@Base @SVER@
  _PyEval_SetSwitchInterval@Base @SVER@
  _PyEval_SetTrace@Base @SVER@
@@ -1370,6 +1372,7 @@
  _PyMem_Strdup@Base @SVER@
  _PyMethodWrapper_Type@Base @SVER@
  _PyModuleSpec_IsInitializing@Base @SVER@
+ _PyModule_Add@Base @SVER@
  _PyModule_Clear@Base @SVER@
  _PyModule_ClearDict@Base @SVER@
  _PyModule_CreateInitialized@Base @SVER@

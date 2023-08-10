@@ -1,8 +1,16 @@
-python3.12 (3.12.0~b3-2) UNRELEASED; urgency=medium
+python3.12 (3.12.0~rc1-1) unstable; urgency=medium
 
+  * Python 3.12.0 release candidate 1.
+  * Update symbols files.
+
+ -- Matthias Klose <doko@debian.org>  Wed, 09 Aug 2023 16:24:31 +0200
+
+python3.12 (3.12.0~b4-1) unstable; urgency=medium
+
+  * Python 3.12.0 beta 3 snapshot.
   * libpython3.12-stdlib: Depend on tzdata. Addresses: #1037168.
 
- -- Matthias Klose <doko@debian.org>  Thu, 06 Jul 2023 08:45:07 +0200
+ -- Matthias Klose <doko@debian.org>  Thu, 13 Jul 2023 16:24:02 +0200
 
 python3.12 (3.12.0~b3-1) unstable; urgency=medium
 
