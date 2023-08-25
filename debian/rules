@@ -100,7 +100,7 @@ ifneq (,$(filter valgrind, $(shell dpkg-query --show -f '$${Depends}\n' valgrind
 endif
 
 VER=3.11
-SVER=3.11.0
+SVER=3.11.5
 NVER=3.12
 PVER=python$(VER)
 EXT_VER=$(subst .,,$(VER))
