@@ -1,6 +1,7 @@
 python3.11 (3.11.5-2) unstable; urgency=medium
 
   * libpython3.11-stdlib: Also depend on tzdata-legacy. Closes: #1050530.
+  * Add loongarch support. Closes: #1049963.
 
  -- Matthias Klose <doko@debian.org>  Sat, 26 Aug 2023 20:28:17 +0200
 
