@@ -1,3 +1,10 @@
+python3.11 (3.11.5-3) UNRELEASED; urgency=medium
+
+  * Add proposed patch to avoid tzdata-legacy, and drop again the
+    dependency on it. See  https://github.com/python/cpython/pull/108533.
+
+ -- Matthias Klose <doko@debian.org>  Tue, 29 Aug 2023 14:15:20 +0200
+
 python3.11 (3.11.5-2) unstable; urgency=medium
 
   * libpython3.11-stdlib: Also depend on tzdata-legacy. Closes: #1050530.
