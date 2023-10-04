@@ -2,6 +2,7 @@ Source: python3.12
 Section: python
 Priority: optional
 Maintainer: Matthias Klose <doko@debian.org>
+Uploaders: Stefano Rivera <stefanor@debian.org>
 Build-Depends: debhelper (>= 11), dpkg-dev (>= 1.17.11),
   quilt, autoconf,
   lsb-release, sharutils,
