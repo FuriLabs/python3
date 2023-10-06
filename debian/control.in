@@ -2,6 +2,7 @@ Source: @PVER@
 Section: python
 Priority: optional
 Maintainer: Matthias Klose <doko@debian.org>
+Uploaders: Stefano Rivera <stefanor@debian.org>
 Build-Depends: debhelper (>= 11), @bd_dpkgdev@
   quilt, autoconf,
   lsb-release, sharutils,
