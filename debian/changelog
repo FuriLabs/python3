@@ -1,3 +1,9 @@
+python3.11 (3.11.6-3) unstable; urgency=medium
+
+  * Fix installation of libpython3.11-testsuite.
+
+ -- Matthias Klose <doko@debian.org>  Sun, 08 Oct 2023 07:06:43 +0200
+
 python3.11 (3.11.6-2) unstable; urgency=medium
 
   * Fix installation of libpython3.11-testsuite.
