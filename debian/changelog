@@ -1,3 +1,10 @@
+python3.11 (3.11.6-4) UNRELEASED; urgency=medium
+
+  [ Stefano Rivera ]
+  * Depend on netbase in libpython3.11-stdlib. Closes: #1055172.
+
+ -- Stefano Rivera <stefanor@debian.org>  Sat, 04 Nov 2023 09:50:07 +0200
+
 python3.11 (3.11.6-3) unstable; urgency=medium
 
   * Fix installation of libpython3.11-testsuite.
