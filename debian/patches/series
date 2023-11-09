@@ -1,4 +1,4 @@
-#git-updates.diff
+git-updates.diff
 #FIXME deb-setup.diff
 deb-locations.diff
 distutils-install-layout.diff
@@ -31,4 +31,3 @@ destshared-location.diff
 fix-py_compile.diff
 ntpath-import.diff
 python3.12-updates.diff
-108533.diff
