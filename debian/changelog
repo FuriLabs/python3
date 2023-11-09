@@ -4,6 +4,7 @@ python3.12 (3.12.0-2) unstable; urgency=medium
 
   [ Stefano Rivera ]
   * Add myself as an uploader.
+  * Depend on netbase in libpython3.12-stdlib. Closes: #1055172.
 
   [ Matthias Klose ]
   * Fix some lintian warnings.
