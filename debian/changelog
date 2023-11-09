@@ -1,4 +1,4 @@
-python3.12 (3.12.0-2) unstable; urgency=medium
+python3.12 (3.12.0-3) unstable; urgency=medium
 
   * Update to the 3.12 branch 2023-11-09.
 
@@ -10,7 +10,7 @@ python3.12 (3.12.0-2) unstable; urgency=medium
   * Fix some lintian warnings.
   * Add loong64 to the multiarch header file. Closes: #1053835.
 
- -- Matthias Klose <doko@debian.org>  Thu, 09 Nov 2023 10:49:38 +0100
+ -- Matthias Klose <doko@debian.org>  Thu, 09 Nov 2023 11:45:17 +0100
 
 python3.12 (3.12.0-1) unstable; urgency=medium
 
