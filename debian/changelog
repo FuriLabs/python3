@@ -5,6 +5,7 @@ python3.12 (3.12.0-2) UNRELEASED; urgency=medium
 
   [ Matthias Klose ]
   * Fix some lintian warnings.
+  * Add loong64 to the multiarch header file. Closes: #1053835.
 
  -- Matthias Klose <doko@debian.org>  Fri, 06 Oct 2023 07:40:21 +0200
 
