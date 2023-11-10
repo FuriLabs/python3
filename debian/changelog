@@ -1,3 +1,9 @@
+python3.12 (3.12.0-4) unstable; urgency=medium
+
+  * Add breaks/replaces for typinganndata move. Closes: #1055680.
+
+ -- Matthias Klose <doko@debian.org>  Fri, 10 Nov 2023 12:33:26 +0100
+
 python3.12 (3.12.0-3) unstable; urgency=medium
 
   * Update to the 3.12 branch 2023-11-09.

@@ -67,8 +67,8 @@ Pre-Depends: ${misc:Pre-Depends}
 Depends: libpython3.12-minimal (= ${binary:Version}),
   media-types | mime-support, netbase, tzdata,
   ${shlibs:Depends}, ${misc:Depends}
-Breaks: python3-gdbm (<< 3.9.9-1~)
-Replaces: python3-gdbm (<< 3.9.9-1~)
+Breaks: python3-gdbm (<< 3.9.9-1~), libpython3.12-testsuite (<< 3.12.0-3~)
+Replaces: python3-gdbm (<< 3.9.9-1~), libpython3.12-testsuite (<< 3.12.0-3~)
 Description: Interactive high-level object-oriented language (standard library, version 3.12)
  Python is a high-level, interactive, object-oriented language. Its 3.12 version
  includes an extensive class library with lots of goodies for
