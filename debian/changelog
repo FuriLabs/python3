@@ -1,4 +1,4 @@
-python3.12 (3.12.0-5) UNRELEASED; urgency=medium
+python3.12 (3.12.0-5) unstable; urgency=medium
 
   * libpython3.12-testsuite: Don't attempt to byte-compile files name
     badsyntax_*. Update path for tokenizedata's bad_coding samples.
@@ -7,7 +7,7 @@ python3.12 (3.12.0-5) UNRELEASED; urgency=medium
   * Replace (currently disabled) hurd_kfreebsd_thread_native_id.diff with
     simply ignoring the relevant symbol on non-Linux. Closes: #1055820.
 
- -- Stefano Rivera <stefanor@debian.org>  Sun, 12 Nov 2023 11:41:09 +0200
+ -- Stefano Rivera <stefanor@debian.org>  Sun, 12 Nov 2023 15:37:07 +0200
 
 python3.12 (3.12.0-4) unstable; urgency=medium
 
