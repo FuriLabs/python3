@@ -1,3 +1,10 @@
+python3.12 (3.12.0-5) UNRELEASED; urgency=medium
+
+  * libpython3.12-testsuite: Don't attempt to byte-compile files name
+    badsyntax_*.
+
+ -- Stefano Rivera <stefanor@debian.org>  Sun, 12 Nov 2023 11:41:09 +0200
+
 python3.12 (3.12.0-4) unstable; urgency=medium
 
   * Add breaks/replaces for typinganndata move. Closes: #1055680.
