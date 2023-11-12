@@ -1,7 +1,7 @@
 python3.12 (3.12.0-5) UNRELEASED; urgency=medium
 
   * libpython3.12-testsuite: Don't attempt to byte-compile files name
-    badsyntax_*.
+    badsyntax_*. Update path for tokenizedata's bad_coding samples.
   * libpython3.12-testsuite: Ignore warnings during byte compilation.
     Closes: #1040279.
   * Replace (currently disabled) hurd_kfreebsd_thread_native_id.diff with
