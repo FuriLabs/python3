@@ -1,3 +1,9 @@
+python3.12 (3.12.0-6) UNRELEASED; urgency=medium
+
+  * Fix syntax error in the python3.12-dbg-config script.
+
+ -- Matthias Klose <doko@debian.org>  Sun, 19 Nov 2023 12:32:56 +0100
+
 python3.12 (3.12.0-5) unstable; urgency=medium
 
   * libpython3.12-testsuite: Don't attempt to byte-compile files name
