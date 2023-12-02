@@ -1,3 +1,11 @@
+python3.12 (3.12.0-7) unstable; urgency=medium
+
+  * Update to the 3.12 branch 2023-12-02.
+  * Identify as version "3.12.0" instead of "3.12.0+", confusing some
+    third party packages.
+
+ -- Matthias Klose <doko@debian.org>  Sat, 02 Dec 2023 13:35:02 +0100
+
 python3.12 (3.12.0-6) unstable; urgency=medium
 
   * Fix syntax error in the python3.12-dbg-config script.
