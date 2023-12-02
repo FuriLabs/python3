@@ -4,6 +4,7 @@ python3.12 (3.12.0-7) unstable; urgency=medium
   * Identify as version "3.12.0" instead of "3.12.0+", confusing some
     third party packages.
   * Remove references to the avr architecture. Closes: #1056761.
+  * Fix more shebangs. Closes: #1057192.
 
  -- Matthias Klose <doko@debian.org>  Sat, 02 Dec 2023 13:35:02 +0100
 

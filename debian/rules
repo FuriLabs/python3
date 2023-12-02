@@ -1171,26 +1171,6 @@ endif
 		usr/lib/python$(VER)/idlelib
 	cp -p debian/idle-$(PVER).1 $(d_idle)/usr/share/man/man1/
 
-	: # Replace all '#!' calls to python with $(PY_INTERPRETER)
-	: # and make them executable
-	for p in $(shell dh_listpackages); do \
-	[ -d debian/$$p ] || continue; \
-	for i in `find debian/$$p -type f`; do \
-	  sed '1s,#!.*python[^ ]*\(.*\),#! $(PY_INTERPRETER)\1,' \
-		$$i > $$i.temp; \
-	  if cmp --quiet $$i $$i.temp; then \
-	    rm -f $$i.temp; \
-	  else \
-	    if [ ! -x $$i ]; then \
-	      echo "fixed x file permissions: $$i"; \
-	    fi; \
-	    mv -f $$i.temp $$i; \
-	    chmod 755 $$i; \
-	    echo "fixed interpreter: $$i"; \
-	  fi; \
-	done; \
-	done
-
 	: # Move the docs into $(p_base)'s /usr/share/doc/$(PVER) directory,
 	: # all other packages only have a copyright file.
 	dh_installdocs -p$(p_base) \
@@ -1237,6 +1217,26 @@ endif
 	mkdir -p $(d)/usr/lib/python3/dist-packages
 	(cd $(d) && tar cf - .) | (cd $(d_base) && tar xpf -)
 	rm -f $(d_base)/usr/bin/python
+
+	: # Replace all '#!' calls to python with $(PY_INTERPRETER)
+	: # and make them executable
+	for p in $(shell dh_listpackages); do \
+	[ -d debian/$$p ] || continue; \
+	for i in `find debian/$$p -type f`; do \
+	  sed '1s,#!.*python[^ ]*\(.*\),#! $(PY_INTERPRETER)\1,' \
+		$$i > $$i.temp; \
+	  if cmp --quiet $$i $$i.temp; then \
+	    rm -f $$i.temp; \
+	  else \
+	    if [ ! -x $$i ]; then \
+	      echo "fixed x file permissions: $$i"; \
+	    fi; \
+	    mv -f $$i.temp $$i; \
+	    chmod 755 $$i; \
+	    echo "fixed interpreter: $$i"; \
+	  fi; \
+	done; \
+	done
 
 	: # Install menu icon
 	dh_installdirs -p$(p_base) usr/share/pixmaps
