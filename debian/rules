@@ -440,7 +440,7 @@ common_configure_args = \
 		--with-ssl-default-suites=openssl \
 		MKDIR_P="/bin/mkdir -p" \
 
-ifneq (,$(filter $(DEB_HOST_ARCH), avr32 or1k))
+ifneq (,$(filter $(DEB_HOST_ARCH), or1k))
   common_configure_args += --without-ffi
 else
   common_configure_args += --with-system-ffi
@@ -597,11 +597,11 @@ endif
 ifneq (,$(filter $(DEB_HOST_ARCH),arm64))
   TEST_EXCLUDES += test_faulthandler
 endif
-ifneq (,$(filter $(DEB_HOST_ARCH), arm avr32))
+ifneq (,$(filter $(DEB_HOST_ARCH), arm))
   TEST_EXCLUDES += test_ctypes
 endif
 TEST_EXCLUDES += test_socket
-ifneq (,$(filter $(DEB_HOST_ARCH), arm armel avr32 m68k))
+ifneq (,$(filter $(DEB_HOST_ARCH), arm armel m68k))
   ifeq ($(on_buildd),yes)
     TEST_EXCLUDES += test_compiler
   endif
@@ -716,7 +716,7 @@ endif
 stamps/stamp-pybench:
 	echo "pybench run disabled for this build" > $(buildd_static)/pybench.log
 
-#ifeq (,$(filter $(DEB_HOST_ARCH), arm armel avr32 hppa mips mipsel mips64 mips64el m68k))
+#ifeq (,$(filter $(DEB_HOST_ARCH), arm armel hppa mips mipsel mips64 mips64el m68k))
   pybench_options = -C 2 -n 5 -w 4
 #endif
 

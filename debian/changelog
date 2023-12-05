@@ -7,6 +7,7 @@ python3.11 (3.11.7-1) UNRELEASED; urgency=medium
 
   [ Matthias Klose ]
   * Fix more shebangs. See: #1057192.
+  * Remove references to the avr architecture. Closes: #1056760.
 
  -- Matthias Klose <doko@debian.org>  Tue, 05 Dec 2023 07:53:14 +0100
 
