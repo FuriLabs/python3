@@ -2,6 +2,9 @@ python3.11 (3.11.7-1) UNRELEASED; urgency=medium
 
   * New upstream release.
 
+  [ Stefano Rivera ]
+  * Depend on netbase in libpython3.11-stdlib. Closes: #1055172.
+
  -- Matthias Klose <doko@debian.org>  Tue, 05 Dec 2023 07:53:14 +0100
 
 python3.11 (3.11.6-3) unstable; urgency=medium
