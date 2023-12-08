@@ -2,6 +2,7 @@ python3.12 (3.12.1-1) unstable; urgency=high
 
   * Python 3.12.1 release.
     - Fix gh-105716, breaking greenlet/eventlet.
+  * Update symbols files.
   * Add platform triplets for x86_64 GNU/Hurd (Samuel Thibault). 
     Addresses: #1055960.
 
