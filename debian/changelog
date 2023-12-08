@@ -1,3 +1,9 @@
+python3.11 (3.11.7-3) UNRELEASED; urgency=medium
+
+  * Don't build-depend on systemtap-sdt-dev on the Hurd.
+
+ -- Matthias Klose <doko@debian.org>  Fri, 08 Dec 2023 20:26:01 +0100
+
 python3.11 (3.11.7-2) unstable; urgency=medium
 
   * Pull gh-112784, installing test/regrtestdata, fixing autopkg tests.
