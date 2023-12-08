@@ -1,0 +1,15 @@
+Description: ia64 build fix
+ https://github.com/python/cpython/issues/112867
+
+--- a/Include/internal/pycore_obmalloc.h
++++ b/Include/internal/pycore_obmalloc.h
+@@ -665,7 +665,9 @@ struct _obmalloc_global_state {
+ struct _obmalloc_state {
+     struct _obmalloc_pools pools;
+     struct _obmalloc_mgmt mgmt;
++#if WITH_PYMALLOC_RADIX_TREE
+     struct _obmalloc_usage usage;
++#endif
+ };
+ 
+ 
