@@ -192,6 +192,7 @@ OPT_PIE_CFLAGS   := $(filter-out -O%,$(DPKG_PIE_CFLAGS)) # default is -O3
 
 ifeq ($(DEB_HOST_ARCH),ia64)
     DPKG_CPPFLAGS += -DWITH_PYMALLOC_RADIX_TREE=0
+    DPKG_PIE_CPPFLAGS += -DWITH_PYMALLOC_RADIX_TREE=0
 endif
 # see #972202, and https://gcc.gnu.org/PR97431
 ifneq (,$(filter $(DEB_HOST_ARCH), hppa sh4))
