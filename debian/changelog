@@ -1,8 +1,9 @@
-python3.11 (3.11.7-3) UNRELEASED; urgency=medium
+python3.11 (3.11.8-1) unstable; urgency=medium
 
+  * New upstream release.
   * Don't build-depend on systemtap-sdt-dev on the Hurd.
 
- -- Matthias Klose <doko@debian.org>  Fri, 08 Dec 2023 20:26:01 +0100
+ -- Matthias Klose <doko@debian.org>  Wed, 07 Feb 2024 22:52:08 +0100
 
 python3.11 (3.11.7-2) unstable; urgency=medium
 

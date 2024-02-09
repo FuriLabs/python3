@@ -39,4 +39,3 @@ fix-py_compile.diff
 ntpath-import.diff
 add-loongarch-support.diff
 issue108447.diff
-gh-112784.diff

@@ -1,8 +1,6 @@
-Index: python3.11-3.11.6/configure.ac
-===================================================================
---- python3.11-3.11.6.orig/configure.ac
-+++ python3.11-3.11.6/configure.ac
-@@ -1066,7 +1066,13 @@ cat > conftest.c <<EOF
+--- a/configure.ac
++++ b/configure.ac
+@@ -1074,7 +1074,13 @@ cat > conftest.c <<EOF
  #   error unknown platform triplet
  # endif
  #elif defined(__gnu_hurd__)
