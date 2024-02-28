@@ -116,7 +116,10 @@ Description: Minimal subset of the Python language (version 3.12)
  This package contains some essential modules. It is normally not
  used on it's own, but as a dependency of python3.12-minimal.
 
-Package: libpython3.12
+Package: libpython3.12t64
+Provides: ${t64:Provides}
+Replaces: libpython3.12
+Breaks: libpython3.12 (<< ${source:Version})
 Architecture: any
 Multi-Arch: same
 Section: libs
@@ -143,7 +146,7 @@ Architecture: any
 Multi-Arch: allowed
 Depends: python3.12 (= ${binary:Version}),
   libpython3.12-dev (= ${binary:Version}),
-  libpython3.12 (= ${binary:Version}),
+  libpython3.12t64 (= ${binary:Version}),
   ${shlibs:Depends}, ${misc:Depends}
 Recommends: libc6-dev | libc-dev
 Description: Header files and a static library for Python (v3.12)
@@ -159,7 +162,7 @@ Architecture: any
 Multi-Arch: same
 Pre-Depends: ${misc:Pre-Depends}
 Depends: libpython3.12-stdlib (= ${binary:Version}),
-  libpython3.12 (= ${binary:Version}),
+  libpython3.12t64 (= ${binary:Version}),
   libexpat1-dev, zlib1g-dev,
   ${shlibs:Depends}, ${misc:Depends}
 Recommends: libc6-dev | libc-dev
@@ -221,7 +224,7 @@ Package: python3.12-dbg
 Section: debug
 Architecture: any
 Multi-Arch: allowed
-Depends: python3.12 (= ${binary:Version}), libpython3.12-dbg (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
+Depends: python3.12 (= ${binary:Version}), libpython3.12t64-dbg (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
 Recommends: gdb
 Suggests: python3-gdbm-dbg, python3-tk-dbg
 Description: Debug Build of the Python Interpreter (version 3.12)
@@ -234,14 +237,16 @@ Description: Debug Build of the Python Interpreter (version 3.12)
  .
  See the README.debug for more information.
 
-Package: libpython3.12-dbg
+Package: libpython3.12t64-dbg
+X-Time64-Compat: libpython3.12-dbg
+Provides: ${t64:Provides}
 Section: debug
 Architecture: any
 Multi-Arch: same
 Pre-Depends: ${misc:Pre-Depends}
 Depends: libpython3.12-stdlib (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
-Breaks: python3-gdbm-dbg (<< 3.9.9-1~)
-Replaces: python3-gdbm-dbg (<< 3.9.9-1~)
+Breaks: libpython3.12-dbg (<< ${source:Version}), python3-gdbm-dbg (<< 3.9.9-1~)
+Replaces: libpython3.12-dbg, python3-gdbm-dbg (<< 3.9.9-1~)
 Description: Debug Build of the Python Interpreter (version 3.12)
  The package holds two things:
  .

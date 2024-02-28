@@ -279,7 +279,7 @@ scriptdir	=  usr/lib/python$(VER)
 p_base	:= $(PVER)
 p_npie	:= $(PVER)-nopie
 p_min	:= $(PVER)-minimal
-p_lib	:= lib$(PVER)
+p_lib	:= lib$(PVER)t64
 p_tk	:= $(PVER)-tk
 p_dev	:= $(PVER)-dev
 p_exam	:= $(PVER)-examples
@@ -293,7 +293,7 @@ p_full	:= $(PVER)-full
 p_lbase	:= lib$(PVER)-stdlib
 p_lmin	:= lib$(PVER)-minimal
 p_ldev	:= lib$(PVER)-dev
-p_ldbg	:= lib$(PVER)-dbg
+p_ldbg	:= lib$(PVER)t64-dbg
 p_ltst	:= lib$(PVER)-testsuite
 
 d_base	:= debian/$(p_base)
