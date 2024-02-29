@@ -1,11 +1,14 @@
-python3.12 (3.12.2-2) UNRELEASED; urgency=medium
+python3.12 (3.12.2-2) unstable; urgency=medium
 
+  [ Colin Watson ]
   * Don't rely on module state in teedataobject_clear (from Brandt Bucher in
-    https://github.com/python/cpython/issues/115874; closes: #1063345).
+    https://github.com/python/cpython/issues/115874). Closes: #1063345.
+
+  [ Steve Langasek ]
   * Rename libraries for 64-bit time_t transition, declare X-Time64-Compat
     to get proper Provides (Steve Langasek). Closes: #1064336.
 
- -- Matthias Klose <doko@debian.org>  Wed, 28 Feb 2024 06:51:00 +0100
+ -- Matthias Klose <doko@debian.org>  Thu, 29 Feb 2024 02:56:09 +0100
 
 python3.12 (3.12.2-1) unstable; urgency=medium
 
