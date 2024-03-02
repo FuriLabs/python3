@@ -39,3 +39,4 @@ destshared-location.diff
 fix-py_compile.diff
 ntpath-import.diff
 shutdown-deadlock.diff
+frame_dealloc-crash.diff

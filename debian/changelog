@@ -1,3 +1,10 @@
+python3.11 (3.11.2-6+deb12u1) UNRELEASED; urgency=medium
+
+  * Fix a use-after-free crash when deallocating a frame object
+    (closes: #1050843).
+
+ -- Anders Kaseorg <andersk@mit.edu>  Tue, 29 Aug 2023 18:38:47 -0700
+
 python3.11 (3.11.2-6) unstable; urgency=high
 
   [ Stefano Rivera ]
