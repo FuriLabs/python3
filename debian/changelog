@@ -1,9 +1,10 @@
-python3.11 (3.11.2-6+deb12u1) UNRELEASED; urgency=medium
+python3.11 (3.11.2-6+deb12u1) bookworm; urgency=medium
 
+  [ Anders Kaseorg ]
   * Fix a use-after-free crash when deallocating a frame object
     (closes: #1050843).
 
- -- Anders Kaseorg <andersk@mit.edu>  Tue, 29 Aug 2023 18:38:47 -0700
+ -- Stefano Rivera <stefanor@debian.org>  Sat, 02 Mar 2024 16:28:50 -0400
 
 python3.11 (3.11.2-6) unstable; urgency=high
 
