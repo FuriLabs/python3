@@ -1,3 +1,9 @@
+python3.12 (3.12.2-4) UNRELEASED; urgency=medium
+
+  * Build-Depend on libnsl-dev for NIS support. Closes: #1065128.
+
+ -- Stefano Rivera <stefanor@debian.org>  Sat, 02 Mar 2024 11:37:17 -0400
+
 python3.12 (3.12.2-3) unstable; urgency=medium
 
   * Actually apply the teedataobject_clear patch. Closes: #1063345.
