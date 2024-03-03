@@ -1,8 +1,12 @@
 python3.12 (3.12.2-4) UNRELEASED; urgency=medium
 
+  [ Stefano Rivera ]
   * Build-Depend on libnsl-dev for NIS support. Closes: #1065128.
 
- -- Stefano Rivera <stefanor@debian.org>  Sat, 02 Mar 2024 11:37:17 -0400
+  [ Matthias Klose ]
+  * Fix override files for renamed t64 packages.
+
+ -- Matthias Klose <doko@debian.org>  Sun, 03 Mar 2024 10:11:00 +0100
 
 python3.12 (3.12.2-3) unstable; urgency=medium
 
