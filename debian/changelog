@@ -1,8 +1,12 @@
-python3.11 (3.11.8-2) UNRELEASED; urgency=medium
+python3.11 (3.11.8-3) UNRELEASED; urgency=medium
 
+  [ Stefano Rivera ]
   * Build-Depend on libnsl-dev for NIS support. Closes: #1065129.
 
- -- Stefano Rivera <stefanor@debian.org>  Sat, 02 Mar 2024 11:37:17 -0400
+  [ Matthias Klose ]
+  * Fix package names in PVER-dbg maintainer scripts. Closes: #1065164.
+
+ -- Matthias Klose <doko@debian.org>  Sun, 03 Mar 2024 10:23:40 +0100
 
 python3.11 (3.11.8-2) unstable; urgency=medium
 
