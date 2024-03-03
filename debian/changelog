@@ -1,4 +1,4 @@
-python3.12 (3.12.2-4) UNRELEASED; urgency=medium
+python3.12 (3.12.2-4) unstable; urgency=medium
 
   [ Stefano Rivera ]
   * Build-Depend on libnsl-dev for NIS support. Closes: #1065128.
