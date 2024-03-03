@@ -5,6 +5,7 @@ python3.12 (3.12.2-4) UNRELEASED; urgency=medium
 
   [ Matthias Klose ]
   * Fix override files for renamed t64 packages.
+  * Fix package names in PVER-dbg maintainer scripts. Addresses: #1065164.
 
  -- Matthias Klose <doko@debian.org>  Sun, 03 Mar 2024 10:11:00 +0100
 
