@@ -5,6 +5,7 @@ python3.11 (3.11.8-3) UNRELEASED; urgency=medium
 
   [ Matthias Klose ]
   * Fix package names in PVER-dbg maintainer scripts. Closes: #1065164.
+  * Really build without LTO when requested.
 
  -- Matthias Klose <doko@debian.org>  Sun, 03 Mar 2024 10:23:40 +0100
 
