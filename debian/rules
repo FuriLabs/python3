@@ -78,6 +78,8 @@ derivative      := $(shell \
 	elif dpkg-vendor --derives-from Debian; then echo Debian; \
 	else echo Unknown; fi)
 
+# we inject our own lto flags
+DPKG_OPTIMIZE = optimize=-lto
 dpkg_buildflags = DEB_BUILD_MAINT_OPTIONS="hardening=-pie $(DPKG_OPTIMIZE)" dpkg-buildflags
 dpkg_pieflags = DEB_BUILD_MAINT_OPTIONS="hardening=-pie $(DPKG_OPTIMIZE)"dpkg-buildflags
 ifeq (,$(filter $(distrelease),stretch buster bullseye trusty xenial bionic focal impish))
