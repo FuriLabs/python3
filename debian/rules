@@ -1029,7 +1029,7 @@ endif
 			test -e $(scriptdir)/lib-dynload/$$i.*.so \
 			  && echo $(scriptdir)/lib-dynload/$$i.*.so; \
 		  done`
-	ls -l  $(d_lmin)/$(scriptdir)/lib-dynload/*.so
+	-ls -l  $(d_lmin)/$(scriptdir)/lib-dynload/*.so
 
 	: # Move the binary into $(p_min).
 	dh_installdirs -p$(p_min) \
