@@ -444,7 +444,6 @@ common_configure_args = \
 		--with-dtrace \
 		--with-ssl-default-suites=openssl \
 		--with-wheel-pkg-dir=/usr/share/python-wheels/ \
-		--with-ssl-default-suites=openssl \
 		MKDIR_P="/bin/mkdir -p" \
 
 # FIXME, only temporaray
