@@ -32,3 +32,4 @@ ntpath-import.diff
 python3.12-updates.diff
 issue108447.diff
 itertools-clear-crash.diff
+issue117011.diff

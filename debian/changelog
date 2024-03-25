@@ -1,3 +1,9 @@
+python3.12 (3.12.2-5) UNRELEASED; urgency=medium
+
+  * Make C API compatible with ISO C90 (GH-116950).
+
+ -- Matthias Klose <doko@debian.org>  Mon, 25 Mar 2024 17:21:47 +0100
+
 python3.12 (3.12.2-4) unstable; urgency=medium
 
   [ Stefano Rivera ]

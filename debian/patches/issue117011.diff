@@ -1,0 +1,38 @@
+diff --git a/Include/cpython/longintrepr.h b/Include/cpython/longintrepr.h
+index 692c69ba76db2f..78ac79a7cb8874 100644
+--- a/Include/cpython/longintrepr.h
++++ b/Include/cpython/longintrepr.h
+@@ -116,9 +116,10 @@ _PyLong_IsCompact(const PyLongObject* op) {
+ static inline Py_ssize_t
+ _PyLong_CompactValue(const PyLongObject *op)
+ {
++    Py_ssize_t sign;
+     assert(PyType_HasFeature((op)->ob_base.ob_type, Py_TPFLAGS_LONG_SUBCLASS));
+     assert(PyUnstable_Long_IsCompact(op));
+-    Py_ssize_t sign = 1 - (op->long_value.lv_tag & _PyLong_SIGN_MASK);
++    sign = 1 - (op->long_value.lv_tag & _PyLong_SIGN_MASK);
+     return sign * (Py_ssize_t)op->long_value.ob_digit[0];
+ }
+ 
+diff --git a/Include/object.h b/Include/object.h
+index 5c30c77bc26a40..0d94cf825534d3 100644
+--- a/Include/object.h
++++ b/Include/object.h
+@@ -230,8 +230,7 @@ PyAPI_DATA(PyTypeObject) PyBool_Type;
+ static inline Py_ssize_t Py_SIZE(PyObject *ob) {
+     assert(ob->ob_type != &PyLong_Type);
+     assert(ob->ob_type != &PyBool_Type);
+-    PyVarObject *var_ob = _PyVarObject_CAST(ob);
+-    return var_ob->ob_size;
++    return  _PyVarObject_CAST(ob)->ob_size;
+ }
+ #if !defined(Py_LIMITED_API) || Py_LIMITED_API+0 < 0x030b0000
+ #  define Py_SIZE(ob) Py_SIZE(_PyObject_CAST(ob))
+diff --git a/Misc/NEWS.d/next/C API/2024-03-18-09-58-46.gh-issue-116869.LFDVKM.rst b/Misc/NEWS.d/next/C API/2024-03-18-09-58-46.gh-issue-116869.LFDVKM.rst
+new file mode 100644
+index 00000000000000..9b9d943f2e6d19
+--- /dev/null
++++ b/Misc/NEWS.d/next/C API/2024-03-18-09-58-46.gh-issue-116869.LFDVKM.rst	
+@@ -0,0 +1,2 @@
++Make the C API compatible with ``-Werror=declaration-after-statement``
++compiler flag again. Patch by Victor Stinner.
