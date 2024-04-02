@@ -92,13 +92,13 @@ Forwarded: not-needed
              # other platforms
 --- a/Lib/pydoc.py
 +++ b/Lib/pydoc.py
-@@ -517,6 +517,7 @@ class Doc:
+@@ -532,6 +532,7 @@ class Doc:
                                   'marshal', 'posix', 'signal', 'sys',
                                   '_thread', 'zipimport') or
               (file.startswith(basedir) and
 +              not file.startswith(os.path.join(basedir, 'dist-packages')) and
                not file.startswith(os.path.join(basedir, 'site-packages')))) and
-             object.__name__ not in ('xml.etree', 'test.pydoc_mod')):
+             object.__name__ not in ('xml.etree', 'test.test_pydoc.pydoc_mod')):
              if docloc.startswith(("http://", "https://")):
 --- /dev/null
 +++ b/Lib/_distutils_system_mod.py
