@@ -254,7 +254,6 @@ sysconfig_substflags = \
 	-e '/^OPT/s,-O3,-O2,' \
 	-e 's/-O3/-O2/g' \
 	-e 's/-fprofile-use *-fprofile-correction//g' \
-	-e 's/-fstack-protector /-fstack-protector-strong /g' \
 	-e "s/-specs=[^ '\"]*//g" \
 	-e "s/-fdebug-prefix-map=[^ '\"]*//g" \
 	-e "s/-ffile-prefix-map=[^ '\"]*//g" \
@@ -366,8 +365,6 @@ PROFILE_TASK = ../Lib/test/regrtest.py \
 stamps/stamp-build-static: stamps/stamp-configure-static
 	dh_testdir
 	$(MAKE) $(NJOBS) -C $(buildd_static) \
-		EXTRA_CFLAGS="$(EXTRA_OPT_CFLAGS)" \
-		CONFIGURE_LDFLAGS="$(DPKG_PIE_LDFLAGS) $(LTO_CFLAGS)" \
 		PROFILE_TASK='$(PROFILE_TASK)' $(make_build_target)
 
 ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
@@ -384,8 +381,6 @@ endif
 stamps/stamp-build-nopie: stamps/stamp-configure-nopie
 	dh_testdir
 	$(MAKE) $(NJOBS) -C $(buildd_nopie) \
-		EXTRA_CFLAGS="$(EXTRA_OPT_CFLAGS)" \
-		CONFIGURE_LDFLAGS="$(DPKG_LDFLAGS) $(LTO_CFLAGS)" \
 		PROFILE_TASK='$(PROFILE_TASK)' $(make_build_target)
 
 ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
@@ -405,18 +400,16 @@ run-profile-task:
 
 stamps/stamp-build-shared: stamps/stamp-configure-shared
 	dh_testdir
-	$(MAKE) $(NJOBS) -C $(buildd_shared) \
-		EXTRA_CFLAGS="$(EXTRA_OPT_CFLAGS)"
+	$(MAKE) $(NJOBS) -C $(buildd_shared)
+
 	: # build a static library with PIC objects
 	$(MAKE) $(NJOBS) -C $(buildd_shared) \
-		EXTRA_CFLAGS="$(EXTRA_OPT_CFLAGS)" \
 		LIBRARY=libpython$(VER)-pic.a libpython$(VER)-pic.a
 	touch stamps/stamp-build-shared
 
 stamps/stamp-build-debug: stamps/stamp-configure-debug
 	dh_testdir
-	$(MAKE) $(NJOBS) -C $(buildd_debug) \
-		EXTRA_CFLAGS="$(DEBUG_CFLAGS)"
+	$(MAKE) $(NJOBS) -C $(buildd_debug)
 
 ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
 	cd $(buildd_static) && ./python -c 'import _decimal'
@@ -428,8 +421,8 @@ endif
 stamps/stamp-build-shared-debug: stamps/stamp-configure-shared-debug
 	dh_testdir
 	: # build the shared debug library
-	$(MAKE) $(NJOBS) -C $(buildd_shdebug) \
-		EXTRA_CFLAGS="$(DEBUG_CFLAGS)"
+	$(MAKE) $(NJOBS) -C $(buildd_shdebug)
+
 	touch stamps/stamp-build-shared-debug
 
 common_configure_args = \
@@ -473,8 +466,9 @@ stamps/stamp-configure-shared: stamps/stamp-patch
 	rm -rf $(buildd_shared)
 	mkdir -p $(buildd_shared)
 	cd $(buildd_shared) && \
-	  AR="$(AR)" RANLIB="$(RANLIB)" CFLAGS="$(OPT_CFLAGS)" \
-	  CPPFLAGS="$(DPKG_CPPFLAGS)" LDFLAGS="$(DPKG_LDFLAGS) $(LTO_CFLAGS)" \
+	  AR="$(AR)" RANLIB="$(RANLIB)" \
+	  CFLAGS_NODIST="$(DPKG_CPPFLAGS) $(OPT_CFLAGS)" \
+	  LDFLAGS_NODIST="$(DPKG_LDFLAGS) $(LTO_CFLAGS)" \
 	    $(config_site) \
 	    ../configure \
 		--enable-shared \
@@ -491,8 +485,9 @@ stamps/stamp-configure-static: stamps/stamp-patch
 	rm -rf $(buildd_static)
 	mkdir -p $(buildd_static)
 	cd $(buildd_static) && \
-	  AR="$(AR)" RANLIB="$(RANLIB)" CFLAGS="$(OPT_PIE_CFLAGS)" \
-	  CPPFLAGS="$(DPKG_PIE_CPPFLAGS)" LDFLAGS="$(DPKG_PIE_LDFLAGS) $(LTO_CFLAGS)" \
+	  AR="$(AR)" RANLIB="$(RANLIB)" \
+	  CFLAGS_NODIST="$(DPKG_PIE_CPPFLAGS) $(OPT_PIE_CFLAGS)" \
+	  LDFLAGS_NODIST="$(DPKG_PIE_LDFLAGS) $(LTO_CFLAGS)" \
 	    $(config_site) \
 	    ../configure \
 		$(common_configure_args)
@@ -504,8 +499,9 @@ stamps/stamp-configure-nopie: stamps/stamp-patch
 	rm -rf $(buildd_nopie)
 	mkdir -p $(buildd_nopie)
 	cd $(buildd_nopie) && \
-	  AR="$(AR)" RANLIB="$(RANLIB)" CFLAGS="$(OPT_CFLAGS)" \
-	  CPPFLAGS="$(DPKG_CPPFLAGS)" LDFLAGS="$(DPKG_LDFLAGS) $(LTO_CFLAGS)" \
+	  AR="$(AR)" RANLIB="$(RANLIB)" \
+	  CFLAGS_NODIST="$(DPKG_CPPFLAGS) $(OPT_CFLAGS)" \
+	  LDFLAGS_NODIST="$(DPKG_LDFLAGS) $(LTO_CFLAGS)" \
 	    $(config_site) \
 	    ../configure \
 		$(common_configure_args)
@@ -517,8 +513,9 @@ stamps/stamp-configure-debug: stamps/stamp-patch
 	rm -rf $(buildd_debug)
 	mkdir -p $(buildd_debug)
 	cd $(buildd_debug) && \
-	  AR="$(AR)" RANLIB="$(RANLIB)" CFLAGS="$(DEBUG_CFLAGS)" \
-	  CPPFLAGS="$(DPKG_CPPFLAGS)" LDFLAGS="$(DPKG_LDFLAGS)" \
+	  AR="$(AR)" RANLIB="$(RANLIB)" \
+	  CFLAGS_NODIST="$(DPKG_CPPFLAGS) $(DEBUG_CFLAGS)" \
+	  LDFLAGS_NODIST="$(DPKG_LDFLAGS)" \
 	    $(config_site) \
 	    ../configure \
 		$(common_configure_args) \
@@ -532,8 +529,9 @@ stamps/stamp-configure-shared-debug: stamps/stamp-patch
 	rm -rf $(buildd_shdebug)
 	mkdir -p $(buildd_shdebug)
 	cd $(buildd_shdebug) && \
-	  AR="$(AR)" RANLIB="$(RANLIB)" CFLAGS="$(DEBUG_CFLAGS)" \
-	  CPPFLAGS="$(DPKG_CPPFLAGS)" LDFLAGS="$(DPKG_LDFLAGS)" \
+	  AR="$(AR)" RANLIB="$(RANLIB)" \
+	  CFLAGS_NODIST="$(DPKG_CPPFLAGS) $(DEBUG_CFLAGS)" \
+	  LDFLAGS_NODIST="$(DPKG_LDFLAGS)" \
 	    $(config_site) \
 	    ../configure \
 		$(common_configure_args) \

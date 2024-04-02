@@ -1,8 +1,9 @@
 python3.12 (3.12.2-5) UNRELEASED; urgency=medium
 
   * Update to the 3.12 branch 2024-02-02.
-    - Make C API compatible with ISO C90 (GH-116950).
+    - Make C API compatible with ISO C90 (GH-116950). Closes: #1064028.
     - Upstream patch for GH-115874.
+  * Use CFLAGS_NODIST, LDFLAGS_NODIST for passing build flags.
 
  -- Matthias Klose <doko@debian.org>  Tue, 02 Apr 2024 12:34:19 +0200
 
