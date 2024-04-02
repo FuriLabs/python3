@@ -1,8 +1,10 @@
 python3.12 (3.12.2-5) UNRELEASED; urgency=medium
 
-  * Make C API compatible with ISO C90 (GH-116950).
+  * Update to the 3.12 branch 2024-02-02.
+    - Make C API compatible with ISO C90 (GH-116950).
+    - Upstream patch for GH-115874.
 
- -- Matthias Klose <doko@debian.org>  Mon, 25 Mar 2024 17:21:47 +0100
+ -- Matthias Klose <doko@debian.org>  Tue, 02 Apr 2024 12:34:19 +0200
 
 python3.12 (3.12.2-4) unstable; urgency=medium
 

@@ -1,4 +1,4 @@
-#git-updates.diff
+git-updates.diff
 #FIXME deb-setup.diff
 deb-locations.diff
 distutils-install-layout.diff
@@ -31,5 +31,3 @@ fix-py_compile.diff
 ntpath-import.diff
 python3.12-updates.diff
 issue108447.diff
-itertools-clear-crash.diff
-issue117011.diff
