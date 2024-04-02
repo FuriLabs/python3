@@ -233,8 +233,6 @@ ifneq (,$(findstring noopt, $(DEB_BUILD_OPTIONS)))
     with_pgo =
     with_lto =
 endif
-with_pgo =
-with_lto =
 
 BASE_LTO_CFLAGS = -g -fwrapv -O3
 ifeq ($(with_lto),yes)
@@ -257,7 +255,6 @@ sysconfig_substflags = \
 	-e "s/-specs=[^ '\"]*//g" \
 	-e "s/-fdebug-prefix-map=[^ '\"]*//g" \
 	-e "s/-ffile-prefix-map=[^ '\"]*//g" \
-	-e 's/-Wl,-z,relro//g' \
 	-e 's,^RUNSHARED *=.*,RUNSHARED=,' \
 	-e '/BLDLIBRARY/s/-L\. //'
 
