@@ -6,6 +6,7 @@ python3.12 (3.12.2-5) UNRELEASED; urgency=medium
     - Still identify as "3.12.2", because "3.12.2+" is mis-treated by some
       third-party packages.
   * Use CFLAGS_NODIST, LDFLAGS_NODIST for passing build flags.
+  * d/rules: Move configure/build targets for each build together.
 
  -- Matthias Klose <doko@debian.org>  Tue, 02 Apr 2024 12:34:19 +0200
 

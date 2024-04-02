@@ -362,68 +362,11 @@ PROFILE_TASK = ../Lib/test/regrtest.py \
 	-j 1 -unone,decimal \
 	-x $(sort $(TEST_EXCLUDES) $(PROFILE_EXCLUDES))
 
-stamps/stamp-build-static: stamps/stamp-configure-static
-	dh_testdir
-	$(MAKE) $(NJOBS) -C $(buildd_static) \
-		PROFILE_TASK='$(PROFILE_TASK)' $(make_build_target)
-
-ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
-	: # check that things are correctly built
-  ifneq (,$(filter $(DEB_HOST_ARCH_OS), linux))
-	cd $(buildd_static) && ./python -c 'from _multiprocessing import SemLock'
-  endif
-	cd $(buildd_static) && ./python -c 'import _decimal'
-	cd $(buildd_static) && ./python -c 'import math, cmath'
-endif
-
-	touch stamps/stamp-build-static
-
-stamps/stamp-build-nopie: stamps/stamp-configure-nopie
-	dh_testdir
-	$(MAKE) $(NJOBS) -C $(buildd_nopie) \
-		PROFILE_TASK='$(PROFILE_TASK)' $(make_build_target)
-
-ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
-	: # check that things are correctly built
-  ifneq (,$(filter $(DEB_HOST_ARCH_OS), linux))
-	cd $(buildd_nopie) && ./python -c 'from _multiprocessing import SemLock'
-  endif
-	cd $(buildd_nopie) && ./python -c 'import _decimal'
-	cd $(buildd_nopie) && ./python -c 'import math, cmath'
-endif
-
-	touch stamps/stamp-build-nopie
 
 run-profile-task:
 	$(MAKE) -C $(buildd_static) \
 		PROFILE_TASK='$(PROFILE_TASK)' run_profile_task
 
-stamps/stamp-build-shared: stamps/stamp-configure-shared
-	dh_testdir
-	$(MAKE) $(NJOBS) -C $(buildd_shared)
-
-	: # build a static library with PIC objects
-	$(MAKE) $(NJOBS) -C $(buildd_shared) \
-		LIBRARY=libpython$(VER)-pic.a libpython$(VER)-pic.a
-	touch stamps/stamp-build-shared
-
-stamps/stamp-build-debug: stamps/stamp-configure-debug
-	dh_testdir
-	$(MAKE) $(NJOBS) -C $(buildd_debug)
-
-ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
-	cd $(buildd_static) && ./python -c 'import _decimal'
-	cd $(buildd_debug) && ./python -c 'import math, cmath'
-endif
-
-	touch stamps/stamp-build-debug
-
-stamps/stamp-build-shared-debug: stamps/stamp-configure-shared-debug
-	dh_testdir
-	: # build the shared debug library
-	$(MAKE) $(NJOBS) -C $(buildd_shdebug)
-
-	touch stamps/stamp-build-shared-debug
 
 common_configure_args = \
 		--prefix=/usr \
@@ -481,6 +424,30 @@ stamps/stamp-configure-shared: stamps/stamp-patch
 
 	touch $@
 
+stamps/stamp-build-static: stamps/stamp-configure-static
+	dh_testdir
+	$(MAKE) $(NJOBS) -C $(buildd_static) \
+		PROFILE_TASK='$(PROFILE_TASK)' $(make_build_target)
+
+ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
+	: # check that things are correctly built
+  ifneq (,$(filter $(DEB_HOST_ARCH_OS), linux))
+	cd $(buildd_static) && ./python -c 'from _multiprocessing import SemLock'
+  endif
+	cd $(buildd_static) && ./python -c 'import _decimal'
+	cd $(buildd_static) && ./python -c 'import math, cmath'
+endif
+	touch $@
+
+stamps/stamp-build-shared: stamps/stamp-configure-shared
+	dh_testdir
+	$(MAKE) $(NJOBS) -C $(buildd_shared)
+
+	: # build a static library with PIC objects
+	$(MAKE) $(NJOBS) -C $(buildd_shared) \
+		LIBRARY=libpython$(VER)-pic.a libpython$(VER)-pic.a
+	touch $@
+
 stamps/stamp-configure-static: stamps/stamp-patch
 	rm -rf $(buildd_static)
 	mkdir -p $(buildd_static)
@@ -509,6 +476,21 @@ stamps/stamp-configure-nopie: stamps/stamp-patch
 	$(call __post_configure,$(buildd_nopie))
 	touch $@
 
+stamps/stamp-build-nopie: stamps/stamp-configure-nopie
+	dh_testdir
+	$(MAKE) $(NJOBS) -C $(buildd_nopie) \
+		PROFILE_TASK='$(PROFILE_TASK)' $(make_build_target)
+
+ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
+	: # check that things are correctly built
+  ifneq (,$(filter $(DEB_HOST_ARCH_OS), linux))
+	cd $(buildd_nopie) && ./python -c 'from _multiprocessing import SemLock'
+  endif
+	cd $(buildd_nopie) && ./python -c 'import _decimal'
+	cd $(buildd_nopie) && ./python -c 'import math, cmath'
+endif
+	touch $@
+
 stamps/stamp-configure-debug: stamps/stamp-patch
 	rm -rf $(buildd_debug)
 	mkdir -p $(buildd_debug)
@@ -523,6 +505,16 @@ stamps/stamp-configure-debug: stamps/stamp-patch
 		--with-pydebug
 
 	$(call __post_configure,$(buildd_debug))
+	touch $@
+
+stamps/stamp-build-debug: stamps/stamp-configure-debug
+	dh_testdir
+	$(MAKE) $(NJOBS) -C $(buildd_debug)
+
+ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
+	cd $(buildd_static) && ./python -c 'import _decimal'
+	cd $(buildd_debug) && ./python -c 'import math, cmath'
+endif
 	touch $@
 
 stamps/stamp-configure-shared-debug: stamps/stamp-patch
@@ -541,6 +533,13 @@ stamps/stamp-configure-shared-debug: stamps/stamp-patch
 
 	$(call __post_configure,$(buildd_shdebug))
 	touch $@
+
+stamps/stamp-build-shared-debug: stamps/stamp-configure-shared-debug
+	dh_testdir
+	: # build the shared debug library
+	$(MAKE) $(NJOBS) -C $(buildd_shdebug)
+	touch $@
+
 
 define __post_configure
 	egrep \
