@@ -55,12 +55,12 @@ debian/testdir
 debian/python3.12-doc.info
 
 debian/idle-python3.12
-debian/libpython3.12-dbg
+debian/libpython3.12t64-dbg
 debian/libpython3.12-dev
 debian/libpython3.12-minimal
 debian/libpython3.12-stdlib
 debian/libpython3.12-testsuite
-debian/libpython3.12
+debian/libpython3.12t64
 debian/python3.12-dbg
 debian/python3.12-dev
 debian/python3.12-doc
@@ -86,11 +86,9 @@ debian/idle-python3.12.postrm
 debian/idle-python3.12.prerm
 debian/idle.desktop
 debian/libpython.symbols
-debian/libpython3.12-dbg.overrides
-debian/libpython3.12-dbg.postinst
-debian/libpython3.12-dbg.prerm
-debian/libpython3.12-dbg.symbols
-debian/libpython3.12-dbg.symbols.i386
+debian/libpython3.12t64-dbg.overrides
+debian/libpython3.12t64-dbg.prerm
+debian/libpython3.12t64-dbg.symbols
 debian/libpython3.12-dev.overrides
 debian/libpython3.12-minimal.overrides
 debian/libpython3.12-minimal.postinst
@@ -101,9 +99,8 @@ debian/libpython3.12-stdlib.prerm
 debian/libpython3.12-testsuite.overrides
 debian/libpython3.12-testsuite.postinst
 debian/libpython3.12-testsuite.prerm
-debian/libpython3.12.overrides
-debian/libpython3.12.symbols
-debian/libpython3.12.symbols.i386
+debian/libpython3.12t64.overrides
+debian/libpython3.12t64.symbols
 debian/multiarch.h
 debian/pdb.1
 debian/pydoc.1
