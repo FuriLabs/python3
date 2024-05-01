@@ -1,6 +1,7 @@
 python3.13 (3.13.0~a6-1) UNRELEASED; urgency=medium
 
   * Python 3.13.0 alpha 6 snapshot.
+  * Refresh patches.
 
  -- Matthias Klose <doko@debian.org>  Wed, 01 May 2024 07:51:20 +0200
 

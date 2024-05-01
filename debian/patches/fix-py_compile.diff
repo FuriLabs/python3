@@ -4,7 +4,7 @@ Forwarded: https://github.com/python/cpython/pull/28848
 
 --- a/Lib/py_compile.py
 +++ b/Lib/py_compile.py
-@@ -194,6 +194,7 @@
+@@ -194,6 +194,7 @@ def main():
      else:
          filenames = args.filenames
      for filename in filenames:
