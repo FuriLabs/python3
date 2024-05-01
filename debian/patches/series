@@ -40,3 +40,5 @@ fix-py_compile.diff
 ntpath-import.diff
 shutdown-deadlock.diff
 frame_dealloc-crash.diff
+CVE-2024-0450.patch
+CVE-2023-6597.patch

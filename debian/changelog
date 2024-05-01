@@ -1,3 +1,14 @@
+python3.11 (3.11.2-6+deb12u2) bookworm; urgency=medium
+
+  * Apply upstream security fix for CVE-2024-0450
+    Protect zipfile from "quoted-overlap" zipbomb.
+    Closes: #1070133
+  * Apply and tweak upstream security fix for CVE-2023-6597
+    tempfile.TemporaryDirectory: fix symlink bug in cleanup
+    Closes: #1070135
+
+ -- Steve McIntyre <steve.mcintyre@pexip.com>  Fri, 26 Apr 2024 16:10:48 +0100
+
 python3.11 (3.11.2-6+deb12u1) bookworm; urgency=medium
 
   [ Anders Kaseorg ]
