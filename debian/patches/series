@@ -44,3 +44,6 @@ CVE-2024-0450.patch
 CVE-2023-6597.patch
 relfile-nullptr-dereference.patch
 CVE-2023-41105-path-truncation.patch
+CVE-2023-40217-ssl-pre-close-flaw.patch
+CVE-2023-40217-ref-cycle.patch
+CVE-2023-40217-test-reliability.patch
