@@ -16,7 +16,6 @@ ctypes-arm.diff
 # link-timemodule.diff
 #lto-link-flags.diff
 multiarch.diff
-test-no-random-order.diff
 tempfile-minimal.diff
 ensurepip-disabled.diff
 reproducible-buildinfo.diff
@@ -30,6 +29,5 @@ destshared-location.diff
 fix-py_compile.diff
 ntpath-import.diff
 python3.12-updates.diff
-issue108447.diff
 makefile-bootstrap.diff
 #patchlevel-noplus.diff

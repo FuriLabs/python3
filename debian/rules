@@ -103,9 +103,9 @@ ifneq (,$(filter valgrind, $(shell dpkg-query --show -f '$${Depends}\n' valgrind
   valgrind_configure_args = --with-valgrind
 endif
 
-VER=3.12
-SVER=3.12.1
-NVER=3.13
+VER=3.13
+SVER=3.13.0~a6
+NVER=3.14
 PVER=python$(VER)
 EXT_VER=$(subst .,,$(VER))
 PRIORITY=$(shell echo $(VER) | tr -d '.')0
@@ -281,7 +281,7 @@ scriptdir	=  usr/lib/python$(VER)
 p_base	:= $(PVER)
 p_npie	:= $(PVER)-nopie
 p_min	:= $(PVER)-minimal
-p_lib	:= lib$(PVER)t64
+p_lib	:= lib$(PVER)
 p_tk	:= $(PVER)-tk
 p_dev	:= $(PVER)-dev
 p_exam	:= $(PVER)-examples
@@ -295,7 +295,7 @@ p_full	:= $(PVER)-full
 p_lbase	:= lib$(PVER)-stdlib
 p_lmin	:= lib$(PVER)-minimal
 p_ldev	:= lib$(PVER)-dev
-p_ldbg	:= lib$(PVER)t64-dbg
+p_ldbg	:= lib$(PVER)-dbg
 p_ltst	:= lib$(PVER)-testsuite
 
 d_base	:= debian/$(p_base)
@@ -841,7 +841,6 @@ clean: control-file
 	sed 's/^@/#/' Makefile.pre.in | $(MAKE) -f - srcdir=. distclean
 	rm -rf $(buildd_static) $(buildd_shared) $(buildd_debug) $(buildd_shdebug) $(buildd_nopie)
 	find -name '*.py[co]' | xargs -r rm -f
-	rm -f Lib/lib2to3/*.pickle
 	rm -f Lib/dist-packages
 	rm -rf locales
 	rm -rf $(d)-dbg
@@ -875,9 +874,6 @@ stamps/stamp-control:
 	done
 
 2to3-man:
-	help2man --no-info --version-string=$(VER) --no-discard-stderr \
-	  --name 'Python2 to Python3 converter' \
-	  2to3-$(VER) > debian/2to3-3.1
 	help2man --no-info --version-string=$(VER) --no-discard-stderr \
 	  --name 'pysetup tool' \
 	  pysetup$(VER) > debian/pysetup3.1
@@ -927,7 +923,6 @@ endif
 
 	: # remove files, which are not packaged
 	rm -rf $(d)/usr/lib/python$(VER)/ctypes/macholib
-	rm -f $(d)/$(scriptdir)/lib2to3/*.pickle
 	rm -f $(d)/usr/share/man/man1/python3.1
 
 	if [ -d $(d)/$(scriptdir)/ensurepip/_bundled ]; then \
@@ -937,17 +932,6 @@ endif
 
 	: # cannot build it, zlib maintainer won't provide a mingw build
 	find $(d) -name 'wininst*.exe' | xargs -r rm -f
-
-	: # fix some file permissions
-	chmod a-x $(d)/$(scriptdir)/{runpy,fractions,lib2to3/refactor,tkinter/tix}.py
-	chmod a-x $(d)/$(scriptdir)/test/test_pathlib.py
-
-#	: # move manpages to new names
-#	if [ -d $(d)/usr/man/man1 ]; then \
-#	    mkdir -p $(d)/usr/share/man
-#	    mv $(d)/usr/man/man1/* $(d)/usr/share/man/man1/; \
-#	    rm -rf $(d)/usr/man/; \
-#	fi
 
 	mkdir -p $(d)/usr/share/man/man1
 	cp -p Misc/python.man $(d)/usr/share/man/man1/python$(VER).1
@@ -959,7 +943,7 @@ endif
 	cp -p debian/pysetup3.1 $(d)/usr/share/man/man1/pysetup$(VER).1
 
 	: # versioned install only
-	rm -f $(d)/usr/bin/{2to3,idle3,pydoc3,pysetup3,python3,python3-config}
+	rm -f $(d)/usr/bin/{idle3,pydoc3,pysetup3,python3,python3-config}
 	rm -f $(d)/usr/lib/*/pkgconfig/python3.pc
 	rm -f $(d)/usr/lib/*/pkgconfig/python3-embed.pc
 
@@ -1136,12 +1120,6 @@ endif
 
 	: # Tkinter library files shipped in python3-tk
 	rm -rf $(d)/usr/lib/python$(VER)/tkinter
-
-	: # lib2to3 shipped in python3-lib2to3
-	rm -rf \
-		$(d)/usr/bin/2to3-$(VER) \
-		$(d)/usr/share/man/man1/2to3-$(VER).1 \
-		$(d)/usr/lib/python$(VER)/lib2to3
 
 	: # Move the demos and tools into $(p_exam)'s doc directory
 	dh_installdirs -p$(p_exam) \

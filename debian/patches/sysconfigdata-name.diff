@@ -5,9 +5,9 @@ Description: Don't encode the MACHDEP into the _sysconfigdata file name.
 Bug-cpython: https://bugs.python.org/issue37561
 Forwarded: no
 
---- a/Lib/sysconfig.py
-+++ b/Lib/sysconfig.py
-@@ -498,7 +498,7 @@ def _get_sysconfigdata_name():
+--- a/Lib/sysconfig/__init__.py
++++ b/Lib/sysconfig/__init__.py
+@@ -368,7 +368,7 @@ def _get_sysconfigdata_name():
      multiarch = getattr(sys.implementation, '_multiarch', '')
      return os.environ.get(
          '_PYTHON_SYSCONFIGDATA_NAME',
@@ -15,10 +15,10 @@ Forwarded: no
 +        f'_sysconfigdata_{sys.abiflags}_{multiarch}',
      )
  
- 
+ def _init_posix(vars):
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
-@@ -2328,8 +2328,10 @@ libinstall:	all $(srcdir)/Modules/xxmodu
+@@ -2556,8 +2556,10 @@ libinstall:	all $(srcdir)/Modules/xxmodu
  			esac; \
  		done; \
  	done

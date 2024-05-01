@@ -124,7 +124,7 @@ excluded_imports = {
     'optparse': set(('gettext',)),
     'pathlib': set(('ntpath', 'urllib',)), # Windows only
     'pickle': set(('argparse', 'doctest', 'pprint')),
-    'platform': set(('ctypes', 'plistlib', 'tempfile')),
+    'platform': set(('_ios_support', 'ctypes', 'plistlib', 'tempfile')),
     'reprlib': set(('_dummy_thread',)),
     'shutil': set(('bz2','lzma', 'tarfile', 'zipfile')),
     #'socket': set(('_ssl',)),
@@ -133,8 +133,8 @@ excluded_imports = {
     'sysconfig': set(('pprint','_osx_support', '_aix_support')),
     'tempfile': set(('_dummy_thread', 'shutil')),
     'tokenize': set(('_tokenize',)),
+    'traceback': set(('_suggestions',)),
     'functools': set(('typing',)),
-    'platform': set(('distutils','plistlib')),
     'zipfile': set(('bz2','lzma')),
     'random': set(('statistics',)),
     }

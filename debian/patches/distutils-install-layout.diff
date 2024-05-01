@@ -34,7 +34,7 @@ Forwarded: not-needed
  If a file named "pyvenv.cfg" exists one directory above sys.executable,
  sys.prefix and sys.exec_prefix are set to that directory and
  it is also checked for site-packages (sys.base_prefix and
-@@ -366,6 +372,8 @@ def getsitepackages(prefixes=None):
+@@ -372,6 +378,8 @@ def getsitepackages(prefixes=None):
      if prefixes is None:
          prefixes = PREFIXES
  
@@ -43,7 +43,7 @@ Forwarded: not-needed
      for prefix in prefixes:
          if not prefix or prefix in seen:
              continue
-@@ -376,10 +384,21 @@ def getsitepackages(prefixes=None):
+@@ -384,10 +392,21 @@ def getsitepackages(prefixes=None):
              if sys.platlibdir != "lib":
                  libdirs.append("lib")
  
@@ -60,7 +60,7 @@ Forwarded: not-needed
 +            # this one is deprecated for Debian
              for libdir in libdirs:
                  path = os.path.join(prefix, libdir,
-                                     "python%d.%d" % sys.version_info[:2],
+                                     f"{implementation}{ver[0]}.{ver[1]}",
 -                                    "site-packages")
 +                                    "dist-packages")
                  sitepackages.append(path)
@@ -68,7 +68,7 @@ Forwarded: not-needed
              sitepackages.append(prefix)
 --- a/Lib/test/test_site.py
 +++ b/Lib/test/test_site.py
-@@ -325,16 +325,16 @@ class HelperFunctionsTests(unittest.Test
+@@ -326,16 +326,16 @@ class HelperFunctionsTests(unittest.Test
          if os.sep == '/':
              # OS X, Linux, FreeBSD, etc
              if sys.platlibdir != "lib":
@@ -92,7 +92,7 @@ Forwarded: not-needed
              # other platforms
 --- a/Lib/pydoc.py
 +++ b/Lib/pydoc.py
-@@ -532,6 +532,7 @@ class Doc:
+@@ -555,6 +555,7 @@ class Doc:
                                   'marshal', 'posix', 'signal', 'sys',
                                   '_thread', 'zipimport') or
               (file.startswith(basedir) and

@@ -27,9 +27,11 @@ are:
   _heapq		extension
   _imp			builtin
   _io			builtin
+  _json			extension
   _locale		extension
   _md5			extension
   _opcode		extension
+  _opcode_metadata	module
   _operator		extension
   _pickle		extension
   _posixsubprocess	extension
@@ -50,6 +52,7 @@ are:
   _stringio		builtin
   _strptime		module
   _symtable		builtin
+  _sysconfig		builtin
   _thread		builtin
   _threading_local	module
   _tracemalloc		extension
@@ -76,6 +79,7 @@ are:
   copy			module
   copyreg		module
   csv			module
+  dataclasses		module
   datetime		module
   dis			module
   email			package
@@ -99,6 +103,7 @@ are:
   io			module
   ipaddress		module
   itertools		extension
+  json			package
   keyword		module
   linecache		module
   locale		module
@@ -109,7 +114,7 @@ are:
   operator		module
   optparse		module
   os			module
-  pathlib		module
+  pathlib		package
   pickle		module
   pkgutil		module
   platform		module
@@ -137,7 +142,7 @@ are:
   struct		module
   subprocess		module
   sys			builtin
-  sysconfig		module
+  sysconfig		package
   syslog		extension
   tempfile		module
   textwrap		module
@@ -151,7 +156,6 @@ are:
   typing		module
   unicodedata		extension
   urllib		package
-  uu			module
   warnings		module
   weakref		module
   zipfile		package

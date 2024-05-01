@@ -1,8 +1,6 @@
-Index: b/Lib/sysconfig.py
-===================================================================
---- a/Lib/sysconfig.py
-+++ b/Lib/sysconfig.py
-@@ -37,6 +37,30 @@ _INSTALL_SCHEMES = {
+--- a/Lib/sysconfig/__init__.py
++++ b/Lib/sysconfig/__init__.py
+@@ -38,6 +38,30 @@ _INSTALL_SCHEMES = {
          'scripts': '{base}/bin',
          'data': '{base}',
          },
@@ -31,9 +29,9 @@ Index: b/Lib/sysconfig.py
 +        'data': '{base}/local',
 +        },
      'posix_home': {
-         'stdlib': '{installed_base}/lib/python',
-         'platstdlib': '{base}/lib/python',
-@@ -234,7 +258,7 @@ def is_python_build(check_home=None):
+         'stdlib': '{installed_base}/lib/{implementation_lower}',
+         'platstdlib': '{base}/lib/{implementation_lower}',
+@@ -232,7 +256,7 @@ def is_python_build(check_home=None):
  _PYTHON_BUILD = is_python_build()
  
  if _PYTHON_BUILD:
@@ -42,11 +40,10 @@ Index: b/Lib/sysconfig.py
          # On POSIX-y platforms, Python will:
          # - Build from .h files in 'headers' (which is only added to the
          #   scheme when building CPython)
-@@ -294,8 +318,20 @@ def _get_preferred_schemes():
-             'home': 'posix_home',
+@@ -293,8 +317,19 @@ def _get_preferred_schemes():
              'user': 'osx_framework_user',
          }
-+
+ 
 +    if sys.base_prefix != sys.prefix or hasattr(sys, "real_prefix"):
 +        # virtual environments
 +        prefix_scheme = 'posix_prefix'
@@ -64,7 +61,7 @@ Index: b/Lib/sysconfig.py
          'home': 'posix_home',
          'user': 'posix_user',
      }
-@@ -602,7 +638,7 @@ def get_config_h_filename():
+@@ -413,7 +448,7 @@ def get_config_h_filename():
          else:
              inc_dir = _PROJECT_BASE
      else:
@@ -73,11 +70,9 @@ Index: b/Lib/sysconfig.py
      return os.path.join(inc_dir, 'pyconfig.h')
  
  
-Index: b/Lib/test/test_sysconfig.py
-===================================================================
 --- a/Lib/test/test_sysconfig.py
 +++ b/Lib/test/test_sysconfig.py
-@@ -335,7 +335,7 @@ class TestSysConfig(unittest.TestCase):
+@@ -357,7 +357,7 @@ class TestSysConfig(unittest.TestCase):
          self.assertTrue(os.path.isfile(config_h), config_h)
  
      def test_get_scheme_names(self):
