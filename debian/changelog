@@ -18,7 +18,7 @@ python3.11 (3.11.2-6+deb12u2) bookworm; urgency=medium
   * Apply upstream security fix for CVE-2023-24329
     Strip C0 control and space characters in urlsplit.
 
- -- Steve McIntyre <steve.mcintyre@pexip.com>  Fri, 26 Apr 2024 16:10:48 +0100
+ -- Stefano Rivera <stefanor@debian.org>  Thu, 02 May 2024 07:59:08 -0400
 
 python3.11 (3.11.2-6+deb12u1) bookworm; urgency=medium
 
