@@ -55,7 +55,7 @@ Forwarded: not-needed
  
 --- a/Lib/venv/__init__.py
 +++ b/Lib/venv/__init__.py
-@@ -415,8 +415,26 @@ class EnvBuilder:
+@@ -442,8 +442,26 @@ class EnvBuilder:
  
      def _setup_pip(self, context):
          """Installs or upgrades pip in a virtual environment"""

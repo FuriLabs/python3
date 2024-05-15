@@ -6,7 +6,7 @@ Forwarded: no
 
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
-@@ -1664,6 +1664,8 @@ Modules/getbuildinfo.o: $(PARSER_OBJS) \
+@@ -1671,6 +1671,8 @@ Modules/getbuildinfo.o: $(PARSER_OBJS) \
  	      -DGITVERSION="\"`LC_ALL=C $(GITVERSION)`\"" \
  	      -DGITTAG="\"`LC_ALL=C $(GITTAG)`\"" \
  	      -DGITBRANCH="\"`LC_ALL=C $(GITBRANCH)`\"" \

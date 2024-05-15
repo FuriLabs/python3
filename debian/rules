@@ -376,6 +376,7 @@ common_configure_args = \
 		--with-system-expat \
 		--with-dtrace \
 		--with-ssl-default-suites=openssl \
+		--with-system-libmpdec=no \
 		--with-wheel-pkg-dir=/usr/share/python-wheels/ \
 		MKDIR_P="/bin/mkdir -p" \
 

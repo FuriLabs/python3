@@ -1,4 +1,18 @@
-python3.13 (3.13.0~a6-1) UNRELEASED; urgency=medium
+python3.13 (3.13.0~b1-2) unstable; urgency=medium
+
+  * Configure --with-system-libmpdec=no.
+
+ -- Matthias Klose <doko@debian.org>  Wed, 15 May 2024 12:13:44 +0200
+
+python3.13 (3.13.0~b1-1) unstable; urgency=medium
+
+  * Python 3.13.0 beta 1 snapshot.
+  * Update symbols files.
+  * Refresh patches.
+
+ -- Matthias Klose <doko@debian.org>  Wed, 15 May 2024 08:57:29 +0200
+
+python3.13 (3.13.0~a6-1) experimental; urgency=medium
 
   * Python 3.13.0 alpha 6 snapshot.
   * Refresh patches.

@@ -14,7 +14,7 @@ Forwarded: not-needed
  
  # ---
  # Built-in modules required to get a functioning interpreter are listed in
-@@ -158,8 +159,8 @@ PYTHONPATH=$(COREPYTHONPATH)
+@@ -161,8 +162,8 @@ PYTHONPATH=$(COREPYTHONPATH)
  #_sysconfig _sysconfig.c
  
  # XML
@@ -25,7 +25,7 @@ Forwarded: not-needed
  
  # hashing builtins
  #_blake2 _blake2/blake2module.c _blake2/blake2b_impl.c _blake2/blake2s_impl.c
-@@ -204,15 +205,8 @@ PYTHONPATH=$(COREPYTHONPATH)
+@@ -207,15 +208,8 @@ PYTHONPATH=$(COREPYTHONPATH)
  #readline readline.c -lreadline -ltermcap
  
  # OpenSSL bindings

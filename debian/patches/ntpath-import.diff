@@ -1,16 +1,14 @@
 # ntpath not in python-minimal
 
---- a/Lib/pathlib/__init__.py
-+++ b/Lib/pathlib/__init__.py
-@@ -6,7 +6,6 @@ operating systems.
- """
- 
+--- a/Lib/pathlib/_local.py
++++ b/Lib/pathlib/_local.py
+@@ -1,5 +1,4 @@
  import io
 -import ntpath
+ import operator
  import os
  import posixpath
- import sys
-@@ -123,6 +122,7 @@ class PurePath(_abc.PurePathBase):
+@@ -115,6 +114,7 @@ class PurePath(PurePathBase):
          return object.__new__(cls)
  
      def __init__(self, *args):
@@ -18,7 +16,7 @@
          paths = []
          for arg in args:
              if isinstance(arg, PurePath):
-@@ -497,6 +497,7 @@ class PureWindowsPath(PurePath):
+@@ -475,6 +475,7 @@ class PureWindowsPath(PurePath):
      On a Windows system, instantiating a PurePath should return this object.
      However, you can also instantiate it directly on any system.
      """

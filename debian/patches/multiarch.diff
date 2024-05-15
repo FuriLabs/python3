@@ -22,7 +22,7 @@ Forwarded: no
      if os.name == 'posix':
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
-@@ -1706,6 +1706,7 @@ Python/interpconfig.o: $(srcdir)/Python/
+@@ -1713,6 +1713,7 @@ Python/interpconfig.o: $(srcdir)/Python/
  
  Python/dynload_shlib.o: $(srcdir)/Python/dynload_shlib.c Makefile
  	$(CC) -c $(PY_CORE_CFLAGS) \

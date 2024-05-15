@@ -245,6 +245,9 @@
  PyEval_EvalFrameEx@Base @SVER@
  PyEval_GetBuiltins@Base @SVER@
  PyEval_GetFrame@Base @SVER@
+ PyEval_GetFrameBuiltins@Base @SVER@
+ PyEval_GetFrameGlobals@Base @SVER@
+ PyEval_GetFrameLocals@Base @SVER@
  PyEval_GetFuncDesc@Base @SVER@
  PyEval_GetFuncName@Base @SVER@
  PyEval_GetGlobals@Base @SVER@
@@ -365,6 +368,7 @@
  PyFloat_Unpack2@Base @SVER@
  PyFloat_Unpack4@Base @SVER@
  PyFloat_Unpack8@Base @SVER@
+ PyFrameLocalsProxy_Type@Base @SVER@
  PyFrame_FastToLocals@Base @SVER@
  PyFrame_FastToLocalsWithError@Base @SVER@
  PyFrame_GetBack@Base @SVER@
@@ -624,6 +628,8 @@
  PyModule_NewObject@Base @SVER@
  PyModule_SetDocString@Base @SVER@
  PyModule_Type@Base @SVER@
+ PyMonitoring_EnterScope@Base @SVER@
+ PyMonitoring_ExitScope@Base @SVER@
  PyNumber_Absolute@Base @SVER@
  PyNumber_Add@Base @SVER@
  PyNumber_And@Base @SVER@
@@ -781,6 +787,8 @@
  PyProperty_Type@Base @SVER@
  PyRangeIter_Type@Base @SVER@
  PyRange_Type@Base @SVER@
+ PyRefTracer_GetTracer@Base @SVER@
+ PyRefTracer_SetTracer@Base @SVER@
  PyReversed_Type@Base @SVER@
  PyRun_AnyFile@Base @SVER@
  PyRun_AnyFileEx@Base @SVER@
@@ -927,8 +935,11 @@
  PyThread_tss_set@Base @SVER@
  PyTime_AsSecondsDouble@Base @SVER@
  PyTime_Monotonic@Base @SVER@
+ PyTime_MonotonicRaw@Base @SVER@
  PyTime_PerfCounter@Base @SVER@
+ PyTime_PerfCounterRaw@Base @SVER@
  PyTime_Time@Base @SVER@
+ PyTime_TimeRaw@Base @SVER@
  PyTraceBack_Here@Base @SVER@
  PyTraceBack_Print@Base @SVER@
  PyTraceBack_Type@Base @SVER@
@@ -1092,8 +1103,6 @@
  PyUnstable_Exc_PrepReraiseStar@Base @SVER@
  PyUnstable_ExecutableKinds@Base @SVER@
  PyUnstable_GC_VisitObjects@Base @SVER@
- PyUnstable_GetExecutor@Base @SVER@
- PyUnstable_GetOptimizer@Base @SVER@
  PyUnstable_InterpreterFrame_GetCode@Base @SVER@
  PyUnstable_InterpreterFrame_GetLasti@Base @SVER@
  PyUnstable_InterpreterFrame_GetLine@Base @SVER@
@@ -1101,14 +1110,10 @@
  PyUnstable_Long_CompactValue@Base @SVER@
  PyUnstable_Long_IsCompact@Base @SVER@
  PyUnstable_Object_GC_NewWithExtraData@Base @SVER@
- PyUnstable_Optimizer_NewCounter@Base @SVER@
- PyUnstable_Optimizer_NewUOpOptimizer@Base @SVER@
  PyUnstable_PerfMapState_Fini@Base @SVER@
  PyUnstable_PerfMapState_Init@Base @SVER@
  PyUnstable_PerfTrampoline_CompileCode@Base @SVER@
  PyUnstable_PerfTrampoline_SetPersistAfterFork@Base @SVER@
- PyUnstable_Replace_Executor@Base @SVER@
- PyUnstable_SetOptimizer@Base @SVER@
  PyUnstable_Type_AssignVersionTag@Base @SVER@
  PyUnstable_WritePerfMapEntry@Base @SVER@
  PyVectorcall_Call@Base @SVER@
@@ -1307,6 +1312,7 @@
  _PyErr_SetFromPyStatus@Base @SVER@
  _PyErr_SetKeyError@Base @SVER@
  _PyErr_SetString@Base @SVER@
+ _PyEvalFramePushAndInit@Base @SVER@
  _PyEval_AddPendingCall@Base @SVER@
  _PyEval_BinaryOps@Base @SVER@
  _PyEval_CheckExceptStarTypeValid@Base @SVER@
@@ -1342,6 +1348,7 @@
  _PyImport_GetModuleAttr@Base @SVER@
  _PyImport_GetModuleAttrString@Base @SVER@
  _PyImport_SetModule@Base @SVER@
+ _PyInstructionSequence_New@Base @SVER@
  _PyInterpreterConfig_AsDict@Base @SVER@
  _PyInterpreterConfig_InitFromDict@Base @SVER@
  _PyInterpreterConfig_InitFromState@Base @SVER@
@@ -1349,9 +1356,12 @@
  _PyInterpreterState_FailIfRunningMain@Base @SVER@
  _PyInterpreterState_GetConfigCopy@Base @SVER@
  _PyInterpreterState_GetEvalFrameFunc@Base @SVER@
+ _PyInterpreterState_GetIDObject@Base @SVER@
+ _PyInterpreterState_GetWhence@Base @SVER@
  _PyInterpreterState_IDDecref@Base @SVER@
  _PyInterpreterState_IDIncref@Base @SVER@
  _PyInterpreterState_IDInitref@Base @SVER@
+ _PyInterpreterState_IsReady@Base @SVER@
  _PyInterpreterState_IsRunningMain@Base @SVER@
  _PyInterpreterState_LookUpID@Base @SVER@
  _PyInterpreterState_LookUpIDObject@Base @SVER@
@@ -1396,6 +1406,22 @@
  _PyLong_UnsignedShort_Converter@Base @SVER@
  _PyMem_GetCurrentAllocatorName@Base @SVER@
  _PyMem_Strdup@Base @SVER@
+ _PyMonitoring_FireBranchEvent@Base @SVER@
+ _PyMonitoring_FireCRaiseEvent@Base @SVER@
+ _PyMonitoring_FireCReturnEvent@Base @SVER@
+ _PyMonitoring_FireCallEvent@Base @SVER@
+ _PyMonitoring_FireExceptionHandledEvent@Base @SVER@
+ _PyMonitoring_FireJumpEvent@Base @SVER@
+ _PyMonitoring_FireLineEvent@Base @SVER@
+ _PyMonitoring_FirePyResumeEvent@Base @SVER@
+ _PyMonitoring_FirePyReturnEvent@Base @SVER@
+ _PyMonitoring_FirePyStartEvent@Base @SVER@
+ _PyMonitoring_FirePyThrowEvent@Base @SVER@
+ _PyMonitoring_FirePyUnwindEvent@Base @SVER@
+ _PyMonitoring_FirePyYieldEvent@Base @SVER@
+ _PyMonitoring_FireRaiseEvent@Base @SVER@
+ _PyMonitoring_FireReraiseEvent@Base @SVER@
+ _PyMonitoring_FireStopIterationEvent@Base @SVER@
  _PyMutex_LockSlow@Base @SVER@
  _PyMutex_UnlockSlow@Base @SVER@
  _PyNamespace_New@Base @SVER@
@@ -1429,8 +1455,8 @@
  _PyObject_MakeTpCall@Base @SVER@
  _PyObject_New@Base @SVER@
  _PyObject_NewVar@Base @SVER@
+ _PyObject_SetManagedDict@Base @SVER@
  _PyOnceFlag_CallOnceSlow@Base @SVER@
- _PyOptimizer_Optimize@Base @SVER@
  _PyParkingLot_AfterFork@Base @SVER@
  _PyParkingLot_Park@Base @SVER@
  _PyParkingLot_Unpark@Base @SVER@
@@ -1456,6 +1482,7 @@
  _PySet_Contains@Base @SVER@
  _PySet_Dummy@Base @SVER@
  _PySet_NextEntry@Base @SVER@
+ _PySet_NextEntryRef@Base @SVER@
  _PySet_Update@Base @SVER@
  _PySlice_FromIndices@Base @SVER@
  _PySlice_GetLongIndices@Base @SVER@
@@ -1468,6 +1495,7 @@
  _PyThreadState_GetCurrent@Base @SVER@
  _PyThreadState_GetDict@Base @SVER@
  _PyThreadState_Init@Base @SVER@
+ _PyThreadState_PopFrame@Base @SVER@
  _PyThreadState_Prealloc@Base @SVER@
  _PyThread_CurrentFrames@Base @SVER@
  _PyTime_AsLong@Base @SVER@
@@ -1482,13 +1510,10 @@
  _PyTime_FromMillisecondsObject@Base @SVER@
  _PyTime_FromSeconds@Base @SVER@
  _PyTime_FromSecondsObject@Base @SVER@
- _PyTime_MonotonicUnchecked@Base @SVER@
  _PyTime_MonotonicWithInfo@Base @SVER@
  _PyTime_ObjectToTime_t@Base @SVER@
  _PyTime_ObjectToTimespec@Base @SVER@
  _PyTime_ObjectToTimeval@Base @SVER@
- _PyTime_PerfCounterUnchecked@Base @SVER@
- _PyTime_TimeUnchecked@Base @SVER@
  _PyTime_gmtime@Base @SVER@
  _PyTime_localtime@Base @SVER@
  _PyToken_OneChar@Base @SVER@
@@ -1496,13 +1521,14 @@
  _PyToken_TwoChars@Base @SVER@
  _PyTraceMalloc_GetTraceback@Base @SVER@
  _PyTraceback_Add@Base @SVER@
- _PyTrash_begin@Base @SVER@
- _PyTrash_cond@Base @SVER@
- _PyTrash_end@Base @SVER@
+ _PyTrash_thread_deposit_object@Base @SVER@
+ _PyTrash_thread_destroy_chain@Base @SVER@
  _PyTuple_FromArraySteal@Base @SVER@
  _PyTuple_Resize@Base @SVER@
  _PyType_GetDict@Base @SVER@
+ _PyType_GetModuleByDef2@Base @SVER@
  _PyType_Lookup@Base @SVER@
+ _PyType_LookupRef@Base @SVER@
  _PyType_Name@Base @SVER@
  _PyUnicodeWriter_Dealloc@Base @SVER@
  _PyUnicodeWriter_Finish@Base @SVER@
@@ -1553,12 +1579,18 @@
  _PyXI_ApplyCapturedException@Base @SVER@
  _PyXI_ApplyError@Base @SVER@
  _PyXI_ApplyNamespace@Base @SVER@
+ _PyXI_ClearExcInfo@Base @SVER@
+ _PyXI_EndInterpreter@Base @SVER@
  _PyXI_Enter@Base @SVER@
+ _PyXI_ExcInfoAsObject@Base @SVER@
  _PyXI_Exit@Base @SVER@
  _PyXI_FillNamespaceFromDict@Base @SVER@
+ _PyXI_FormatExcInfo@Base @SVER@
  _PyXI_FreeNamespace@Base @SVER@
  _PyXI_HasCapturedException@Base @SVER@
+ _PyXI_InitExcInfo@Base @SVER@
  _PyXI_NamespaceFromNames@Base @SVER@
+ _PyXI_NewInterpreter@Base @SVER@
  _Py_BreakPoint@Base @SVER@
  _Py_BuildValue_SizeT@Base @SVER@
  _Py_CheckFunctionResult@Base @SVER@
@@ -1569,8 +1601,6 @@
  _Py_DisplaySourceLine@Base @SVER@
  _Py_EllipsisObject@Base @SVER@
  _Py_EncodeLocaleEx@Base @SVER@
- _Py_Executor_DependsOn@Base @SVER@
- _Py_Executors_InvalidateDependency@Base @SVER@
  _Py_FalseStruct@Base @SVER@
  _Py_FatalErrorFunc@Base @SVER@
  _Py_FatalRefcountErrorFunc@Base @SVER@
@@ -1586,6 +1616,8 @@
  _Py_IncRef@Base @SVER@
  _Py_InitializeMain@Base @SVER@
  _Py_IsInterpreterFinalizing@Base @SVER@
+ _Py_IsValidFD@Base @SVER@
+ _Py_MakeCoro@Base @SVER@
  _Py_NewReference@Base @SVER@
  _Py_NewReferenceNoTotal@Base @SVER@
  _Py_NoneStruct@Base @SVER@
@@ -1640,7 +1672,6 @@
  (arch=amd64 arm64)_Py_trampoline_func_end@Base @SVER@
  (arch=amd64 arm64)_Py_trampoline_func_start@Base @SVER@
  _Py_union_type_or@Base @SVER@
- _Py_uop_symbols_test@Base @SVER@
  _Py_write@Base @SVER@
  _Py_write_noraise@Base @SVER@
 
