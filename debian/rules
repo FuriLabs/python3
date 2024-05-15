@@ -374,7 +374,7 @@ common_configure_args = \
 		--with-computed-gotos \
 		--without-ensurepip \
 		--with-system-expat \
-		--with-dtrace \
+		$(if $(filter hurd, $(DEB_HOST_ARCH_OS)),,--with-dtrace) \
 		--with-ssl-default-suites=openssl \
 		--with-system-libmpdec=no \
 		--with-wheel-pkg-dir=/usr/share/python-wheels/ \
