@@ -1,6 +1,10 @@
 python3.13 (3.13.0~b1-3) UNRELEASED; urgency=medium
 
+  [ Matthias Klose ]
   * Configure without --with-dtrace on the Hurd.
+
+  [ Stefano Rivera ]
+  * Bump watch file to 3.13.
 
  -- Matthias Klose <doko@debian.org>  Wed, 15 May 2024 13:52:46 +0200
 
