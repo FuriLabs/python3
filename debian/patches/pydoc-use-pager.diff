@@ -6,10 +6,10 @@ Forwarded: no
 
 --- a/Lib/_pyrepl/pager.py
 +++ b/Lib/_pyrepl/pager.py
-@@ -36,6 +36,8 @@ def get_pager() -> Pager:
+@@ -36,6 +36,8 @@
          return plain_pager
      if sys.platform == 'win32':
-         return lambda text, title='': tempfilepager(plain(text), 'more <')
+         return lambda text, title='': tempfile_pager(plain(text), 'more <')
 +    if hasattr(os, 'system') and os.system('(pager) 2>/dev/null') == 0:
 +        return lambda text: pipepager(text, 'pager')
      if hasattr(os, 'system') and os.system('(less) 2>/dev/null') == 0:
