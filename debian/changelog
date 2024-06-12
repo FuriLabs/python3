@@ -2,6 +2,7 @@ python3.12 (3.12.4-1) UNRELEASED; urgency=medium
 
   * Python 3.12.4 release.
   * Refresh patches.
+  * Patch: Ignore test/wheeldata completely in test_makefile.
 
  -- Stefano Rivera <stefanor@debian.org>  Wed, 12 Jun 2024 14:35:50 +0100
 
