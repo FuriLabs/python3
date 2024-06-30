@@ -22,7 +22,7 @@ Forwarded: no
      if os.name == 'posix':
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
-@@ -1715,6 +1715,7 @@
+@@ -1718,6 +1718,7 @@
  
  Python/dynload_shlib.o: $(srcdir)/Python/dynload_shlib.c Makefile
  	$(CC) -c $(PY_CORE_CFLAGS) \

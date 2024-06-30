@@ -6,7 +6,7 @@ Forwarded: not-needed
 
 --- a/Lib/ensurepip/__init__.py
 +++ b/Lib/ensurepip/__init__.py
-@@ -8,6 +8,34 @@ from importlib import resources
+@@ -8,6 +8,34 @@
  from pathlib import Path
  from shutil import copy2
  
@@ -40,8 +40,8 @@ Forwarded: not-needed
 +
  
  __all__ = ["version", "bootstrap"]
- _PIP_VERSION = "24.0"
-@@ -130,6 +158,11 @@ def _bootstrap(*, root=None, upgrade=Fal
+ _PIP_VERSION = "24.1.1"
+@@ -130,6 +158,11 @@
  
      Note that calling this function will alter both sys.path and os.environ.
      """
@@ -55,7 +55,7 @@ Forwarded: not-needed
  
 --- a/Lib/venv/__init__.py
 +++ b/Lib/venv/__init__.py
-@@ -442,8 +442,26 @@ class EnvBuilder:
+@@ -442,8 +442,26 @@
  
      def _setup_pip(self, context):
          """Installs or upgrades pip in a virtual environment"""

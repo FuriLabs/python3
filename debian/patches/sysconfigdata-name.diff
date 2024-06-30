@@ -18,7 +18,7 @@ Forwarded: no
  def _init_posix(vars):
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
-@@ -2572,8 +2572,10 @@
+@@ -2575,8 +2575,10 @@
  			esac; \
  		done; \
  	done

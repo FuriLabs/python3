@@ -6,7 +6,7 @@ Forwarded: no
 
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
-@@ -1673,6 +1673,8 @@
+@@ -1676,6 +1676,8 @@
  	      -DGITVERSION="\"`LC_ALL=C $(GITVERSION)`\"" \
  	      -DGITTAG="\"`LC_ALL=C $(GITTAG)`\"" \
  	      -DGITBRANCH="\"`LC_ALL=C $(GITBRANCH)`\"" \

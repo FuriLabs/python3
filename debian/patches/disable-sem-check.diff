@@ -6,7 +6,7 @@ Forwarded: not-needed
 
 --- a/configure.ac
 +++ b/configure.ac
-@@ -5945,10 +5945,15 @@
+@@ -5946,10 +5946,15 @@
    [ac_cv_posix_semaphores_enabled=yes])
  )
  AS_VAR_IF([ac_cv_posix_semaphores_enabled], [no], [
