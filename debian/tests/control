@@ -2,30 +2,30 @@ Tests: testsuite
 Depends: build-essential,
   ca-certificates,
   locales-all,
-  python3.12-dev,
-  libpython3.12-testsuite:native,
-  python3-gdbm (>= 3.11.4),
+  python3.13-dev,
+  libpython3.13-testsuite:native,
+  python3-gdbm,
   python3-distutils,
-  python3-tk (>= 3.11.4),
-  idle-python3.12,
+  python3-tk,
+  idle-python3.13,
   systemtap-sdt-dev,
-  python3.12-venv,
+  python3.13-venv,
 # need to turn off apport
 Restrictions: needs-root, allow-stderr
 
 Tests: testsuite-dbg
 Depends: build-essential,
   ca-certificates,
-  locales-all, python3.12-dev,
-  python3.12-dbg,
-  libpython3.12-testsuite:native,
-  python3-gdbm-dbg (>= 3.11.4),
+  locales-all, python3.13-dev,
+  python3.13-dbg,
+  libpython3.13-testsuite:native,
+  python3-gdbm-dbg,
   gdb,
   python3-distutils,
-  python3-tk-dbg (>= 3.11.4),
-  idle-python3.12,
+  python3-tk-dbg,
+  idle-python3.13,
   systemtap-sdt-dev,
-  python3.12-venv,
+  python3.13-venv,
 # need to turn off apport
 Restrictions: needs-root, allow-stderr
 
@@ -33,12 +33,12 @@ Tests: failing-tests
 Depends: build-essential,
   ca-certificates,
   locales-all,
-  python3.12-dev,
-  libpython3.12-testsuite:native,
-  python3-gdbm (>= 3.11.4),
-  python3-tk (>= 3.11.4),
+  python3.13-dev,
+  libpython3.13-testsuite:native,
+  python3-gdbm,
+  python3-tk,
   python3-distutils,
-  python3.12-venv,
+  python3.13-venv,
 # need to turn off apport
 Restrictions: needs-root, allow-stderr
 
@@ -46,20 +46,20 @@ Tests: failing-tests-dbg
 Depends: build-essential,
   ca-certificates,
   locales-all,
-  python3.12-dev,
-  python3.12-dbg,
-  libpython3.12-testsuite:native,
-  python3-gdbm-dbg (>= 3.11.4),
-  python3-tk-dbg (>= 3.11.4),
+  python3.13-dev,
+  python3.13-dbg,
+  libpython3.13-testsuite:native,
+  python3-gdbm-dbg,
+  python3-tk-dbg,
   gdb,
   python3-distutils,
-  python3.12-venv,
+  python3.13-venv,
 # need to turn off apport
 Restrictions: needs-root, allow-stderr
 
 Tests: module-install-local
 Depends: build-essential,
-  python3.12-dev,
+  python3.13-dev,
   python3-pip,
   python3-setuptools,
   shunit2,
@@ -67,7 +67,7 @@ Restrictions: needs-root, allow-stderr
 
 Tests: module-install-user
 Depends: build-essential,
-  python3.12-dev,
+  python3.13-dev,
   python3-pip,
   python3-setuptools,
   shunit2
@@ -75,8 +75,8 @@ Restrictions: allow-stderr
 
 Tests: module-install-venv
 Depends: build-essential,
-  python3.12-dev,
-  python3.12-venv,
+  python3.13-dev,
+  python3.13-venv,
   python3-setuptools-whl,
   python3-wheel-whl,
   shunit2
@@ -84,9 +84,9 @@ Restrictions: allow-stderr
 
 Tests: module-install-virtualenv
 Depends: build-essential,
-  python3.12-dev,
+  python3.13-dev,
   shunit2,
   virtualenv,
   python3-setuptools-whl,
   python3-wheel-whl
-Restrictions: allow-stderr
+Restriction: allow-stderr
