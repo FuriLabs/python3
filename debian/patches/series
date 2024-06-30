@@ -28,6 +28,6 @@ sphinx3.diff
 destshared-location.diff
 fix-py_compile.diff
 ntpath-import.diff
-python3.12-updates.diff
+compileall-minimal.diff
 makefile-bootstrap.diff
 #patchlevel-noplus.diff
