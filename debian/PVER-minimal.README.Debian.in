@@ -58,6 +58,7 @@ are:
   _threading_local	module
   _tracemalloc		extension
   _types		builtin
+  _typing		builtin
   _weakref		builtin
   _weakrefset		module
   _warnings		builtin

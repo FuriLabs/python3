@@ -6,6 +6,7 @@ python3.13 (3.13.0~b3-1) UNRELEASED; urgency=medium
   * Migrate some more bits of packaging from 3.12 to 3.13.
   * Drop old breaks+replace.
   * Rename python3.12-updates.diff to compileall-minimal.diff.
+  * Document that _typing is included in -minimal.
 
  -- Stefano Rivera <stefanor@debian.org>  Sun, 30 Jun 2024 15:58:55 -0700
 
