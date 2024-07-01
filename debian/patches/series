@@ -31,3 +31,4 @@ ntpath-import.diff
 compileall-minimal.diff
 makefile-bootstrap.diff
 #patchlevel-noplus.diff
+pyrepl-import.dff
