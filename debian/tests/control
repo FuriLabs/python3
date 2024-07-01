@@ -10,6 +10,7 @@ Depends: build-essential,
   idle-python3.13,
   systemtap-sdt-dev,
   python3.13-venv,
+  python3-wheel-whl,
 # need to turn off apport
 Restrictions: needs-root, allow-stderr
 
