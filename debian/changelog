@@ -11,6 +11,7 @@ python3.13 (3.13.0~b3-1) UNRELEASED; urgency=medium
   * Install python3-wheel-whl in the testsuite autopkgtest. Not installed in
     venvs by default (so not a dependency of python3-venv) but required by
     tests.
+  * Add a missing import to ntpath-import.diff.
 
  -- Stefano Rivera <stefanor@debian.org>  Sun, 30 Jun 2024 15:58:55 -0700
 
