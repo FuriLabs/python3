@@ -134,6 +134,10 @@
  PyContext_Type@Base @SVER@
  PyCoro_New@Base @SVER@
  PyCoro_Type@Base @SVER@
+ PyCriticalSection2_Begin@Base @SVER@
+ PyCriticalSection2_End@Base @SVER@
+ PyCriticalSection_Begin@Base @SVER@
+ PyCriticalSection_End@Base @SVER@
  PyDescr_IsData@Base @SVER@
  PyDescr_NewClassMethod@Base @SVER@
  PyDescr_NewGetSet@Base @SVER@
@@ -292,7 +296,6 @@
  PyExc_IOError@Base @SVER@
  PyExc_ImportError@Base @SVER@
  PyExc_ImportWarning@Base @SVER@
- PyExc_IncompleteInputError@Base @SVER@
  PyExc_IndentationError@Base @SVER@
  PyExc_IndexError@Base @SVER@
  PyExc_InterpreterError@Base @SVER@
@@ -630,6 +633,8 @@
  PyModule_Type@Base @SVER@
  PyMonitoring_EnterScope@Base @SVER@
  PyMonitoring_ExitScope@Base @SVER@
+ PyMutex_Lock@Base @SVER@
+ PyMutex_Unlock@Base @SVER@
  PyNumber_Absolute@Base @SVER@
  PyNumber_Add@Base @SVER@
  PyNumber_And@Base @SVER@
@@ -1109,6 +1114,7 @@
  PyUnstable_InterpreterState_GetMainModule@Base @SVER@
  PyUnstable_Long_CompactValue@Base @SVER@
  PyUnstable_Long_IsCompact@Base @SVER@
+ PyUnstable_Object_ClearWeakRefsNoCallbacks@Base @SVER@
  PyUnstable_Object_GC_NewWithExtraData@Base @SVER@
  PyUnstable_PerfMapState_Fini@Base @SVER@
  PyUnstable_PerfMapState_Init@Base @SVER@
@@ -1335,6 +1341,7 @@
  _PyEval_UnpackIterable@Base @SVER@
  _PyEvent_IsSet@Base @SVER@
  _PyEvent_Notify@Base @SVER@
+ _PyExc_IncompleteInputError@Base @SVER@
  _PyFloat_ExactDealloc@Base @SVER@
  _PyFrame_IsEntryFrame@Base @SVER@
  _PyFunction_SetVersion@Base @SVER@
@@ -1422,8 +1429,6 @@
  _PyMonitoring_FireRaiseEvent@Base @SVER@
  _PyMonitoring_FireReraiseEvent@Base @SVER@
  _PyMonitoring_FireStopIterationEvent@Base @SVER@
- _PyMutex_LockSlow@Base @SVER@
- _PyMutex_UnlockSlow@Base @SVER@
  _PyNamespace_New@Base @SVER@
  _PyNone_Type@Base @SVER@
  _PyNotImplemented_Type@Base @SVER@
@@ -1468,6 +1473,9 @@
  _PyRWMutex_RLock@Base @SVER@
  _PyRWMutex_RUnlock@Base @SVER@
  _PyRWMutex_Unlock@Base @SVER@
+ _PyRecursiveMutex_IsLockedByCurrentThread@Base @SVER@
+ _PyRecursiveMutex_Lock@Base @SVER@
+ _PyRecursiveMutex_Unlock@Base @SVER@
  _PyRuntime@Base @SVER@
  _PySemaphore_Destroy@Base @SVER@
  _PySemaphore_Init@Base @SVER@
@@ -1488,6 +1496,7 @@
  _PySlice_GetLongIndices@Base @SVER@
  _PyStack_AsDict@Base @SVER@
  _PyState_AddModule@Base @SVER@
+ _PyStaticType_InitForExtension@Base @SVER@
  _PyStructSequence_NewType@Base @SVER@
  _PySuper_Lookup@Base @SVER@
  _PySys_GetAttr@Base @SVER@
@@ -1495,6 +1504,8 @@
  _PyThreadState_GetCurrent@Base @SVER@
  _PyThreadState_GetDict@Base @SVER@
  _PyThreadState_Init@Base @SVER@
+ _PyThreadState_New@Base @SVER@
+ _PyThreadState_NewBound@Base @SVER@
  _PyThreadState_PopFrame@Base @SVER@
  _PyThreadState_Prealloc@Base @SVER@
  _PyThread_CurrentFrames@Base @SVER@
@@ -1551,6 +1562,9 @@
  _PyUnicode_EqualToASCIIString@Base @SVER@
  _PyUnicode_ExactDealloc@Base @SVER@
  _PyUnicode_FromId@Base @SVER@
+ _PyUnicode_InternImmortal@Base @SVER@
+ _PyUnicode_InternInPlace@Base @SVER@
+ _PyUnicode_InternMortal@Base @SVER@
  _PyUnicode_IsAlpha@Base @SVER@
  _PyUnicode_IsDecimalDigit@Base @SVER@
  _PyUnicode_IsDigit@Base @SVER@
@@ -1573,6 +1587,7 @@
  _PyUnion_Type@Base @SVER@
  _PyWarnings_Init@Base @SVER@
  _PyWeakref_CallableProxyType@Base @SVER@
+ _PyWeakref_ClearRef@Base @SVER@
  _PyWeakref_IsDead@Base @SVER@
  _PyWeakref_ProxyType@Base @SVER@
  _PyWeakref_RefType@Base @SVER@
