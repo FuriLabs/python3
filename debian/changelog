@@ -8,7 +8,7 @@ python3.13 (3.13.0~b3-1) UNRELEASED; urgency=medium
   * Rename python3.12-updates.diff to compileall-minimal.diff.
   * Document that _typing is included in -minimal.
   * Update symbols file.
-  * Install python3-wheel-whl in the testsuite autopkgtest. Not installed in
+  * Install python3-wheel-whl in the testsuite autopkgtests. Not installed in
     venvs by default (so not a dependency of python3-venv) but required by
     tests.
   * Add a missing import to ntpath-import.diff.
