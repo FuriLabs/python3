@@ -6,15 +6,15 @@ Description: Disable perf_trampoline on riscv64 for now
 Forwarded: https://github.com/python/cpython/pull/121328
 --- a/configure
 +++ b/configure
-@@ -13131,8 +13131,6 @@
- case $PLATFORM_TRIPLET in #(
-   x86_64-linux-gnu) :
+@@ -13133,8 +13133,6 @@
      perf_trampoline=yes ;; #(
--  aarch64-linux-gnu) :
+   aarch64-linux-gnu) :
+     perf_trampoline=yes ;; #(
+-  riscv64-linux-gnu) :
 -    perf_trampoline=yes ;; #(
-   riscv64-linux-gnu) :
-     perf_trampoline=yes ;; #(
    *) :
+     perf_trampoline=no
+  ;;
 --- a/configure.ac
 +++ b/configure.ac
 @@ -3641,7 +3641,6 @@
