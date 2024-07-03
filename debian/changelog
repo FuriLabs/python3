@@ -1,4 +1,4 @@
-python3.13 (3.13.0~b3-1) UNRELEASED; urgency=medium
+python3.13 (3.13.0~b3-1) unstable; urgency=medium
 
   * New upstream beta.
   * Use https in watch file.
@@ -14,7 +14,7 @@ python3.13 (3.13.0~b3-1) UNRELEASED; urgency=medium
   * Add a missing import to ntpath-import.diff.
   * Patch: Handle missing _pyrepl in the -minimal interpreter.
 
- -- Stefano Rivera <stefanor@debian.org>  Sun, 30 Jun 2024 15:58:55 -0700
+ -- Stefano Rivera <stefanor@debian.org>  Wed, 03 Jul 2024 12:17:07 +0200
 
 python3.13 (3.13.0~b2-1) unstable; urgency=medium
 
