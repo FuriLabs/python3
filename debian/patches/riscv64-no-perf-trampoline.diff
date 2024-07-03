@@ -1,0 +1,27 @@
+Description: Disable perf_trampoline on riscv64 for now
+ Until support is added in perf_jit_trampoline.c
+ .
+ gh-120089 was incomplete.
+
+Forwarded: https://github.com/python/cpython/pull/121328
+--- a/configure
++++ b/configure
+@@ -13131,8 +13131,6 @@
+ case $PLATFORM_TRIPLET in #(
+   x86_64-linux-gnu) :
+     perf_trampoline=yes ;; #(
+-  aarch64-linux-gnu) :
+-    perf_trampoline=yes ;; #(
+   riscv64-linux-gnu) :
+     perf_trampoline=yes ;; #(
+   *) :
+--- a/configure.ac
++++ b/configure.ac
+@@ -3641,7 +3641,6 @@
+ AS_CASE([$PLATFORM_TRIPLET],
+   [x86_64-linux-gnu], [perf_trampoline=yes],
+   [aarch64-linux-gnu], [perf_trampoline=yes],
+-  [riscv64-linux-gnu], [perf_trampoline=yes],
+   [perf_trampoline=no]
+ )
+ AC_MSG_RESULT([$perf_trampoline])

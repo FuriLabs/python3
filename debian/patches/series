@@ -32,3 +32,4 @@ compileall-minimal.diff
 makefile-bootstrap.diff
 #patchlevel-noplus.diff
 pyrepl-import.dff
+riscv64-no-perf-trampoline.diff
