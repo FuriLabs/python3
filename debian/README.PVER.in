@@ -41,11 +41,10 @@ can't be used with Linux.
 
 See the draft of the Debian Python policy in /usr/share/doc/python.
 
-distutils can be found in the @PVER@-dev package. Development files
-like the python library or Makefiles can be found in the @PVER@-dev
-package in /usr/lib/@PVER@/config. Therefore, if you need to install 
-a pure python extension, you only need @PVER@. On the other hand, to 
-install a C extension, you need @PVER@-dev.
+Development files like the python library or Makefiles can be found in the
+@PVER@-dev package in /usr/lib/@PVER@/config. Therefore, if you need to install
+a pure python extension, you only need @PVER@. On the other hand, to install a
+C extension, you need @PVER@-dev.
 
 a) Locally installed Python add-ons
 
@@ -70,7 +69,7 @@ Header files for extensions go into /usr/include/@PVER@/.
 Installing extensions for local use only:
 ----------------------------------------
 
-Consider using distutils ...
+Consider using setuptools ...
 
 Most extensions use Python's Makefile.pre.in. Note that Makefile.pre.in
 by default will install files into /usr/lib/, not into /usr/local/lib/,

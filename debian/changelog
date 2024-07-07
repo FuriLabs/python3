@@ -1,3 +1,9 @@
+python3.13 (3.13.0~b3-3) UNRELEASED; urgency=medium
+
+  * Remove distutils references, it was removed in 3.12.
+
+ -- Stefano Rivera <stefanor@debian.org>  Sun, 07 Jul 2024 18:17:26 +0200
+
 python3.13 (3.13.0~b3-2) unstable; urgency=medium
 
   * Patch: Disable perf_trampoline or riscv64, for now.

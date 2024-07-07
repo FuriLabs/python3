@@ -329,7 +329,7 @@ stamps/stamp-build: stamps/stamp-build-static \
     stamps/stamp-check stamps/stamp-pybench
 	touch $@
 
-PROFILE_EXCLUDES = test_compiler test_distutils test_subprocess \
+PROFILE_EXCLUDES = test_compiler test_subprocess \
 	test_multiprocessing test_socket test_socketserver \
 	test_thread test_threaded_import test_threadedtempfile \
 	test_threading test_threading_local test_threadsignals \
@@ -1044,8 +1044,7 @@ endif
 		usr/lib/python$(VER)/config-$(VER)-$(DEB_HOST_MULTIARCH) \
 		usr/include \
 		usr/lib/$(DEB_HOST_MULTIARCH)/libpython$(VER).{a,so} \
-		usr/lib/$(DEB_HOST_MULTIARCH)/pkgconfig/python-$(VER)*.pc \
-		usr/lib/python$(VER)/distutils/command/wininst-*.exe
+		usr/lib/$(DEB_HOST_MULTIARCH)/pkgconfig/python-$(VER)*.pc
 
 	sed 's/@subdir@/$(PVER)/;s/@header@/pyconfig.h/' \
 		debian/multiarch.h.in > $(d_ldev)/usr/include/$(PVER)/pyconfig.h
