@@ -1,6 +1,7 @@
 python3.13 (3.13.0~b3-3) UNRELEASED; urgency=medium
 
   * Remove distutils references, it was removed in 3.12.
+  * Remove pysetup3(1), it was removed in 3.2.
 
  -- Stefano Rivera <stefanor@debian.org>  Sun, 07 Jul 2024 18:17:26 +0200
 
