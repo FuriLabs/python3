@@ -1,0 +1,17 @@
+Description: Skip freeing unallocated arenas
+ Fixes an observed testsuite hang on 32-bit ARM systems.
+Forwarded: https://github.com/python/cpython/pull/121491
+Bug-upstream: https://github.com/python/cpython/issues/121460
+
+--- a/Objects/obmalloc.c
++++ b/Objects/obmalloc.c
+@@ -3169,6 +3169,9 @@
+     for (uint i = 0; i < maxarenas; ++i) {
+         // free each obmalloc memory arena
+         struct arena_object *ao = &allarenas[i];
++        /* Skip arenas which are not allocated. */
++        if (ao->address == (uintptr_t)NULL)
++            continue;
+         _PyObject_Arena.free(_PyObject_Arena.ctx,
+                              (void *)ao->address, ARENA_SIZE);
+     }
