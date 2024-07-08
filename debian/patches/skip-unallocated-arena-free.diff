@@ -5,13 +5,20 @@ Bug-upstream: https://github.com/python/cpython/issues/121460
 
 --- a/Objects/obmalloc.c
 +++ b/Objects/obmalloc.c
-@@ -3169,6 +3169,9 @@
-     for (uint i = 0; i < maxarenas; ++i) {
-         // free each obmalloc memory arena
-         struct arena_object *ao = &allarenas[i];
-+        /* Skip arenas which are not allocated. */
-+        if (ao->address == (uintptr_t)NULL)
-+            continue;
-         _PyObject_Arena.free(_PyObject_Arena.ctx,
-                              (void *)ao->address, ARENA_SIZE);
-     }
+@@ -386,8 +386,16 @@
+ )
+ {
+ #ifdef MS_WINDOWS
++    /* Unlike free(), VirtualFree() does not special-case NULL to noop. */
++    if (ptr == NULL) {
++        return;
++    }
+     VirtualFree(ptr, 0, MEM_RELEASE);
+ #elif defined(ARENAS_USE_MMAP)
++    /* Unlike free(), munmap() does not special-case NULL to noop. */
++    if (ptr == NULL) {
++        return;
++    }
+     munmap(ptr, size);
+ #else
+     free(ptr);
