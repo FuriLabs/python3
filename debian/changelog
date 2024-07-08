@@ -1,10 +1,10 @@
-python3.13 (3.13.0~b3-3) UNRELEASED; urgency=medium
+python3.13 (3.13.0~b3-3) unstable; urgency=medium
 
   * Remove distutils references, it was removed in 3.12.
   * Remove pysetup3(1), it was removed in 3.2.
-  * Patch: Skip freeing unallocated arenas.
+  * Patch: Avoid munmap() of the zero page when freeing unallocated arenas.
 
- -- Stefano Rivera <stefanor@debian.org>  Sun, 07 Jul 2024 18:17:26 +0200
+ -- Stefano Rivera <stefanor@debian.org>  Tue, 09 Jul 2024 01:33:11 +0200
 
 python3.13 (3.13.0~b3-2) unstable; urgency=medium
 
