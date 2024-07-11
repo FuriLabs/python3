@@ -26,12 +26,6 @@ SPHINXOPTS := -D today='$(shell LC_ALL=C date -u +'%B %d, %Y' -d '@$(SOURCE_DATE
 SPHINXOPTS += -D html_last_updated_fmt='$(shell LC_ALL=C date -u +'%B %d, %Y' -d '@$(SOURCE_DATE_EPOCH)')'
 export SPHINXOPTS
 
-# Export variables needed for ELF package metadata
-export DEB_BUILD_OS_RELEASE_ID=$(shell . /usr/lib/os-release && echo $$ID)
-export DEB_HOST_ARCH
-export DEB_SOURCE
-export DEB_VERSION
-
 on_buildd := $(shell [ -f /CurrentlyBuilding -o "$$LOGNAME" = buildd -o "$$USER" = buildd ] && echo yes)
 
 dh_compat2 := $(shell dpkg --compare-versions "$$(dpkg-query -f '$${Version}' -W debhelper)" lt 9.20150811ubuntu2 && echo DH_COMPAT=2)
@@ -69,6 +63,19 @@ derivative      := $(shell \
 	if dpkg-vendor --derives-from Ubuntu; then echo Ubuntu; \
 	elif dpkg-vendor --derives-from Debian; then echo Debian; \
 	else echo Unknown; fi)
+
+# package metadata information
+ifeq (,$(ELF_PACKAGE_METADATA))
+  ELF_PACKAGE_METADATA := $(subst $(SPACE),,{ \
+        "type":"deb", \
+        "os":"$(shell awk -F= '/^ID=/ {print $$2}' /etc/os-release)", \
+        "name":"$(DEB_SOURCE)", \
+        "version":"$(DEB_VERSION)", \
+        "architecture":"$(DEB_HOST_ARCH)" \
+        $(if $(DEB_BUILD_DEBUG_INFO_URL),$(COMMA)"debugInfoUrl":"$(DEB_BUILD_DEBUG_INFO_URL)") \
+    })
+  export ELF_PACKAGE_METADATA
+endif
 
 # we inject our own lto flags
 DPKG_OPTIMIZE = optimize=-lto

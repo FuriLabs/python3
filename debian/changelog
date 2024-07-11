@@ -1,9 +1,11 @@
 python3.12 (3.12.4-2) UNRELEASED; urgency=medium
 
+  [ Matthias Klose ]
+  * Set ELF_PACKAGE_METADATA, if unset.
+
   [ Benjamin Drung ]
   * debian/rules: Use pkg-info.mk.
   * debian/rules: Use architecture.mk.
-  * d/rules: Export variable needed for ELF package metadata.
   * Rely on SOURCE_DATE_EPOCH for reproducibility.
 
   [ Graham Inggs ]
