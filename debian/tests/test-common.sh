@@ -61,3 +61,8 @@ TESTEXCLUSIONS="$TESTEXCLUSIONS test_ttk_textonly"
 
 # FIXME: test_multiprocessing_fork times out sometimes. See #1000188
 TESTEXCLUSIONS="$TESTEXCLUSIONS test_multiprocessing_fork"
+
+# FIXME, tests never run to completion on Ubuntu infra
+if [ "$vendor" = Ubuntu ]; then
+  TESTNEVERCOMPLETE="$TESTNEVERCOMPLETE test_exceptions test_repl"
+fi

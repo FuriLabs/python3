@@ -1,3 +1,19 @@
+python3.13 (3.13.0~b3-4) UNRELEASED; urgency=medium
+
+  [ Matthias Klose ]
+  * Set ELF_PACKAGE_METADATA, if unset.
+
+  [ Benjamin Drung ]
+  * debian/rules: Use pkg-info.mk
+  * debian/rules: Use architecture.mk
+  * Rely on SOURCE_DATE_EPOCH for reproducibility
+
+  [ Graham Inggs ]
+  * Skip test_exceptions and test_repl which never run to
+    completion on the Ubuntu autopkgtest infrastructure
+
+ -- Matthias Klose <doko@debian.org>  Thu, 11 Jul 2024 14:41:19 +0200
+
 python3.13 (3.13.0~b3-3) unstable; urgency=medium
 
   * Remove distutils references, it was removed in 3.12.
