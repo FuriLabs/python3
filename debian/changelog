@@ -1,3 +1,18 @@
+python3.12 (3.12.4-2) UNRELEASED; urgency=medium
+
+  [ Benjamin Drung ]
+  * debian/rules: Use pkg-info.mk.
+  * debian/rules: Use architecture.mk.
+  * d/rules: Export variable needed for ELF package metadata.
+  * Rely on SOURCE_DATE_EPOCH for reproducibility.
+
+  [ Graham Inggs ]
+  * Drop test dependencies on python3-distutils.
+  * Skip test_exceptions and test_repl which never run to
+    completion on the Ubuntu autopkgtest infrastructure.
+
+ -- Matthias Klose <doko@debian.org>  Thu, 11 Jul 2024 14:36:39 +0200
+
 python3.12 (3.12.4-1) unstable; urgency=medium
 
   * Python 3.12.4 release.

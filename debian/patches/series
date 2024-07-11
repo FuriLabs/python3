@@ -19,7 +19,6 @@ multiarch.diff
 test-no-random-order.diff
 tempfile-minimal.diff
 ensurepip-disabled.diff
-reproducible-buildinfo.diff
 pydoc-use-pager.diff
 local-doc-references.diff
 #build-math-object.diff

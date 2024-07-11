@@ -1,5 +1,8 @@
 #!/usr/bin/make -f
 
+include /usr/share/dpkg/architecture.mk
+include /usr/share/dpkg/pkg-info.mk
+
 unexport LANG LC_ALL LC_CTYPE LC_COLLATE LC_TIME LC_NUMERIC LC_MESSAGES
 unexport CFLAGS CXXFLAGS LDFLAGS CPPFLAGS
 
@@ -7,16 +10,6 @@ export SHELL = /bin/bash
 
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
-
-vafilt		= $(subst $(2)=,,$(filter $(2)=%,$(1)))
-DPKG_VARS	:= $(shell dpkg-architecture)
-DEB_BUILD_ARCH		?= $(call vafilt,$(DPKG_VARS),DEB_BUILD_ARCH)
-DEB_BUILD_GNU_TYPE	?= $(call vafilt,$(DPKG_VARS),DEB_BUILD_GNU_TYPE)
-DEB_HOST_ARCH		?= $(call vafilt,$(DPKG_VARS),DEB_HOST_ARCH)
-DEB_HOST_ARCH_ENDIAN	?= $(call vafilt,$(DPKG_VARS),DEB_HOST_ARCH_ENDIAN)
-DEB_HOST_ARCH_OS	?= $(call vafilt,$(DPKG_VARS),DEB_HOST_ARCH_OS)
-DEB_HOST_GNU_TYPE	?= $(call vafilt,$(DPKG_VARS),DEB_HOST_GNU_TYPE)
-DEB_HOST_MULTIARCH	?= $(call vafilt,$(DPKG_VARS),DEB_HOST_MULTIARCH)
 
 ifeq ($(DEB_HOST_ARCH_OS),linux)
   PLAT = linux
@@ -29,18 +22,15 @@ else
   PLAT = unknown
 endif
 
-CHANGELOG_VARS := $(shell dpkg-parsechangelog | \
-	sed -n 's/ /_/g;/^[^_]/s/^\([^:]*\):_\(.*\)/\1=\2/p')
-PKGSOURCE  := $(call vafilt,$(CHANGELOG_VARS),Source)
-PKGVERSION := $(call vafilt,$(CHANGELOG_VARS),Version)
-
-LAST_CHANGE := $(shell dpkg-parsechangelog -S Date)
-export BUILD_DATE := $(shell LC_ALL=C date -u +'%b %e %Y' -d '$(LAST_CHANGE)')
-export BUILD_TIME := $(shell LC_ALL=C date -u +'%H:%M:%S' -d '$(LAST_CHANGE)')
-
-SPHINXOPTS := -D today='$(shell LC_ALL=C date -u +'%B %d, %Y' -d '$(LAST_CHANGE)')'
-SPHINXOPTS += -D html_last_updated_fmt='$(shell LC_ALL=C date -u +'%B %d, %Y' -d '$(LAST_CHANGE)')'
+SPHINXOPTS := -D today='$(shell LC_ALL=C date -u +'%B %d, %Y' -d '@$(SOURCE_DATE_EPOCH)')'
+SPHINXOPTS += -D html_last_updated_fmt='$(shell LC_ALL=C date -u +'%B %d, %Y' -d '@$(SOURCE_DATE_EPOCH)')'
 export SPHINXOPTS
+
+# Export variables needed for ELF package metadata
+export DEB_BUILD_OS_RELEASE_ID=$(shell . /usr/lib/os-release && echo $$ID)
+export DEB_HOST_ARCH
+export DEB_SOURCE
+export DEB_VERSION
 
 on_buildd := $(shell [ -f /CurrentlyBuilding -o "$$LOGNAME" = buildd -o "$$USER" = buildd ] && echo yes)
 
@@ -818,7 +808,7 @@ control-file:
 	      | $(ma_filter) \
 	      > debian/control.tmp
 ifeq ($(distribution),Ubuntu)
-  ifneq (,$(findstring ubuntu, $(PKGVERSION)))
+  ifneq (,$(findstring ubuntu, $(DEB_VERSION)))
 	m='Ubuntu Core Developers <ubuntu-devel-discuss@lists.ubuntu.com>'; \
 	sed -i "/^Maintainer:/s/\(.*\)/Maintainer: $$m\nXSBC-Original-\1/" \
 	  debian/control.tmp
