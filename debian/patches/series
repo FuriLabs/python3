@@ -1,4 +1,5 @@
-#git-updates.diff
+git-updates.diff
+patchlevel-noplus.diff
 #FIXME deb-setup.diff
 deb-locations.diff
 distutils-install-layout.diff
@@ -31,5 +32,4 @@ ntpath-import.diff
 python3.12-updates.diff
 issue108447.diff
 makefile-bootstrap.diff
-#patchlevel-noplus.diff
 ignore-wheeldata.diff

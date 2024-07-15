@@ -1,9 +1,10 @@
-python3.12 (3.12.4-2) UNRELEASED; urgency=medium
+python3.12 (3.12.4-2) unstable; urgency=medium
 
   [ Matthias Klose ]
   * Set ELF_PACKAGE_METADATA, if unset.
   * Fix multiarch path for hurd-amd64. Closes: #1076321.
   * Don't configure -with-dtrace on the Hurd. Closes: #1065456.
+  * Update from the 3.12 branch 2024-07-15.
 
   [ Benjamin Drung ]
   * debian/rules: Use pkg-info.mk.
@@ -15,7 +16,7 @@ python3.12 (3.12.4-2) UNRELEASED; urgency=medium
   * Skip test_exceptions and test_repl which never run to
     completion on the Ubuntu autopkgtest infrastructure.
 
- -- Matthias Klose <doko@debian.org>  Thu, 11 Jul 2024 14:36:39 +0200
+ -- Matthias Klose <doko@debian.org>  Mon, 15 Jul 2024 12:12:46 +0200
 
 python3.12 (3.12.4-1) unstable; urgency=medium
 
