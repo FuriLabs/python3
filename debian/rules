@@ -371,7 +371,6 @@ common_configure_args = \
 		--with-computed-gotos \
 		--without-ensurepip \
 		--with-system-expat \
-		--with-dtrace \
 		--with-ssl-default-suites=openssl \
 		--with-wheel-pkg-dir=/usr/share/python-wheels/ \
 		MKDIR_P="/bin/mkdir -p" \
@@ -379,6 +378,10 @@ common_configure_args = \
 # FIXME, only temporaray
 #common_configure_args += \
 #		--without-builtin-hashlib-hashes
+
+ifeq (,$(filter $(DEB_HOST_ARCH_OS), hurd))
+  common_configure_args += --with-dtrace
+endif
 
 ifneq ($(DEB_HOST_GNU_TYPE),$(DEB_BUILD_GNU_TYPE))
   common_configure_args += --host=$(DEB_HOST_GNU_TYPE) --build=$(DEB_BUILD_GNU_TYPE)
