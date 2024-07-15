@@ -2,6 +2,7 @@ python3.12 (3.12.4-2) UNRELEASED; urgency=medium
 
   [ Matthias Klose ]
   * Set ELF_PACKAGE_METADATA, if unset.
+  * Fix multiarch path for hurd-amd64. Closes: #1076321.
 
   [ Benjamin Drung ]
   * debian/rules: Use pkg-info.mk.
