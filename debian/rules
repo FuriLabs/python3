@@ -52,6 +52,7 @@ endif
 WITHOUT_BENCH := yes
 WITHOUT_CHECK := yes
 
+SPACE = $(EMPTY) $(EMPTY)
 COMMA = ,
 ifneq (,$(filter parallel=%,$(subst $(COMMA), ,$(DEB_BUILD_OPTIONS))))
   NJOBS := -j $(subst parallel=,,$(filter parallel=%,$(subst $(COMMA), ,$(DEB_BUILD_OPTIONS))))

@@ -1,4 +1,4 @@
-python3.12 (3.12.4-2) unstable; urgency=medium
+python3.12 (3.12.4-3) unstable; urgency=medium
 
   [ Matthias Klose ]
   * Set ELF_PACKAGE_METADATA, if unset.
@@ -16,7 +16,7 @@ python3.12 (3.12.4-2) unstable; urgency=medium
   * Skip test_exceptions and test_repl which never run to
     completion on the Ubuntu autopkgtest infrastructure.
 
- -- Matthias Klose <doko@debian.org>  Mon, 15 Jul 2024 12:12:46 +0200
+ -- Matthias Klose <doko@debian.org>  Mon, 15 Jul 2024 14:17:32 +0200
 
 python3.12 (3.12.4-1) unstable; urgency=medium
 
