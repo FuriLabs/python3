@@ -1,10 +1,10 @@
-python3.13 (3.13.0~b3-6) UNRELEASED; urgency=medium
+python3.13 (3.13.0~b3-6) unstable; urgency=medium
 
   * Don't consider fixing interpreters in .so files, fixing a FTBFS on s390x.
   * Instead of exporting ELF_PACKAGE_METADATA, which isn't consumed directly,
     export the environment variables required by the metadata spec file.
 
- -- Stefano Rivera <stefanor@debian.org>  Thu, 18 Jul 2024 09:16:09 +0900
+ -- Stefano Rivera <stefanor@debian.org>  Thu, 18 Jul 2024 11:00:47 +0900
 
 python3.13 (3.13.0~b3-5) unstable; urgency=medium
 
