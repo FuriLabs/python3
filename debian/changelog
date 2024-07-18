@@ -1,7 +1,7 @@
 python3.13 (3.13.0~b4-1) UNRELEASED; urgency=medium
 
   [ Stefano Rivera ]
-  * New upstream point release.
+  * New upstream beta.
   * Drop patches superseded upstream: riscv64-no-perf-trampoline,
     skip-unallocated-arena-free.
 
