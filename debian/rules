@@ -1187,7 +1187,7 @@ endif
 	: # and make them executable
 	for p in $(shell dh_listpackages); do \
 	[ -d debian/$$p ] || continue; \
-	for i in `find debian/$$p -type f`; do \
+	for i in `find debian/$$p -type f ! -name '*.so'`; do \
 	  sed '1s,#!.*python[^ ]*\(.*\),#! $(PY_INTERPRETER)\1,' \
 		$$i > $$i.temp; \
 	  if cmp --quiet $$i $$i.temp; then \
