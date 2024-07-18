@@ -846,6 +846,7 @@
  PySet_Pop@Base @SVER@
  PySet_Size@Base @SVER@
  PySet_Type@Base @SVER@
+ PySignal_SetWakeupFd@Base @SVER@
  PySlice_AdjustIndices@Base @SVER@
  PySlice_GetIndices@Base @SVER@
  PySlice_GetIndicesEx@Base @SVER@

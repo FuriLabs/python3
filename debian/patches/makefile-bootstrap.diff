@@ -3,7 +3,7 @@
 
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
-@@ -96,7 +96,7 @@
+@@ -97,7 +97,7 @@
  # of _bootstrap_python and _freeze_module tools, which don't need LTO.
  CONFIGURE_LDFLAGS_NOLTO=@LDFLAGS_NOLTO@
  CONFIGURE_CPPFLAGS=	@CPPFLAGS@

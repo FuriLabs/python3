@@ -3,7 +3,7 @@ Description: _pyrepl (and its dependencies) are not shipped in -minimal
 Forwarded: not-needed
 --- a/Modules/main.c
 +++ b/Modules/main.c
-@@ -514,7 +514,8 @@
+@@ -566,7 +566,8 @@
      }
  
      if (!isatty(fileno(stdin))

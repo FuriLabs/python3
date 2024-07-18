@@ -6,9 +6,9 @@ Forwarded: no
 
 --- a/Lib/sysconfig/__init__.py
 +++ b/Lib/sysconfig/__init__.py
-@@ -522,6 +522,12 @@
-         # the init-function.
-         _CONFIG_VARS['userbase'] = _getuserbase()
+@@ -525,6 +525,12 @@
+     # e.g., 't' for free-threaded or '' for default build
+     _CONFIG_VARS['abi_thread'] = 't' if _CONFIG_VARS.get('Py_GIL_DISABLED') else ''
  
 +    multiarch = get_config_var('MULTIARCH')
 +    if multiarch:
@@ -21,7 +21,7 @@ Forwarded: no
      if os.name == 'posix':
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
-@@ -1718,6 +1718,7 @@
+@@ -1720,6 +1720,7 @@
  
  Python/dynload_shlib.o: $(srcdir)/Python/dynload_shlib.c Makefile
  	$(CC) -c $(PY_CORE_CFLAGS) \

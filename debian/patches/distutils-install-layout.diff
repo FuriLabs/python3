@@ -34,7 +34,7 @@ Forwarded: not-needed
  If a file named "pyvenv.cfg" exists one directory above sys.executable,
  sys.prefix and sys.exec_prefix are set to that directory and
  it is also checked for site-packages (sys.base_prefix and
-@@ -383,6 +389,8 @@
+@@ -387,6 +393,8 @@
      if prefixes is None:
          prefixes = PREFIXES
  
@@ -43,7 +43,7 @@ Forwarded: not-needed
      for prefix in prefixes:
          if not prefix or prefix in seen:
              continue
-@@ -395,10 +403,21 @@
+@@ -403,10 +411,21 @@
              if sys.platlibdir != "lib":
                  libdirs.append("lib")
  
@@ -60,7 +60,7 @@ Forwarded: not-needed
 +            # this one is deprecated for Debian
              for libdir in libdirs:
                  path = os.path.join(prefix, libdir,
-                                     f"{implementation}{ver[0]}.{ver[1]}",
+                                     f"{implementation}{ver[0]}.{ver[1]}{abi_thread}",
 -                                    "site-packages")
 +                                    "dist-packages")
                  sitepackages.append(path)
@@ -76,7 +76,7 @@ Forwarded: not-needed
 -                wanted = os.path.join('xoxo', sys.platlibdir,
 +                self.assertEqual(len(dirs), 3)
 +                wanted = os.path.join('xoxo', 'local', 'lib',
-                                       'python%d.%d' % sys.version_info[:2],
+                                       f'python{sysconfig._get_python_version_abi()}',
 -                                      'site-packages')
 +                                      'dist-packages')
                  self.assertEqual(dirs[0], wanted)
@@ -84,7 +84,7 @@ Forwarded: not-needed
 -                self.assertEqual(len(dirs), 1)
 +                self.assertEqual(len(dirs), 3)
              wanted = os.path.join('xoxo', 'lib',
-                                   'python%d.%d' % sys.version_info[:2],
+                                   f'python{sysconfig._get_python_version_abi()}',
 -                                  'site-packages')
 +                                  'dist-packages')
              self.assertEqual(dirs[-1], wanted)
