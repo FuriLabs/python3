@@ -67,7 +67,6 @@ derivative      := $(shell \
 
 # package metadata information
 ifeq (,$(ELF_PACKAGE_METADATA))
-  SPACE := $(eval) $(eval)
   ELF_PACKAGE_METADATA := $(subst $(SPACE),,{ \
         "type":"deb", \
         "os":"$(shell awk -F= '/^ID=/ {print $$2}' /etc/os-release)", \
