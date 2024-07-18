@@ -65,19 +65,6 @@ derivative      := $(shell \
 	elif dpkg-vendor --derives-from Debian; then echo Debian; \
 	else echo Unknown; fi)
 
-# package metadata information
-ifeq (,$(ELF_PACKAGE_METADATA))
-  ELF_PACKAGE_METADATA := $(subst $(SPACE),,{ \
-        "type":"deb", \
-        "os":"$(shell awk -F= '/^ID=/ {print $$2}' /etc/os-release)", \
-        "name":"$(DEB_SOURCE)", \
-        "version":"$(DEB_VERSION)", \
-        "architecture":"$(DEB_HOST_ARCH)" \
-        $(if $(DEB_BUILD_DEBUG_INFO_URL),$(COMMA)"debugInfoUrl":"$(DEB_BUILD_DEBUG_INFO_URL)") \
-    })
-  export ELF_PACKAGE_METADATA
-endif
-
 # we inject our own lto flags
 DPKG_OPTIMIZE = optimize=-lto
 dpkg_buildflags = DEB_BUILD_MAINT_OPTIONS="hardening=-pie $(DPKG_OPTIMIZE)" dpkg-buildflags
@@ -178,6 +165,13 @@ RANLIB=$(DEB_HOST_GNU_TYPE)-ranlib
 
 # configure and dtrace consume these
 export CC CXX
+
+# These variables are needed for the ELF package metadata (set via LDFLAGS)
+DEB_BUILD_OS_RELEASE_ID=$(shell . /usr/lib/os-release && echo $$ID)
+export DEB_BUILD_OS_RELEASE_ID
+export DEB_HOST_ARCH
+export DEB_SOURCE
+export DEB_VERSION
 
 DPKG_CPPFLAGS= $(shell $(dpkg_buildflags) --get CPPFLAGS)
 DPKG_CFLAGS  := $(shell $(dpkg_buildflags) --get CFLAGS)
