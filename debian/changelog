@@ -1,11 +1,11 @@
-python3.13 (3.13.0~b4-1) UNRELEASED; urgency=medium
+python3.13 (3.13.0~b4-1) unstable; urgency=medium
 
   [ Stefano Rivera ]
   * New upstream beta.
   * Drop patches superseded upstream: riscv64-no-perf-trampoline,
     skip-unallocated-arena-free.
 
- -- Stefano Rivera <stefanor@debian.org>  Wed, 17 Jul 2024 20:35:55 +0900
+ -- Stefano Rivera <stefanor@debian.org>  Fri, 19 Jul 2024 10:12:48 +0900
 
 python3.13 (3.13.0~b3-6) unstable; urgency=medium
 
