@@ -72,10 +72,11 @@ _Py_ThreadCanHandleSignals(PyInterpreterState *interp)
 /* Variable and static inline functions for in-line access to current thread
    and interpreter state */
 
-#if defined(HAVE_THREAD_LOCAL) && !defined(Py_BUILD_CORE_MODULE)
-extern _Py_thread_local PyThreadState *_Py_tss_tstate;
-#endif
-PyAPI_DATA(PyThreadState *) _PyThreadState_GetCurrent(void);
+static inline PyThreadState*
+_PyRuntimeState_GetThreadState(_PyRuntimeState *runtime)
+{
+    return (PyThreadState*)_Py_atomic_load_relaxed(&runtime->tstate_current);
+}
 
 #ifndef NDEBUG
 extern int _PyThreadState_CheckConsistency(PyThreadState *tstate);
@@ -85,7 +86,9 @@ extern int _PyThreadState_MustExit(PyThreadState *tstate);
 
 /* Get the current Python thread state.
 
-   This function is unsafe: it does not check for error and it can return NULL.
+   Efficient macro reading directly the 'tstate_current' atomic
+   variable. The macro is unsafe: it does not check for error and it can
+   return NULL.
 
    The caller must hold the GIL.
 
@@ -93,13 +96,8 @@ extern int _PyThreadState_MustExit(PyThreadState *tstate);
 static inline PyThreadState*
 _PyThreadState_GET(void)
 {
-#if defined(HAVE_THREAD_LOCAL) && !defined(Py_BUILD_CORE_MODULE)
-    return _Py_tss_tstate;
-#else
-    return _PyThreadState_GetCurrent();
-#endif
+    return _PyRuntimeState_GetThreadState(&_PyRuntime);
 }
-
 
 static inline void
 _Py_EnsureFuncTstateNotNULL(const char *func, PyThreadState *tstate)

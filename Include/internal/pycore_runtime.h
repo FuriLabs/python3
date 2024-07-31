@@ -120,6 +120,9 @@ typedef struct pyruntimestate {
     struct _pythread_runtime_state threads;
     struct _signals_runtime_state signals;
 
+    /* Assuming the current thread holds the GIL, this is the
+       PyThreadState for the current thread. */
+    _Py_atomic_address tstate_current;
     /* Used for the thread state bound to the current thread. */
     Py_tss_t autoTSSkey;
 
