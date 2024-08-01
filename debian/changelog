@@ -1,3 +1,9 @@
+python3.12 (3.12.4-4) UNRELEASED; urgency=medium
+
+  * Don't pass -specs=package-metadata.specs.
+
+ -- Matthias Klose <doko@debian.org>  Thu, 01 Aug 2024 04:50:31 +0200
+
 python3.12 (3.12.4-3) unstable; urgency=medium
 
   [ Matthias Klose ]

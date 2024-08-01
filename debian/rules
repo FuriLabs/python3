@@ -192,6 +192,10 @@ DPKG_PIE_CFLAGS  := $(subst -fstack-protector-strong,-fstack-protector,$(DPKG_PI
 DPKG_PIE_LDFLAGS = $(shell $(dpkg_pieflags) --get LDFLAGS)
 OPT_PIE_CFLAGS   := $(filter-out -O%,$(DPKG_PIE_CFLAGS)) # default is -O3
 
+# we set ELF_PACKAGE_METADATA instead
+DPKG_LDFLAGS := $(filter-out -specs=/usr/share/dpkg/elf-package-metadata.specs, $(DPKG_LDFLAGS))
+DPKG_PIE_LDFLAGS := $(filter-out -specs=/usr/share/dpkg/elf-package-metadata.specs, $(DPKG_PIE_LDFLAGS))
+
 ifeq ($(DEB_HOST_ARCH),ia64)
     DPKG_CPPFLAGS += -DWITH_PYMALLOC_RADIX_TREE=0
     DPKG_PIE_CPPFLAGS += -DWITH_PYMALLOC_RADIX_TREE=0
