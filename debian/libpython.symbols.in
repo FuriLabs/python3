@@ -1459,7 +1459,6 @@
  _PyThreadState_Bind@Base @SVER@
  _PyThreadState_DeleteCurrent@Base @SVER@
  _PyThreadState_DeleteExcept@Base @SVER@
- _PyThreadState_GetCurrent@Base @SVER@
  _PyThreadState_GetDict@Base @SVER@
  _PyThreadState_Init@Base @SVER@
  _PyThreadState_New@Base @SVER@
@@ -1747,7 +1746,5 @@
  _Py_wrealpath@Base @SVER@
  _Py_write@Base @SVER@
  _Py_write_noraise@Base @SVER@
-
- (optional|regex)"^_ctypes_.*@Base$" @SVER@
 
  (optional|regex)"^PyInit_.*@Base$" @SVER@
