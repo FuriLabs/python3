@@ -272,8 +272,8 @@ Description: Python Interpreter with complete class library (version @VER@)
  .
  This package is a dependency package, which depends on the full
  standard library of Python for Python developers. Including modules
- used only at build-time, such as venv and lib2to3, and modules with
- complex dependencies, such as tk and IDLE. All batteries included.
+ used only at build-time, such as venv, and modules with complex
+ dependencies, such as tk and IDLE. All batteries included.
  .
  According to the Debian Python policy, this package must not be used in
  build dependencies, dependencies and recommendations.
