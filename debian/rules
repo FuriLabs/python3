@@ -89,7 +89,7 @@ ifneq (,$(filter valgrind, $(shell dpkg-query --show -f '$${Depends}\n' valgrind
 endif
 
 VER=3.13
-SVER=3.13.0~a6
+SVER=3.13.0~rc1
 NVER=3.14
 PVER=python$(VER)
 EXT_VER=$(subst .,,$(VER))
@@ -1288,14 +1288,22 @@ endif
 	cp -p $(buildd_debug)/python $(d_dbg)/usr/bin/$(PVER)d
 	ln -sf python$(VER)d $(d_dbg)/usr/bin/$(PVER)-dbg
 
-ifneq ($(with_tk),yes)
-	rm -f $(d_lbase)/$(scriptdir)/lib-dynload/_tkinter*.so
-	rm -f $(d_ldbg)/$(scriptdir)/lib-dynload/_tkinter*.so
-endif
-ifneq ($(with_gdbm),yes)
-	rm -f $(d_lbase)/$(scriptdir)/lib-dynload/_gdbm*.so
-	rm -f $(d_ldbg)/$(scriptdir)/lib-dynload/_gdbm*.so
-endif
+	for p in \
+	  $(d_lbase)/$(scriptdir)/lib-dynload/_tkinter*.so \
+	  $(d_ldbg)/$(scriptdir)/lib-dynload/_tkinter*.so; \
+	do \
+	  d=$$(dirname $$p); \
+	  m=$$(basename $$p); \
+	  mv $$p $$d/.$$m; \
+	done
+	for p in \
+	  $(d_lbase)/$(scriptdir)/lib-dynload/_gdbm*.so \
+	  $(d_ldbg)/$(scriptdir)/lib-dynload/_gdbm*.so; \
+	do \
+	  d=$$(dirname $$p); \
+	  m=$$(basename $$p); \
+	  mv $$p $$d/.$$m; \
+	done
 ifneq ($(with_dbmmodule),yes)
 	rm -f $(d_lbase)/$(scriptdir)/lib-dynload/_dbm*.so
 	rm -f $(d_ldbg)/$(scriptdir)/lib-dynload/_dbm*.so
@@ -1520,7 +1528,13 @@ endif
 	  -e '/^ (ffi_type_|_ctypes_)/d' \
 	    $(d_lib)/DEBIAN/symbols $(d_ldbg)/DEBIAN/symbols
 	dh_installdeb -a
-	dh_shlibdeps -a
+	: # shipping _gdbm and _tkinter in $(p_lbase), prefixed with dot.
+	: # don't add these to the dependencies.
+ifeq ($(bd_dbm),libdb-dev)
+	dh_shlibdeps -a -X._gdbm -X._tkinter
+else
+	dh_shlibdeps -a -X._tkinter
+endif
 	dep=`sed -n '/^shlibs:Depends/s/[^=]*=\(.*\)/\1/p' $(d_min).substvars | awk -v RS=', ' -v ORS=', ' '/^libc6/ { print }'`; \
 	echo "shlibs:Pre-Depends=$$dep" >> $(d_min).substvars
 	sed -i '/^shlibs:Depends/s/libc6[^,]*[, ]*//g' $(d_min).substvars
