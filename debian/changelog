@@ -3,6 +3,7 @@ python3.13 (3.13.0~rc1-1) UNRELEASED; urgency=medium
   * Python 3.13.0 release candidate 1.
   * Don't pass -specs=package-metadata.specs.
   * Don't mention 2to3 in package description anymore. Closes: #1077957.
+  * Prefix patches for python3-minimal with 'min-'.
 
  -- Matthias Klose <doko@debian.org>  Tue, 06 Aug 2024 06:34:17 +0200
 
