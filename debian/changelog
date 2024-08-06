@@ -1,6 +1,8 @@
 python3.12 (3.12.4-4) UNRELEASED; urgency=medium
 
   * Don't pass -specs=package-metadata.specs.
+  * libpython-stdlib: Include the _gdbm and _tkinter extensions, prefixed
+    with a dot, and no dependencies on the gbm and tcl/tk libraries.
 
  -- Matthias Klose <doko@debian.org>  Thu, 01 Aug 2024 04:50:31 +0200
 
