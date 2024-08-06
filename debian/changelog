@@ -6,6 +6,7 @@ python3.13 (3.13.0~rc1-1) UNRELEASED; urgency=medium
   * Prefix patches for python3-minimal with 'min-'.
   * libpython-stdlib: Include the _gdbm and _tkinter extensions, prefixed
     with a dot, and no dependencies on the gbm and tcl/tk libraries.
+  * Update symbols files.
 
  -- Matthias Klose <doko@debian.org>  Tue, 06 Aug 2024 06:34:17 +0200
 

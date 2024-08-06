@@ -1256,6 +1256,7 @@
  _PyBytesWriter_WriteBytes@Base @SVER@
  _PyBytes_DecodeEscape@Base @SVER@
  _PyBytes_Find@Base @SVER@
+ _PyBytes_Join@Base @SVER@
  _PyBytes_Repeat@Base @SVER@
  _PyBytes_Resize@Base @SVER@
  _PyBytes_ReverseFind@Base @SVER@
@@ -1298,6 +1299,7 @@
  _PyCrossInterpreterData_UnregisterClass@Base @SVER@
  _PyDeadline_Get@Base @SVER@
  _PyDeadline_Init@Base @SVER@
+ _PyDict_DelItemIf@Base @SVER@
  _PyDict_DelItem_KnownHash@Base @SVER@
  _PyDict_FromItems@Base @SVER@
  _PyDict_GetItemStringWithError@Base @SVER@
@@ -1336,6 +1338,7 @@
  _PyEval_MakePendingCalls@Base @SVER@
  _PyEval_MatchClass@Base @SVER@
  _PyEval_MatchKeys@Base @SVER@
+ _PyEval_MonitorRaise@Base @SVER@
  _PyEval_SetProfile@Base @SVER@
  _PyEval_SliceIndex@Base @SVER@
  _PyEval_SliceIndexNotNone@Base @SVER@
