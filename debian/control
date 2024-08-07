@@ -24,7 +24,7 @@ Build-Depends: debhelper (>= 11), dpkg-dev (>= 1.17.11),
   systemtap-sdt-dev [!hurd-amd64 !hurd-i386],
   valgrind-if-available,
 Build-Depends-Indep: python3-sphinx, python3-docs-theme, texinfo
-Standards-Version: 4.6.2
+Standards-Version: 4.7.0
 Vcs-Browser: https://salsa.debian.org/cpython-team/python3
 Vcs-Git: https://salsa.debian.org/cpython-team/python3.git
 XS-Testsuite: autopkgtest

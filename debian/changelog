@@ -1,9 +1,10 @@
-python3.12 (3.12.5-1) UNRELEASED; urgency=medium
+python3.12 (3.12.5-1) unstable; urgency=medium
 
   * Python 3.12.5 release.
   * libpython-stdlib: Include the _gdbm and _tkinter extensions, prefixed
     with a dot, and no dependencies on the gbm and tcl/tk libraries.
   * Refresh patches.
+  * Bump standards version.
 
  -- Matthias Klose <doko@debian.org>  Wed, 07 Aug 2024 15:49:14 +0200
 
