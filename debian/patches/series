@@ -18,7 +18,6 @@ multiarch.diff
 ensurepip-disabled.diff
 pydoc-use-pager.diff
 local-doc-references.diff
-#build-math-object.diff
 sysconfigdata-name.diff
 sphinx3.diff
 destshared-location.diff
