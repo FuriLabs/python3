@@ -1,3 +1,9 @@
+python3.13 (3.13.0~rc1-2) UNRELEASED; urgency=medium
+
+  * Drop patch ctypes-arm. Superseded upstream in 2.7.5.
+
+ -- Stefano Rivera <stefanor@debian.org>  Fri, 09 Aug 2024 20:31:22 +0900
+
 python3.13 (3.13.0~rc1-1) unstable; urgency=medium
 
   * Python 3.13.0 release candidate 1.
