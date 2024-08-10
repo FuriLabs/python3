@@ -3,7 +3,7 @@ Description: Don't encode the MACHDEP into the _sysconfigdata file name.
  with a changing MACHDEP.
 
 Bug-cpython: https://bugs.python.org/issue37561
-Forwarded: no
+Forwarded: https://github.com/python/cpython/pull/122879
 
 --- a/Lib/sysconfig/__init__.py
 +++ b/Lib/sysconfig/__init__.py

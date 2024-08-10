@@ -2,7 +2,8 @@ Description: pydoc: use the pager command if available
  Debian file pagers register the "pager" alternative, so if any pager is
  available, /usr/bin/pager will exist, and point to the best pager available.
 
-Forwarded: no
+Bug-Debian: https://bugs.debian.org/799555
+Forwarded: https://github.com/python/cpython/pull/122878
 
 --- a/Lib/_pyrepl/pager.py
 +++ b/Lib/_pyrepl/pager.py

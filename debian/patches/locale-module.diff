@@ -1,7 +1,6 @@
 Description: Use glibc's name for the UTF-8 locale
- FIXME: back story?
 
-Forwarded: no
+Forwarded: https://github.com/python/cpython/pull/122877
 
 --- a/Lib/locale.py
 +++ b/Lib/locale.py
