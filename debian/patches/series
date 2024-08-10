@@ -16,7 +16,6 @@ ensurepip-disabled.diff
 pydoc-use-pager.diff
 local-doc-references.diff
 sysconfigdata-name.diff
-sphinx3.diff
 destshared-location.diff
 min-tempfile.diff
 min-lib-argparse.diff
