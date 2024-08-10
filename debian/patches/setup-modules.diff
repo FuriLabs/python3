@@ -1,6 +1,7 @@
 Description: Configure linking for C-library wrapping modules
  Use the system C libraries, rather than sources bundled with cPython, or
  anything from /usr/local.
+ This is for performance, to avoid unnecessary C extension imports at start-up.
 
 Forwarded: not-needed
 

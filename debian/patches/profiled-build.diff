@@ -1,5 +1,6 @@
 Description: Ignore errors in the profile task.
- FIXME: Back story?
+ This is a rewrite of the profile task. We run the tests sequentially, and only
+ once at a time.
 
 Forwarded: no
 

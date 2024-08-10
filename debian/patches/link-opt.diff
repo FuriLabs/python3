@@ -1,5 +1,7 @@
 Description: Call the linker with -O1 -Bsymbolic-functions
- FIXME: Why? Why -O1?
+ We do symbolic-functions as policy in Ubuntu.
+
+ Could be forwarded in the form of a configure flag.
 
 Forwarded: no
 

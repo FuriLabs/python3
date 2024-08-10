@@ -1,5 +1,6 @@
 Description: Debian: Configure multiarch tuple.
  1. Expose multiarchsubdir in sysconfig.
+    Some packages in Debian are depending on this.
  2. Install the .pc file into the multiarch path.
 
 Forwarded: no

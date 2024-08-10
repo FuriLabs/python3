@@ -1,6 +1,6 @@
 Description: Keep the lib-dynload dir in the same place when configuring with
- --libdir=/usr/bin/$(DEB_HOST_MULTIARCH)
- FIXME: Expand?
+ --libdir=/usr/lib/$(DEB_HOST_MULTIARCH)
+ The C extensions already have multiarch paths in their filenames.
 
 Forwarded: no
 

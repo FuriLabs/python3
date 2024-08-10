@@ -1,6 +1,8 @@
 Description: Debian: Don't autodetect whether semephores are present
  Assume working semaphores, don't rely on running kernel for the check.
- Build machine != Target machine.
+
+ This is not something that's approriate for us to detect at build time.
+ Potentially forwadable, if redesigned.
 
 Forwarded: not-needed
 

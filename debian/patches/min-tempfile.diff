@@ -2,6 +2,8 @@ Description: Debian: Degrade tempfile gracefully without shutil
  python3.X-minimal includes tempfile but not shutil. Use a fallback racy
  rmtree, if shutil can't be imported.
 
+ This needs constant maintainance, as the code is a copy.
+
 Forwarded: not-needed
 
 --- a/Lib/tempfile.py

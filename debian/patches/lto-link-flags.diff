@@ -1,5 +1,6 @@
 Description: Enable Link Time Optimization
- FIXME: Expand
+ The Debian package has had LTO longer than upstream has. This patch may not be
+ necessary any more, more investigation needed.
 
 Forwarded: no
 
