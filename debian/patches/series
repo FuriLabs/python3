@@ -19,7 +19,6 @@ local-doc-references.diff
 sysconfigdata-name.diff
 sphinx3.diff
 destshared-location.diff
-fix-py_compile.diff
 min-tempfile.diff
 min-lib-argparse.diff
 min-argparse-no-shutil.diff
