@@ -10,7 +10,6 @@ setup-modules.diff
 profiled-build.diff
 langpack-gettext.diff
 disable-sem-check.diff
-# link-timemodule.diff
 #lto-link-flags.diff
 multiarch.diff
 ensurepip-disabled.diff
