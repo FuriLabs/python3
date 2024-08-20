@@ -131,7 +131,8 @@ MIN_ENCODINGS := $(foreach i, \
 			encodings/$(i)) \
 		 codecs.py stringprep.py
 
-with_tk := no
+with_tk := yes
+with_gdbm := yes
 with_interp := static
 #with_interp := shared
 
@@ -280,6 +281,7 @@ p_base	:= $(PVER)
 p_npie	:= $(PVER)-nopie
 p_min	:= $(PVER)-minimal
 p_lib	:= lib$(PVER)t64
+p_gdbm	:= $(PVER)-gdbm
 p_tk	:= $(PVER)-tk
 p_dev	:= $(PVER)-dev
 p_exam	:= $(PVER)-examples
@@ -300,6 +302,7 @@ d_base	:= debian/$(p_base)
 d_min	:= debian/$(p_min)
 d_npie	:= debian/$(p_npie)
 d_lib	:= debian/$(p_lib)
+d_gdbm	:= debian/$(p_gdbm)
 d_tk	:= debian/$(p_tk)
 d_dev	:= debian/$(p_dev)
 d_exam	:= debian/$(p_exam)
@@ -815,6 +818,7 @@ control-file:
 	    -e "s/@bd_dbm@/$(bd_dbm)/g" \
 	    -e "s/@bd_dpkgdev@/$(bd_dpkgdev)/g" \
 		debian/control.in \
+		debian/control.stdlib \
 		$(if $(with_udeb),debian/control.udeb) \
 	      | $(ma_filter) \
 	      > debian/control.tmp
@@ -1112,12 +1116,22 @@ endif
 	ln -sf $(DEB_HOST_MULTIARCH)-$(PVER)-config $(d_dev)/usr/bin/$(PVER)-config
 	ln -sf $(DEB_HOST_MULTIARCH)-$(PVER)-config.1.gz $(d_dev)/usr/share/man/man1/$(PVER)-config.1.gz
 
+ifeq ($(with_gdbm),yes)
+	: # Move the gdbm extension file into $(p_gdbm).
+	dh_installdirs -p$(p_gdbm) \
+		$(scriptdir) \
+		usr/lib/python$(VER)/lib-dynload
+	$(dh_compat2) dh_movefiles -p$(p_gdbm) --sourcedir=$(d) \
+		usr/lib/python$(VER)/lib-dynload/_gdbm*.so
+endif
+
 ifeq ($(with_tk),yes)
 	: # Move the Tkinter extension files into $(p_tk).
 	dh_installdirs -p$(p_tk) \
 		$(scriptdir) \
 		usr/lib/python$(VER)/lib-dynload
 	$(dh_compat2) dh_movefiles -p$(p_tk) --sourcedir=$(d) \
+		usr/lib/python$(VER)/tkinter \
 		usr/lib/python$(VER)/lib-dynload/_tkinter*.so
 endif
 
@@ -1134,9 +1148,6 @@ endif
 
 	: # fixed upstream ...
 	chmod -x $(d_ltst)/$(scriptdir)/test/{test_dbm_gnu,test_dbm_ndbm}.py
-
-	: # Tkinter library files shipped in python3-tk
-	rm -rf $(d)/usr/lib/python$(VER)/tkinter
 
 	: # lib2to3 shipped in python3-lib2to3
 	rm -rf \
@@ -1321,22 +1332,6 @@ endif
 	cp -p $(buildd_debug)/python $(d_dbg)/usr/bin/$(PVER)d
 	ln -sf python$(VER)d $(d_dbg)/usr/bin/$(PVER)-dbg
 
-	for p in \
-	  $(d_lbase)/$(scriptdir)/lib-dynload/_tkinter*.so \
-	  $(d_ldbg)/$(scriptdir)/lib-dynload/_tkinter*.so; \
-	do \
-	  d=$$(dirname $$p); \
-	  m=$$(basename $$p); \
-	  mv $$p $$d/.$$m; \
-	done
-	for p in \
-	  $(d_lbase)/$(scriptdir)/lib-dynload/_gdbm*.so \
-	  $(d_ldbg)/$(scriptdir)/lib-dynload/_gdbm*.so; \
-	do \
-	  d=$$(dirname $$p); \
-	  m=$$(basename $$p); \
-	  mv $$p $$d/.$$m; \
-	done
 ifneq ($(with_dbmmodule),yes)
 	rm -f $(d_lbase)/$(scriptdir)/lib-dynload/_dbm*.so
 	rm -f $(d_ldbg)/$(scriptdir)/lib-dynload/_dbm*.so
@@ -1520,10 +1515,13 @@ binary-arch: build-arch install
 	done
 	-find debian ! -perm -200 -print -exec chmod +w {} \;
 ifneq ($(with_tk),yes)
+	rm -f $(d_lbase)/$(scriptdir)/tkinter
 	rm -f $(d_lbase)/$(scriptdir)/lib-dynload/_tkinter*.so
+	rm -f $(d_ldbg)/$(scriptdir)/lib-dynload/_tkinter*.so
 endif
 ifneq ($(with_gdbm),yes)
 	rm -f $(d_lbase)/$(scriptdir)/lib-dynload/_gdbm*.so
+	rm -f $(d_ldbg)/$(scriptdir)/lib-dynload/_gdbm*.so
 endif
 
 	find $(d_ldbg) $(d_ldev) -name '*.a' ! -type l \
@@ -1561,13 +1559,7 @@ endif
 	  -e '/^ (ffi_type_|_ctypes_)/d' \
 	    $(d_lib)/DEBIAN/symbols $(d_ldbg)/DEBIAN/symbols
 	dh_installdeb -a
-	: # shipping _gdbm and _tkinter in $(p_lbase), prefixed with dot.
-	: # don't add these to the dependencies.
-ifeq ($(bd_dbm),libdb-dev)
-	dh_shlibdeps -a -X._gdbm -X._tkinter
-else
-	dh_shlibdeps -a -X._tkinter
-endif
+	dh_shlibdeps -a
 	dep=`sed -n '/^shlibs:Depends/s/[^=]*=\(.*\)/\1/p' $(d_min).substvars | awk -v RS=', ' -v ORS=', ' '/^libc6/ { print }'`; \
 	echo "shlibs:Pre-Depends=$$dep" >> $(d_min).substvars
 	sed -i '/^shlibs:Depends/s/libc6[^,]*[, ]*//g' $(d_min).substvars

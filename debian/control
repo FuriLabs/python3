@@ -249,8 +249,10 @@ Architecture: any
 Multi-Arch: same
 Pre-Depends: ${misc:Pre-Depends}
 Depends: libpython3.12-stdlib (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
-Breaks: libpython3.12-dbg (<< ${source:Version}), python3-gdbm-dbg (<< 3.9.9-1~)
-Replaces: libpython3.12-dbg, python3-gdbm-dbg (<< 3.9.9-1~)
+Breaks: libpython3.12-dbg (<< ${source:Version}),
+  python3-gdbm-dbg (<< 3.12.5-2~), python3-tk-dbg (<< 3.12.5-2~)
+Replaces: libpython3.12-dbg,
+  python3-gdbm-dbg (<< 3.12.5-2~), python3-tk-dbg (<< 3.12.5-2~)
 Description: Debug Build of the Python Interpreter (version 3.12)
  The package holds two things:
  .
@@ -285,3 +287,25 @@ Description: Python Interpreter with complete class library (version 3.12)
  .
  According to the Debian Python policy, this package must not be used in
  build dependencies, dependencies and recommendations.
+
+Package: python3.12-tk
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Enhances: python3.12
+Suggests: tix
+Breaks: python3-tk (<< 3.12.5-2~)
+Replaces: python3-tk (<< 3.12.5-2~)
+XB-Python-Version: 3.12
+Description: Tkinter - Writing Tk applications with Python (v3.12)
+ A module for writing portable GUI applications with Python (v3.12) using Tk.
+ Also known as Tkinter.
+
+Package: python3.12-gdbm
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Enhances: python3.12
+Breaks: python3-gdbm (<< 3.12.5-2~)
+Replaces: python3-gdbm (<< 3.12.5-2~)
+Description: GNU dbm database support for Python (v3.12)
+ GNU dbm database module for Python. Install this if you want to
+ create or read GNU dbm database files with Python.

@@ -11,6 +11,7 @@ locales
 .azure-pipelines
 .editorconfig
 .devcontainer
+.github
 .mailmap
 .pre-commit-config.yaml
 .readthedocs.yml
@@ -66,8 +67,10 @@ debian/python3.12-dev
 debian/python3.12-doc
 debian/python3.12-examples
 debian/python3.12-full
+debian/python3.12-gdbm
 debian/python3.12-minimal
 debian/python3.12-nopie
+debian/python3.12-tk
 debian/python3.12
 debian/test_results
 debian/tmp-dbg
