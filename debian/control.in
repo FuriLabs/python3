@@ -243,8 +243,10 @@ Architecture: any
 Multi-Arch: same
 Pre-Depends: ${misc:Pre-Depends}
 Depends: lib@PVER@-stdlib (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
-Breaks: python3-gdbm-dbg (<< 3.9.9-1~)
-Replaces: python3-gdbm-dbg (<< 3.9.9-1~)
+Breaks: lib@PVER@-dbg (<< ${source:Version}),
+  python3-gdbm-dbg (<< 3.12.5-2~), python3-tk-dbg (<< 3.12.5-2~)
+Replaces: lib@PVER@-dbg,
+  python3-gdbm-dbg (<< 3.12.5-2~), python3-tk-dbg (<< 3.12.5-2~)
 Description: Debug Build of the Python Interpreter (version @VER@)
  The package holds two things:
  .

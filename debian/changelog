@@ -1,5 +1,6 @@
 python3.13 (3.13.0~rc1-2) UNRELEASED; urgency=medium
 
+  [ Stefano Rivera ]
   * Drop patch ctypes-arm. Superseded upstream in 2.7.5.
   * Drop patch fix-py_compile. Superseded upstream in 3.11.
   * Drop patch sphinx3, superseded upstream in 3.10.
@@ -7,7 +8,14 @@ python3.13 (3.13.0~rc1-2) UNRELEASED; urgency=medium
   * Forward some patches.
   * Update pydoc-use-pager patch.
 
- -- Stefano Rivera <stefanor@debian.org>  Fri, 09 Aug 2024 20:31:22 +0900
+  [ Matthias Klose ]
+  * Build python3.12-gdbm and python3.12-tk packages again; Having these
+    extensions hidden in the libpython-stdlib packages raises some chrootkit
+    warnings. These packages should not be used as dependencies, and do not
+    depend on the Python interpreter.  For dependencies, the existing
+    python3-gdbm and python3-tk packages should be used.
+
+ -- Matthias Klose <doko@debian.org>  Tue, 20 Aug 2024 15:25:46 +0200
 
 python3.13 (3.13.0~rc1-1) unstable; urgency=medium
 

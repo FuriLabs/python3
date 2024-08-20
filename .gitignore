@@ -12,6 +12,7 @@ locales
 .coveragerc
 .editorconfig
 .devcontainer
+.github
 .mailmap
 .pre-commit-config.yaml
 .readthedocs.yml
@@ -70,8 +71,10 @@ debian/python3.13-dev
 debian/python3.13-doc
 debian/python3.13-examples
 debian/python3.13-full
+debian/python3.13-gdbm
 debian/python3.13-minimal
 debian/python3.13-nopie
+debian/python3.13-tk
 debian/python3.13
 debian/test_results
 debian/tmp-dbg
