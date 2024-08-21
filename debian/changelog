@@ -1,3 +1,10 @@
+python3.13 (3.13.0~rc1-3) UNRELEASED; urgency=medium
+
+  * Add python3.x-tk maintainer scripts.
+  * Call dpkg with LC_ALL=C.UTF8 set.
+
+ -- Matthias Klose <doko@debian.org>  Wed, 21 Aug 2024 12:07:01 +0200
+
 python3.13 (3.13.0~rc1-2) experimental; urgency=medium
 
   [ Stefano Rivera ]
