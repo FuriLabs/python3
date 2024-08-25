@@ -2,7 +2,7 @@ Installing Python Packages in Debian
 ====================================
 
 It is recommended to let Debian's package managers manage Python packages in
-/usr/lib/ and /usr/share/.
+/usr/lib/ and /usr/share/, and avoid installing packages in your user directory (~/.local).
 
 Python applications
 -------------------
@@ -70,3 +70,10 @@ which will survive security updates):
 
 A clean option is to install your own Python (from source) in /usr/local, that
 isn't EXTERNALLY-MANAGED.
+
+Installing things in your home directory
+----------------------------------------
+
+The EXTERNALLY-MANAGED policy also disables installation into your home
+directory (pip install --user). This is to protect your ability to execute
+system Python packages. The same --break-system-packages option can override it.
