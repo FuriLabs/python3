@@ -1,3 +1,12 @@
+Debian: Add our install schemes to sysconfig
+
+This adds two schemes:
+1. deb_system: Debian's installed Python layout, with modules in
+   dist-packages shared across Python versions.
+2. posix_local: A clone of posix_prefix that includes a built-in local
+   prefix. We default to this to redict local installations into
+   /usr/local.
+
 --- a/Lib/sysconfig/__init__.py
 +++ b/Lib/sysconfig/__init__.py
 @@ -38,6 +38,30 @@ _INSTALL_SCHEMES = {
