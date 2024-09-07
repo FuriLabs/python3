@@ -1,3 +1,9 @@
+python3.13 (3.13.0~rc2-1) UNRELEASED; urgency=medium
+
+  * Python 3.13.0 release candidate 2.
+
+ -- Stefano Rivera <stefanor@debian.org>  Sat, 07 Sep 2024 08:50:45 +0200
+
 python3.13 (3.13.0~rc1-4) unstable; urgency=medium
 
   * python3.x-tk: Make byte-compilation depend on the availability of
