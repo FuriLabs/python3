@@ -7,6 +7,7 @@ python3.12 (3.12.6-1) UNRELEASED; urgency=medium
   * Refresh patches.
   * Remove debian/locale-gen, we use locales-all. (Closes: #1076778)
   * Re-enable build-time tests. (Closes: #1076779)
+    - Build-Depend on xvfb and xauth again.
 
  -- Stefano Rivera <stefanor@debian.org>  Sat, 07 Sep 2024 12:05:25 +0200
 
