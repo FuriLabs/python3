@@ -1,6 +1,7 @@
 python3.12 (3.12.6-1) UNRELEASED; urgency=medium
 
   * Python 3.12.6 release.
+  * Refresh patches.
 
  -- Stefano Rivera <stefanor@debian.org>  Sat, 07 Sep 2024 12:05:25 +0200
 
