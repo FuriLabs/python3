@@ -2,6 +2,7 @@ python3.13 (3.13.0~rc2-2) UNRELEASED; urgency=medium
 
   * Remove debian/locale-gen, we use locales-all. (Closes: #1076778)
   * Re-enable build-time tests. (Closes: #1076779)
+    - Build-Depend on xvfb and xauth again.
 
  -- Stefano Rivera <stefanor@debian.org>  Sat, 07 Sep 2024 10:52:38 +0200
 
