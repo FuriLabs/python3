@@ -1,3 +1,9 @@
+python3.13 (3.13.0~rc2-2) UNRELEASED; urgency=medium
+
+  * Remove debian/locale-gen, we use locales-all. (Closes: #1076778)
+
+ -- Stefano Rivera <stefanor@debian.org>  Sat, 07 Sep 2024 10:52:38 +0200
+
 python3.13 (3.13.0~rc2-1) unstable; urgency=medium
 
   * Python 3.13.0 release candidate 2.
