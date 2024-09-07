@@ -654,13 +654,6 @@ stamps/stamp-check:
 ifeq ($(WITHOUT_CHECK),yes)
 	echo "check run disabled for this build" > $(buildd_static)/test_results
 else
-	: # build locales needed by the testsuite
-	rm -rf locales
-	mkdir locales
-	if command -v localedef >/dev/null 2>&1; then \
-	  sh debian/locale-gen; \
-	fi
-
 	@echo ========== test environment ============
 	@env
 	@echo ========================================

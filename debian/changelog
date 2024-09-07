@@ -5,6 +5,7 @@ python3.12 (3.12.6-1) UNRELEASED; urgency=medium
       CVE-2024-4032, CVE-2024-6232, CVE-2024-6923, CVE-2024-7592, and
       CVE-2024-8088.
   * Refresh patches.
+  * Remove debian/locale-gen, we use locales-all. (Closes: #1076778)
 
  -- Stefano Rivera <stefanor@debian.org>  Sat, 07 Sep 2024 12:05:25 +0200
 

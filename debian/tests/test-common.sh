@@ -7,9 +7,6 @@ else
   vendor=Unknown
 fi
 
-export LOCPATH=$(pwd)/locales
-sh $debian_dir/locale-gen
-
 export LANG=C.UTF-8
 
 export DEB_PYTHON_INSTALL_LAYOUT=deb_system
