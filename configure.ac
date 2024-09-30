@@ -164,7 +164,7 @@ AC_ARG_WITH([build-python],
     dnl Build Python interpreter is used for regeneration and freezing.
     ac_cv_prog_PYTHON_FOR_REGEN=$with_build_python
     PYTHON_FOR_FREEZE="$with_build_python"
-    PYTHON_FOR_BUILD='_PYTHON_PROJECT_BASE=$(abs_builddir) _PYTHON_HOST_PLATFORM=$(_PYTHON_HOST_PLATFORM) PYTHONPATH=$(shell test -f pybuilddir.txt && echo $(abs_builddir)/`cat pybuilddir.txt`:)$(srcdir)/Lib _PYTHON_SYSCONFIGDATA_NAME=_sysconfigdata_$(ABIFLAGS)_$(MACHDEP)_$(MULTIARCH) '$with_build_python
+    PYTHON_FOR_BUILD='_PYTHON_PROJECT_BASE=$(abs_builddir) _PYTHON_HOST_PLATFORM=$(_PYTHON_HOST_PLATFORM) PYTHONPATH=$(shell test -f pybuilddir.txt && echo $(abs_builddir)/`cat pybuilddir.txt`:)$(srcdir)/Lib _PYTHON_SYSCONFIGDATA_NAME=_sysconfigdata_$(ABIFLAGS)_$(MULTIARCH) '$with_build_python
     AC_MSG_RESULT([$with_build_python])
   ], [
     AS_VAR_IF([cross_compiling], [yes],
@@ -1075,7 +1075,13 @@ cat > conftest.c <<EOF
 #   error unknown platform triplet
 # endif
 #elif defined(__gnu_hurd__)
+# if defined(__LP64__)
+        x86_64-gnu
+# elif defined(__i386__)
         i386-gnu
+# else
+#   error unknown platform triplet
+# endif
 #elif defined(__APPLE__)
         darwin
 #elif defined(__VXWORKS__)
@@ -3360,8 +3366,8 @@ then
 		LDSHARED='$(CC) -shared'
 		LDCXXSHARED='$(CXX) -shared';;
 	Linux*|GNU*|QNX*|VxWorks*|Haiku*)
-		LDSHARED='$(CC) -shared'
-		LDCXXSHARED='$(CXX) -shared';;
+		LDSHARED='$(CC) -shared -Wl,-O1 -Wl,-Bsymbolic-functions'
+		LDCXXSHARED='$(CXX) -shared -Wl,-O1 -Wl,-Bsymbolic-functions';;
 	FreeBSD*)
 		if [[ "`$CC -dM -E - </dev/null | grep __ELF__`" != "" ]]
 		then
@@ -3474,7 +3480,7 @@ then
 	    LINKFORSHARED="-Wl,-E -Wl,+s";;
 #	    LINKFORSHARED="-Wl,-E -Wl,+s -Wl,+b\$(BINLIBDEST)/lib-dynload";;
 	Linux-android*) LINKFORSHARED="-pie -Xlinker -export-dynamic";;
-	Linux*|GNU*) LINKFORSHARED="-Xlinker -export-dynamic";;
+	Linux*|GNU*) LINKFORSHARED="-Xlinker -export-dynamic -Wl,-O1 -Wl,-Bsymbolic-functions";;
 	# -u libsys_s pulls in all symbols in libsys
 	Darwin/*)
 		LINKFORSHARED="$extra_undefs -framework CoreFoundation"
@@ -5816,10 +5822,15 @@ AC_CACHE_CHECK([whether POSIX semaphores are enabled], [ac_cv_posix_semaphores_e
   [ac_cv_posix_semaphores_enabled=yes])
 )
 AS_VAR_IF([ac_cv_posix_semaphores_enabled], [no], [
-  AC_DEFINE(
-    [POSIX_SEMAPHORES_NOT_ENABLED], [1],
-    [Define if POSIX semaphores aren't enabled on your system]
-  )
+  case $ac_sys_system in
+    Linux*) # assume yes, see https://launchpad.net/bugs/630511
+      ;;
+    *)
+      AC_DEFINE(
+        [POSIX_SEMAPHORES_NOT_ENABLED], [1],
+        [Define if POSIX semaphores aren't enabled on your system]
+      )
+  esac
 ])
 
 dnl Multiprocessing check for broken sem_getvalue

@@ -95,7 +95,7 @@ CONFIGURE_LDFLAGS_NODIST=@LDFLAGS_NODIST@
 # of _bootstrap_python and _freeze_module tools, which don't need LTO.
 CONFIGURE_LDFLAGS_NOLTO=@LDFLAGS_NOLTO@
 CONFIGURE_CPPFLAGS=	@CPPFLAGS@
-CONFIGURE_LDFLAGS=	@LDFLAGS@
+CONFIGURE_LDFLAGS=	@LDFLAGS_NODIST@
 # Avoid assigning CFLAGS, LDFLAGS, etc. so users can use them on the
 # command line to append to these values without stomping the pre-set
 # values.
@@ -168,7 +168,7 @@ EXT_SUFFIX=	@EXT_SUFFIX@
 LDSHARED=	@LDSHARED@ $(PY_LDFLAGS)
 BLDSHARED=	@BLDSHARED@ $(PY_CORE_LDFLAGS)
 LDCXXSHARED=	@LDCXXSHARED@ $(PY_LDFLAGS)
-DESTSHARED=	$(BINLIBDEST)/lib-dynload
+DESTSHARED=	$(LIBDEST)/lib-dynload
 
 # List of exported symbols for AIX
 EXPORTSYMS=	@EXPORTSYMS@
@@ -661,7 +661,16 @@ profile-run-stamp:
 	$(MAKE) profile-gen-stamp
 	# Next, run the profile task to generate the profile information.
 	@ # FIXME: can't run for a cross build
-	$(LLVM_PROF_FILE) $(RUNSHARED) ./$(BUILDPYTHON) $(PROFILE_TASK) || true
+	task="$(PROFILE_TASK)"; \
+	case "$$task" in \
+	*-s\ *) \
+	  $(LLVM_PROF_FILE) $(RUNSHARED) ./$(BUILDPYTHON) $$task; \
+	  while [ -f $(abs_builddir)/build/pynexttest ]; do \
+	    $(LLVM_PROF_FILE) $(RUNSHARED) ./$(BUILDPYTHON) $$task; \
+	  done;; \
+	*) \
+	  $(LLVM_PROF_FILE) $(RUNSHARED) ./$(BUILDPYTHON) $$task; \
+	esac || true
 	$(LLVM_PROF_MERGER)
 	# Remove profile generation binary since we are done with it.
 	$(MAKE) clean-retain-profile
@@ -1370,6 +1379,7 @@ Modules/signalmodule.o: $(srcdir)/Modules/signalmodule.c $(srcdir)/Modules/posix
 
 Python/dynload_shlib.o: $(srcdir)/Python/dynload_shlib.c Makefile
 	$(CC) -c $(PY_CORE_CFLAGS) \
+		$(if $(MULTIARCH),-DMULTIARCH='"$(MULTIARCH)"') \
 		-DSOABI='"$(SOABI)"' \
 		-o $@ $(srcdir)/Python/dynload_shlib.c
 
@@ -2326,8 +2336,10 @@ libinstall:	all $(srcdir)/Modules/xxmodule.c
 			esac; \
 		done; \
 	done
-	$(INSTALL_DATA) `cat pybuilddir.txt`/_sysconfigdata_$(ABIFLAGS)_$(MACHDEP)_$(MULTIARCH).py \
-		$(DESTDIR)$(LIBDEST); \
+	$(INSTALL_DATA) `cat pybuilddir.txt`/_sysconfigdata_$(ABIFLAGS)_$(MULTIARCH).py \
+		$(DESTDIR)$(LIBDEST)
+	$(LN) -s _sysconfigdata_$(ABIFLAGS)_$(MULTIARCH).py \
+		$(DESTDIR)$(LIBDEST)/_sysconfigdata_$(ABIFLAGS)_$(MACHDEP)_$(MULTIARCH).py
 	$(INSTALL_DATA) $(srcdir)/LICENSE $(DESTDIR)$(LIBDEST)/LICENSE.txt
 	@ # Build PYC files for the 3 optimization levels (0, 1, 2)
 	-PYTHONPATH=$(DESTDIR)$(LIBDEST) $(RUNSHARED) \

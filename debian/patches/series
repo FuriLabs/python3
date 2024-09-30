@@ -1,6 +1,3 @@
-#git-updates.diff
-#patchlevel-noplus.diff
-#FIXME deb-setup.diff
 deb-locations.diff
 distutils-install-layout.diff
 locale-module.diff
@@ -14,15 +11,12 @@ langpack-gettext.diff
 disable-sem-check.diff
 lib-argparse.diff
 ctypes-arm.diff
-# link-timemodule.diff
-#lto-link-flags.diff
 multiarch.diff
 test-no-random-order.diff
 tempfile-minimal.diff
 ensurepip-disabled.diff
 pydoc-use-pager.diff
 local-doc-references.diff
-#build-math-object.diff
 argparse-no-shutil.diff
 sysconfigdata-name.diff
 sphinx3.diff
