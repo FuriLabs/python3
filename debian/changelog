@@ -1,6 +1,7 @@
 python3.13 (3.13.0~rc3-1) UNRELEASED; urgency=medium
 
   * Python 3.13.0 release candidate 3.
+  * Refresh patches.
   * Remove debian/locale-gen, we use locales-all. (Closes: #1076778)
   * Re-enable build-time tests. (Closes: #1076779)
     - Build-Depend on xvfb and xauth again.
