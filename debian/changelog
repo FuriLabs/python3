@@ -6,6 +6,7 @@ python3.13 (3.13.0~rc3-1) UNRELEASED; urgency=medium
   * Re-enable build-time tests. (Closes: #1076779)
     - Build-Depend on xvfb and xauth again.
     - Build-Depend on python3-{pip,setuptools,wheel}-whl for tests.
+  * Verify upstream PGP signature.
 
  -- Stefano Rivera <stefanor@debian.org>  Sat, 07 Sep 2024 10:52:38 +0200
 
