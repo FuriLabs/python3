@@ -1,4 +1,4 @@
-python3.13 (3.13.0~rc3-1) UNRELEASED; urgency=medium
+python3.13 (3.13.0~rc3-1) unstable; urgency=medium
 
   * Python 3.13.0 release candidate 3.
   * Refresh patches.
@@ -9,7 +9,7 @@ python3.13 (3.13.0~rc3-1) UNRELEASED; urgency=medium
   * Verify upstream PGP signature.
   * Patch: Strip absolute --libdir paths from configure args in test_freeze.
 
- -- Stefano Rivera <stefanor@debian.org>  Sat, 07 Sep 2024 10:52:38 +0200
+ -- Stefano Rivera <stefanor@debian.org>  Thu, 03 Oct 2024 09:12:35 -0600
 
 python3.13 (3.13.0~rc2-1) unstable; urgency=medium
 
