@@ -1,3 +1,9 @@
+python3.13 (3.13.0~rc3-2) UNRELEASED; urgency=medium
+
+  * Add DEP-12 metadata.
+
+ -- Stefano Rivera <stefanor@debian.org>  Thu, 03 Oct 2024 13:56:44 -0700
+
 python3.13 (3.13.0~rc3-1) unstable; urgency=medium
 
   * Python 3.13.0 release candidate 3.
