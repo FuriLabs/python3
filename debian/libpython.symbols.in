@@ -1302,6 +1302,7 @@
  _PyDict_DelItemIf@Base @SVER@
  _PyDict_DelItem_KnownHash@Base @SVER@
  _PyDict_FromItems@Base @SVER@
+ _PyDict_GetItemRef_KnownHash_LockHeld@Base @SVER@
  _PyDict_GetItemStringWithError@Base @SVER@
  _PyDict_GetItem_KnownHash@Base @SVER@
  _PyDict_LoadGlobal@Base @SVER@
@@ -1309,6 +1310,7 @@
  _PyDict_NewPresized@Base @SVER@
  _PyDict_Pop@Base @SVER@
  _PyDict_SetItem_KnownHash@Base @SVER@
+ _PyDict_SetItem_KnownHash_LockHeld@Base @SVER@
  _PyDict_SetItem_Take2@Base @SVER@
  _PyDict_SizeOf@Base @SVER@
  _PyErr_BadInternalCall@Base @SVER@
