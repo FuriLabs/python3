@@ -1,5 +1,6 @@
-python3.13 (3.13.0~rc3-2) UNRELEASED; urgency=medium
+python3.13 (3.13.0-1) UNRELEASED; urgency=medium
 
+  * Python 3.13.0 final.
   * Add DEP-12 metadata.
   * Update symbols file.
 
