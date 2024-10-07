@@ -26,3 +26,4 @@ min-pyrepl-import.dff
 makefile-bootstrap.diff
 #patchlevel-noplus.diff
 test-freeze-strip-libdir.diff
+stable-abi-multiarch.diff

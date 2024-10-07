@@ -3,6 +3,8 @@ python3.13 (3.13.0-1) UNRELEASED; urgency=medium
   * Python 3.13.0 final.
   * Add DEP-12 metadata.
   * Update symbols file.
+  * Patch: Allow stable API extensions to include a multiarch tuple in the
+    filename.
 
  -- Stefano Rivera <stefanor@debian.org>  Thu, 03 Oct 2024 13:56:44 -0700
 
