@@ -1,4 +1,4 @@
-python3.13 (3.13.0-1) UNRELEASED; urgency=medium
+python3.13 (3.13.0-1) unstable; urgency=medium
 
   * Python 3.13.0 final.
   * Add DEP-12 metadata.
@@ -6,7 +6,7 @@ python3.13 (3.13.0-1) UNRELEASED; urgency=medium
   * Patch: Allow stable API extensions to include a multiarch tuple in the
     filename.
 
- -- Stefano Rivera <stefanor@debian.org>  Thu, 03 Oct 2024 13:56:44 -0700
+ -- Stefano Rivera <stefanor@debian.org>  Mon, 07 Oct 2024 14:58:50 -0700
 
 python3.13 (3.13.0~rc3-1) unstable; urgency=medium
 
