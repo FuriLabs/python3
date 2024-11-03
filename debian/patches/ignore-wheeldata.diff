@@ -20,7 +20,7 @@ Forwarded: https://github.com/python/cpython/pull/120419
          for dirpath, dirs, files in os.walk(support.TEST_HOME_DIR):
              dirname = os.path.basename(dirpath)
              # Skip temporary dirs:
-@@ -64,13 +64,14 @@
+@@ -67,13 +67,14 @@
                          "of test directories to install"
                      )
                  )
