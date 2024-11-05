@@ -1,11 +1,11 @@
-python3.12 (3.12.7-2) UNRELEASED; urgency=medium
+python3.12 (3.12.7-2) unstable; urgency=medium
 
   * Update symbols file.
   * Apply git updates to 2024-11-03.
   * Adjust lib-argparse.diff to avoid failing test_argparse's translation
     test.
 
- -- Stefano Rivera <stefanor@debian.org>  Thu, 03 Oct 2024 18:32:44 -0700
+ -- Stefano Rivera <stefanor@debian.org>  Mon, 04 Nov 2024 20:56:37 -0800
 
 python3.12 (3.12.7-1) unstable; urgency=medium
 
