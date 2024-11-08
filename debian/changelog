@@ -1,3 +1,9 @@
+python3.12 (3.12.7-3) UNRELEASED; urgency=medium
+
+  * Strip the trailing + from PY_VERSION, again. (Closes: #1087011)
+
+ -- Stefano Rivera <stefanor@debian.org>  Fri, 08 Nov 2024 09:52:51 -0800
+
 python3.12 (3.12.7-2) unstable; urgency=medium
 
   * Update symbols file.
