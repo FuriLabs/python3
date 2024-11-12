@@ -1,9 +1,14 @@
-python3.13 (3.13.0-2) UNRELESAED; urgency=medium
+python3.13 (3.13.0-2) unstable; urgency=medium
 
+  [ Stefano Rivera ]
   * Adjust lib-argparse.diff to avoid failing test_argparse's translation
     test.
 
- -- Stefano Rivera <stefanor@debian.org>  Mon, 04 Nov 2024 18:23:20 -0800
+  [ Matthias Klose ]
+  * Update to the 3.13 branch 2024-11-12.
+  * Refresh patches.
+
+ -- Matthias Klose <doko@debian.org>  Tue, 12 Nov 2024 10:54:22 +0100
 
 python3.13 (3.13.0-1) unstable; urgency=medium
 

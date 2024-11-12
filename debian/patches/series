@@ -1,4 +1,5 @@
-#git-updates.diff
+git-updates.diff
+patchlevel-noplus.diff
 deb-locations.diff
 distutils-install-layout.diff
 locale-module.diff
@@ -13,7 +14,6 @@ disable-sem-check.diff
 #lto-link-flags.diff
 multiarch.diff
 ensurepip-disabled.diff
-pydoc-use-pager.diff
 local-doc-references.diff
 sysconfigdata-name.diff
 destshared-location.diff
@@ -24,6 +24,5 @@ min-ntpath-import.diff
 min-compileall.diff
 min-pyrepl-import.dff
 makefile-bootstrap.diff
-#patchlevel-noplus.diff
 test-freeze-strip-libdir.diff
 stable-abi-multiarch.diff
