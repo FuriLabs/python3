@@ -1,3 +1,9 @@
+python3.13 (3.13.0-3) UNRELEASED; urgency=medium
+
+  * Apply temporary fix to fix build issue on m68k. Closes: #1087600.
+
+ -- Matthias Klose <doko@debian.org>  Sat, 16 Nov 2024 10:52:01 +0100
+
 python3.13 (3.13.0-2) unstable; urgency=medium
 
   [ Stefano Rivera ]
