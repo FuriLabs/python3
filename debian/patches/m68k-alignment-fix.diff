@@ -1,3 +1,8 @@
+Description: Enforce 4-byte alignment on m68k
+ This should be temporary as Debian plans to switch the port to 4-byte alignment.
+Author: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Bug-Debian: https://bugs.debian.org/1087600
+Forwarded: not-needed
 --- a/Include/internal/pycore_gc.h
 +++ b/Include/internal/pycore_gc.h
 @@ -19,7 +19,7 @@ typedef struct {
