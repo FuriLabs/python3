@@ -1,14 +1,17 @@
 python3.13 (3.13.1-1) UNRELEASED; urgency=medium
 
-  [ Stefano Rivera ]
   * Python 3.13.1.
+
+  [ Stefano Rivera ]
   * Refresh patches.
 
   [ Matthias Klose ]
   * Apply temporary fix to fix build issue on m68k. Closes: #1087600.
   * Don't use -fno-inline-small-functions on hppa (Dave Anglin).
+  * Build with -Os on sh4 (Adrian Glaubitz).
+  * Stop using EXTRA_CFLAGS.
 
- -- Stefano Rivera <stefanor@debian.org>  Tue, 03 Dec 2024 20:40:07 -0400
+ -- Matthias Klose <doko@debian.org>  Wed, 04 Dec 2024 10:39:10 +0100
 
 python3.13 (3.13.0-2) unstable; urgency=medium
 

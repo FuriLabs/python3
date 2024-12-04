@@ -189,12 +189,14 @@ ifeq ($(DEB_HOST_ARCH),ia64)
     DPKG_CPPFLAGS += -DWITH_PYMALLOC_RADIX_TREE=0
     DPKG_PIE_CPPFLAGS += -DWITH_PYMALLOC_RADIX_TREE=0
 endif
-# see #972202, and https://gcc.gnu.org/PR97431
+# see https://gcc.gnu.org/PR81426
 ifneq (,$(filter $(DEB_HOST_ARCH), sh4))
-    EXTRA_OPT_CFLAGS += -fno-inline-small-functions
+    OPT_CFLAGS += $(filter-out -O%,$(DPKG_CFLAGS)) -Os
+    OPT_PIE_CFLAGS += $(filter-out -O%,$(DPKG_PIE_CFLAGS)) -Os
 endif
 ifneq (,$(filter $(DEB_HOST_ARCH), ppc64 ppc64el))
     OPT_CFLAGS += -fexceptions
+    OPT_PIE_CFLAGS += -fexceptions
     DEBUG_CFLAGS += -fexceptions
 endif
 
@@ -219,8 +221,7 @@ ifneq (,$(findstring nolto, $(DEB_BUILD_OPTIONS)))
 endif
 
 ifneq (,$(findstring noopt, $(DEB_BUILD_OPTIONS)))
-    OPT_CFLAGS := $(filter-out -O%, $(OPT_CFLAGS))
-    EXTRA_OPT_CFLAGS = -O0
+    OPT_CFLAGS := $(filter-out -O%, $(OPT_CFLAGS)) -O0
     with_pgo =
     with_lto =
 endif
@@ -233,7 +234,8 @@ ifeq ($(with_lto),yes)
     ifeq ($(with_fat_lto),yes)
       LTO_CFLAGS += -ffat-lto-objects
     endif
-    EXTRA_OPT_CFLAGS += $(LTO_CFLAGS)
+    OPT_CFLAGS += $(LTO_CFLAGS)
+    OPT_PIE_CFLAGS += $(LTO_CFLAGS)
     AR=$(DEB_HOST_GNU_TYPE)-gcc-ar
     RANLIB=$(DEB_HOST_GNU_TYPE)-gcc-ranlib
 endif
@@ -669,7 +671,7 @@ else
 	  echo '#! /bin/sh'; \
 	  echo 'set -x'; \
 	  echo 'export $(SET_LOCPATH)'; \
-	  echo '$(buildd_static)/python $(CURDIR)/debian/script.py test_results '\''make test EXTRA_CFLAGS="$(EXTRA_OPT_CFLAGS)" TESTOPTS="$(TESTOPTS)"'\'; \
+	  echo '$(buildd_static)/python $(CURDIR)/debian/script.py test_results '\''make test TESTOPTS="$(TESTOPTS)"'\'; \
 	  echo 'echo DONE'; \
 	) > $(buildd_static)/run_tests
 	chmod 755 $(buildd_static)/run_tests
@@ -684,7 +686,7 @@ else
 	  echo '#! /bin/sh'; \
 	  echo 'set -x'; \
 	  echo 'export $(SET_LOCPATH)'; \
-	  echo '$(buildd_static)/python $(CURDIR)/debian/script.py test_results '\''make test EXTRA_CFLAGS="$(EXTRA_OPT_CFLAGS)" TESTOPTS="$(TESTOPTS)"'\'; \
+	  echo '$(buildd_static)/python $(CURDIR)/debian/script.py test_results '\''make test TESTOPTS="$(TESTOPTS)"'\'; \
 	  echo 'echo DONE'; \
 	) > $(buildd_shared)/run_tests
 	chmod 755 $(buildd_shared)/run_tests
