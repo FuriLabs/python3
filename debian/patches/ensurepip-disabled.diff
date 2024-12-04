@@ -40,7 +40,7 @@ Forwarded: not-needed
 +
  
  __all__ = ["version", "bootstrap"]
- _PIP_VERSION = "24.2"
+ _PIP_VERSION = "24.3.1"
 @@ -130,6 +158,11 @@
  
      Note that calling this function will alter both sys.path and os.environ.
@@ -55,7 +55,7 @@ Forwarded: not-needed
  
 --- a/Lib/venv/__init__.py
 +++ b/Lib/venv/__init__.py
-@@ -442,8 +442,26 @@
+@@ -443,8 +443,26 @@
  
      def _setup_pip(self, context):
          """Installs or upgrades pip in a virtual environment"""

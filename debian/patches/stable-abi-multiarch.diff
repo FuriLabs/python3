@@ -50,7 +50,7 @@ Bug-Upstream: https://github.com/python/cpython/issues/122931
      NULL,
 --- a/Doc/c-api/stable.rst
 +++ b/Doc/c-api/stable.rst
-@@ -105,7 +105,8 @@
+@@ -113,7 +113,8 @@
  ``python39.dll``.
  
  On some platforms, Python will look for and load shared library files named

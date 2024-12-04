@@ -7,7 +7,7 @@ Forwarded: no
 
 --- a/Lib/sysconfig/__init__.py
 +++ b/Lib/sysconfig/__init__.py
-@@ -525,6 +525,12 @@
+@@ -538,6 +538,12 @@
      # e.g., 't' for free-threaded or '' for default build
      _CONFIG_VARS['abi_thread'] = 't' if _CONFIG_VARS.get('Py_GIL_DISABLED') else ''
  
