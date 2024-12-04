@@ -190,7 +190,7 @@ ifeq ($(DEB_HOST_ARCH),ia64)
     DPKG_PIE_CPPFLAGS += -DWITH_PYMALLOC_RADIX_TREE=0
 endif
 # see #972202, and https://gcc.gnu.org/PR97431
-ifneq (,$(filter $(DEB_HOST_ARCH), hppa sh4))
+ifneq (,$(filter $(DEB_HOST_ARCH), sh4))
     EXTRA_OPT_CFLAGS += -fno-inline-small-functions
 endif
 ifneq (,$(filter $(DEB_HOST_ARCH), ppc64 ppc64el))

@@ -6,6 +6,7 @@ python3.13 (3.13.1-1) UNRELEASED; urgency=medium
 
   [ Matthias Klose ]
   * Apply temporary fix to fix build issue on m68k. Closes: #1087600.
+  * Don't use -fno-inline-small-functions on hppa (Dave Anglin).
 
  -- Stefano Rivera <stefanor@debian.org>  Tue, 03 Dec 2024 20:40:07 -0400
 
