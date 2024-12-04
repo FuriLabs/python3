@@ -1,5 +1,5 @@
-git-updates.diff
-patchlevel-noplus.diff
+#git-updates.diff
+#patchlevel-noplus.diff
 #FIXME deb-setup.diff
 deb-locations.diff
 distutils-install-layout.diff

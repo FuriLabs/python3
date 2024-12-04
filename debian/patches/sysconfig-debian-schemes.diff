@@ -31,7 +31,7 @@
      'posix_home': {
          'stdlib': '{installed_base}/lib/python',
          'platstdlib': '{base}/lib/python',
-@@ -234,7 +258,7 @@
+@@ -232,7 +256,7 @@
  _PYTHON_BUILD = is_python_build()
  
  if _PYTHON_BUILD:
@@ -40,7 +40,7 @@
          # On POSIX-y platforms, Python will:
          # - Build from .h files in 'headers' (which is only added to the
          #   scheme when building CPython)
-@@ -294,8 +318,20 @@
+@@ -292,8 +316,20 @@
              'home': 'posix_home',
              'user': 'osx_framework_user',
          }
@@ -62,7 +62,7 @@
          'home': 'posix_home',
          'user': 'posix_user',
      }
-@@ -602,7 +638,7 @@
+@@ -600,7 +636,7 @@
          else:
              inc_dir = _PROJECT_BASE
      else:
@@ -73,7 +73,7 @@
  
 --- a/Lib/test/test_sysconfig.py
 +++ b/Lib/test/test_sysconfig.py
-@@ -344,7 +344,7 @@
+@@ -353,7 +353,7 @@
          self.assertTrue(os.path.isfile(config_h), config_h)
  
      def test_get_scheme_names(self):

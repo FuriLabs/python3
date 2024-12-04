@@ -1,6 +1,7 @@
 python3.12 (3.12.8-1) UNRELEASED; urgency=medium
 
   * Python 3.12.8 release.
+  * Refresh patches.
 
  -- Stefano Rivera <stefanor@debian.org>  Tue, 03 Dec 2024 20:49:01 -0400
 
