@@ -1,5 +1,2976 @@
-Description: Updates from the 3.13 branch (until 2024-11-12).
+Description: Updates from the 3.13 branch (until 2024-12-12).
  We pick the latest updates from the maintainance branch, and carry them in a
  patch, rather than creating and uploading uploading a new .orig tarball.
 
-# git diff --no-renames 60403a5409ff2c3f3b07dd2ca91a7a3e096839c7 e5e70c5f094c92f72789dd85ab4d74516a5b4932 | filterdiff -x ?/.hgignore -x ?/.hgeol -x ?/.hgtags -x ?/.hgtouch -x ?/.gitignore -x ?/.gitattributes -x '?/.github/*' -x '?/.git*' -x ?/.codecov.yml -x ?/.travis.yml -x ?/configure --remove-timestamps
+# git diff --no-renames 067145177975eadd61a0c907d0d177f7b6a5a3de 8b24d042b4d23700f873c23f78cee0972ad24f62 | filterdiff -x ?/.hgignore -x ?/.hgeol -x ?/.hgtags -x ?/.hgtouch -x ?/.gitignore -x ?/.gitattributes -x '?/.github/*' -x '?/.git*' -x ?/.codecov.yml -x ?/.travis.yml -x ?/configure --remove-timestamps
+
+diff --git a/Doc/c-api/frame.rst b/Doc/c-api/frame.rst
+index 638a740e0c2..1a52e146a69 100644
+--- a/Doc/c-api/frame.rst
++++ b/Doc/c-api/frame.rst
+@@ -132,7 +132,7 @@ See also :ref:`Reflection <reflection>`.
+    .. versionadded:: 3.11
+ 
+    .. versionchanged:: 3.13
+-      As part of :pep:`667`, return a proxy object for optimized scopes.
++      As part of :pep:`667`, return an instance of :c:var:`PyFrameLocalsProxy_Type`.
+ 
+ 
+ .. c:function:: int PyFrame_GetLineNumber(PyFrameObject *frame)
+@@ -140,6 +140,26 @@ See also :ref:`Reflection <reflection>`.
+    Return the line number that *frame* is currently executing.
+ 
+ 
++Frame Locals Proxies
++^^^^^^^^^^^^^^^^^^^^
++
++.. versionadded:: 3.13
++
++The :attr:`~frame.f_locals` attribute on a :ref:`frame object <frame-objects>`
++is an instance of a "frame-locals proxy". The proxy object exposes a
++write-through view of the underlying locals dictionary for the frame. This
++ensures that the variables exposed by ``f_locals`` are always up to date with
++the live local variables in the frame itself.
++
++See :pep:`667` for more information.
++
++.. c:var:: PyTypeObject PyFrameLocalsProxy_Type
++
++   The type of frame :func:`locals` proxy objects.
++
++.. c:function:: int PyFrameLocalsProxy_Check(PyObject *obj)
++
++   Return non-zero if *obj* is a frame :func:`locals` proxy.
+ 
+ Internal Frames
+ ^^^^^^^^^^^^^^^
+diff --git a/Doc/c-api/init.rst b/Doc/c-api/init.rst
+index 385bed49511..d0632cb6fa1 100644
+--- a/Doc/c-api/init.rst
++++ b/Doc/c-api/init.rst
+@@ -557,6 +557,15 @@ Initializing and finalizing the interpreter
+    customized Python that always runs in isolated mode using
+    :c:func:`Py_RunMain`.
+ 
++.. c:function:: int PyUnstable_AtExit(PyInterpreterState *interp, void (*func)(void *), void *data)
++
++   Register an :mod:`atexit` callback for the target interpreter *interp*.
++   This is similar to :c:func:`Py_AtExit`, but takes an explicit interpreter and
++   data pointer for the callback.
++
++   The :term:`GIL` must be held for *interp*.
++
++   .. versionadded:: 3.13
+ 
+ Process-wide parameters
+ =======================
+diff --git a/Doc/c-api/init_config.rst b/Doc/c-api/init_config.rst
+index 612aa2aa711..cd78fe18e35 100644
+--- a/Doc/c-api/init_config.rst
++++ b/Doc/c-api/init_config.rst
+@@ -1271,6 +1271,17 @@ PyConfig
+ 
+       Default: ``1`` in Python config and ``0`` in isolated config.
+ 
++   .. c:member:: int use_system_logger
++
++      If non-zero, ``stdout`` and ``stderr`` will be redirected to the system
++      log.
++
++      Only available on macOS 10.12 and later, and on iOS.
++
++      Default: ``0`` (don't use system log).
++
++      .. versionadded:: 3.13.2
++
+    .. c:member:: int user_site_directory
+ 
+       If non-zero, add the user site directory to :data:`sys.path`.
+diff --git a/Doc/c-api/sys.rst b/Doc/c-api/sys.rst
+index d6fca1a0b0a..c688afdca82 100644
+--- a/Doc/c-api/sys.rst
++++ b/Doc/c-api/sys.rst
+@@ -426,3 +426,7 @@ Process Control
+    function registered last is called first. Each cleanup function will be called
+    at most once.  Since Python's internal finalization will have completed before
+    the cleanup function, no Python APIs should be called by *func*.
++
++   .. seealso::
++
++      :c:func:`PyUnstable_AtExit` for passing a ``void *data`` argument.
+diff --git a/Doc/howto/gdb_helpers.rst b/Doc/howto/gdb_helpers.rst
+index 53bbf7ddaa2..98ce813ca4a 100644
+--- a/Doc/howto/gdb_helpers.rst
++++ b/Doc/howto/gdb_helpers.rst
+@@ -180,7 +180,7 @@ regular machine-level integer::
+     (gdb) p some_python_integer
+     $4 = 42
+ 
+-The internal structure can be revealed with a cast to :c:expr:`PyLongObject *`:
++The internal structure can be revealed with a cast to :c:expr:`PyLongObject *`::
+ 
+     (gdb) p *(PyLongObject*)some_python_integer
+     $5 = {ob_base = {ob_base = {ob_refcnt = 8, ob_type = 0x3dad39f5e0}, ob_size = 1},
+diff --git a/Doc/library/itertools.rst b/Doc/library/itertools.rst
+index 79b729e36f9..cc7b63ea9ce 100644
+--- a/Doc/library/itertools.rst
++++ b/Doc/library/itertools.rst
+@@ -877,6 +877,11 @@ and :term:`generators <generator>` which incur interpreter overhead.
+        "Returns the sequence elements n times."
+        return chain.from_iterable(repeat(tuple(iterable), n))
+ 
++   def loops(n):
++       "Loop n times. Like range(n) but without creating integers."
++       # for _ in loops(100): ...
++       return repeat(None, n)
++
+    def tail(n, iterable):
+        "Return an iterator over the last n items."
+        # tail(3, 'ABCDEFG') → E F G
+@@ -1099,6 +1104,11 @@ The following recipes have a more mathematical flavor:
+            data[p*p : n : p+p] = bytes(len(range(p*p, n, p+p)))
+        yield from iter_index(data, 1, start=3)
+ 
++   def is_prime(n):
++       "Return True if n is prime."
++       # is_prime(1_000_000_000_000_403) → True
++       return n > 1 and all(n % p for p in sieve(math.isqrt(n) + 1))
++
+    def factor(n):
+        "Prime factors of n."
+        # factor(99) → 3 3 11
+@@ -1202,6 +1212,16 @@ The following recipes have a more mathematical flavor:
+     [0, 2, 4, 6]
+ 
+ 
++    >>> for _ in loops(5):
++    ...     print('hi')
++    ...
++    hi
++    hi
++    hi
++    hi
++    hi
++
++
+     >>> list(tail(3, 'ABCDEFG'))
+     ['E', 'F', 'G']
+     >>> # Verify the input is consumed greedily
+@@ -1475,6 +1495,23 @@ The following recipes have a more mathematical flavor:
+     True
+ 
+ 
++    >>> small_primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97]
++    >>> list(filter(is_prime, range(-100, 100))) == small_primes
++    True
++    >>> carmichael = {561, 1105, 1729, 2465, 2821, 6601, 8911}  # https://oeis.org/A002997
++    >>> any(map(is_prime, carmichael))
++    False
++    >>> # https://www.wolframalpha.com/input?i=is+128884753939+prime
++    >>> is_prime(128_884_753_939)           # large prime
++    True
++    >>> is_prime(999953 * 999983)           # large semiprime
++    False
++    >>> is_prime(1_000_000_000_000_007)     # factor() example
++    False
++    >>> is_prime(1_000_000_000_000_403)     # factor() example
++    True
++
++
+     >>> list(factor(99))                    # Code example 1
+     [3, 3, 11]
+     >>> list(factor(1_000_000_000_000_007)) # Code example 2
+diff --git a/Doc/library/traceback.rst b/Doc/library/traceback.rst
+index 100a92b73d5..8f94fc448f2 100644
+--- a/Doc/library/traceback.rst
++++ b/Doc/library/traceback.rst
+@@ -157,6 +157,13 @@ Module-Level Functions
+    arguments have the same meaning as for :func:`print_stack`.
+ 
+ 
++.. function:: print_list(extracted_list, file=None)
++
++   Print the list of tuples as returned by :func:`extract_tb` or
++   :func:`extract_stack` as a formatted stack trace to the given file.
++   If *file* is ``None``, the output is written to :data:`sys.stderr`.
++
++
+ .. function:: format_list(extracted_list)
+ 
+    Given a list of tuples or :class:`FrameSummary` objects as returned by
+diff --git a/Doc/library/xmlrpc.client.rst b/Doc/library/xmlrpc.client.rst
+index c57f433e6ef..971e6560584 100644
+--- a/Doc/library/xmlrpc.client.rst
++++ b/Doc/library/xmlrpc.client.rst
+@@ -64,11 +64,11 @@ between conformable Python objects and XML on the wire.
+    The obsolete *use_datetime* flag is similar to *use_builtin_types* but it
+    applies only to date/time values.
+ 
+-.. versionchanged:: 3.3
+-    The *use_builtin_types* flag was added.
++   .. versionchanged:: 3.3
++      The *use_builtin_types* flag was added.
+ 
+-.. versionchanged:: 3.8
+-    The *headers* parameter was added.
++   .. versionchanged:: 3.8
++      The *headers* parameter was added.
+ 
+    Both the HTTP and HTTPS transports support the URL syntax extension for HTTP
+    Basic Authentication: ``http://user:pass@host:port/path``.  The  ``user:pass``
+diff --git a/Doc/library/xmlrpc.rst b/Doc/library/xmlrpc.rst
+index 5f0a2cf68d0..a93d08f78cf 100644
+--- a/Doc/library/xmlrpc.rst
++++ b/Doc/library/xmlrpc.rst
+@@ -1,6 +1,9 @@
+ :mod:`!xmlrpc` --- XMLRPC server and client modules
+ ===================================================
+ 
++.. module:: xmlrpc
++   :synopsis: Server and client modules implementing XML-RPC.
++
+ XML-RPC is a Remote Procedure Call method that uses XML passed via HTTP as a
+ transport.  With it, a client can call methods with parameters on a remote
+ server (the server is named by a URI) and get back structured data.
+diff --git a/Doc/tools/.nitignore b/Doc/tools/.nitignore
+index 41ca0bdb907..d827ea29a98 100644
+--- a/Doc/tools/.nitignore
++++ b/Doc/tools/.nitignore
+@@ -77,7 +77,6 @@ Doc/whatsnew/2.4.rst
+ Doc/whatsnew/2.5.rst
+ Doc/whatsnew/2.6.rst
+ Doc/whatsnew/2.7.rst
+-Doc/whatsnew/3.0.rst
+ Doc/whatsnew/3.3.rst
+ Doc/whatsnew/3.4.rst
+ Doc/whatsnew/3.5.rst
+diff --git a/Doc/tutorial/datastructures.rst b/Doc/tutorial/datastructures.rst
+index 263b0c2e281..cbe780e075b 100644
+--- a/Doc/tutorial/datastructures.rst
++++ b/Doc/tutorial/datastructures.rst
+@@ -142,8 +142,8 @@ Using Lists as Stacks
+ 
+ The list methods make it very easy to use a list as a stack, where the last
+ element added is the first element retrieved ("last-in, first-out").  To add an
+-item to the top of the stack, use :meth:`!~list.append`.  To retrieve an item from the
+-top of the stack, use :meth:`!~list.pop` without an explicit index.  For example::
++item to the top of the stack, use :meth:`!append`.  To retrieve an item from the
++top of the stack, use :meth:`!pop` without an explicit index.  For example::
+ 
+    >>> stack = [3, 4, 5]
+    >>> stack.append(6)
+@@ -340,7 +340,7 @@ The :keyword:`!del` statement
+ =============================
+ 
+ There is a way to remove an item from a list given its index instead of its
+-value: the :keyword:`del` statement.  This differs from the :meth:`!~list.pop` method
++value: the :keyword:`del` statement.  This differs from the :meth:`!pop` method
+ which returns a value.  The :keyword:`!del` statement can also be used to remove
+ slices from a list or clear the entire list (which we did earlier by assignment
+ of an empty list to the slice).  For example::
+@@ -500,8 +500,8 @@ any immutable type; strings and numbers can always be keys.  Tuples can be used
+ as keys if they contain only strings, numbers, or tuples; if a tuple contains
+ any mutable object either directly or indirectly, it cannot be used as a key.
+ You can't use lists as keys, since lists can be modified in place using index
+-assignments, slice assignments, or methods like :meth:`!~list.append` and
+-:meth:`!~list.extend`.
++assignments, slice assignments, or methods like :meth:`!append` and
++:meth:`!extend`.
+ 
+ It is best to think of a dictionary as a set of *key: value* pairs,
+ with the requirement that the keys are unique (within one dictionary). A pair of
+diff --git a/Doc/using/ios.rst b/Doc/using/ios.rst
+index 4d4eb2031ee..aa43f75ec35 100644
+--- a/Doc/using/ios.rst
++++ b/Doc/using/ios.rst
+@@ -292,10 +292,12 @@ To add Python to an iOS Xcode project:
+ 10. Add Objective C code to initialize and use a Python interpreter in embedded
+     mode. You should ensure that:
+ 
+-   * :c:member:`UTF-8 mode <PyPreConfig.utf8_mode>` is *enabled*;
+-   * :c:member:`Buffered stdio <PyConfig.buffered_stdio>` is *disabled*;
+-   * :c:member:`Writing bytecode <PyConfig.write_bytecode>` is *disabled*;
+-   * :c:member:`Signal handlers <PyConfig.install_signal_handlers>` are *enabled*;
++   * UTF-8 mode (:c:member:`PyPreConfig.utf8_mode`) is *enabled*;
++   * Buffered stdio (:c:member:`PyConfig.buffered_stdio`) is *disabled*;
++   * Writing bytecode (:c:member:`PyConfig.write_bytecode`) is *disabled*;
++   * Signal handlers (:c:member:`PyConfig.install_signal_handlers`) are *enabled*;
++   * System logging (:c:member:`PyConfig.use_system_logger`) is *enabled*
++     (optional, but strongly recommended);
+    * ``PYTHONHOME`` for the interpreter is configured to point at the
+      ``python`` subfolder of your app's bundle; and
+    * The ``PYTHONPATH`` for the interpreter includes:
+@@ -324,6 +326,49 @@ modules in your app, some additional steps will be required:
+ * If you're using a separate folder for third-party packages, ensure that folder
+   is included as part of the ``PYTHONPATH`` configuration in step 10.
+ 
++Testing a Python package
++------------------------
++
++The CPython source tree contains :source:`a testbed project <iOS/testbed>` that
++is used to run the CPython test suite on the iOS simulator. This testbed can also
++be used as a testbed project for running your Python library's test suite on iOS.
++
++After building or obtaining an iOS XCFramework (See :source:`iOS/README.rst`
++for details), create a clone of the Python iOS testbed project by running:
++
++.. code-block:: bash
++
++    $ python iOS/testbed clone --framework <path/to/Python.xcframework> --app <path/to/module1> --app <path/to/module2> app-testbed
++
++You will need to modify the ``iOS/testbed`` reference to point to that
++directory in the CPython source tree; any folders specified with the ``--app``
++flag will be copied into the cloned testbed project. The resulting testbed will
++be created in the ``app-testbed`` folder. In this example, the ``module1`` and
++``module2`` would be importable modules at runtime. If your project has
++additional dependencies, they can be installed into the
++``app-testbed/iOSTestbed/app_packages`` folder (using ``pip install --target
++app-testbed/iOSTestbed/app_packages`` or similar).
++
++You can then use the ``app-testbed`` folder to run the test suite for your app,
++For example, if ``module1.tests`` was the entry point to your test suite, you
++could run:
++
++.. code-block:: bash
++
++    $ python app-testbed run -- module1.tests
++
++This is the equivalent of running ``python -m module1.tests`` on a desktop
++Python build. Any arguments after the ``--`` will be passed to the testbed as
++if they were arguments to ``python -m`` on a desktop machine.
++
++You can also open the testbed project in Xcode by running:
++
++.. code-block:: bash
++
++    $ open app-testbed/iOSTestbed.xcodeproj
++
++This will allow you to use the full Xcode suite of tools for debugging.
++
+ App Store Compliance
+ ====================
+ 
+diff --git a/Doc/whatsnew/3.0.rst b/Doc/whatsnew/3.0.rst
+index d97f5fdd9ea..26e62080e81 100644
+--- a/Doc/whatsnew/3.0.rst
++++ b/Doc/whatsnew/3.0.rst
+@@ -150,8 +150,8 @@ Some well-known APIs no longer return lists:
+   sorted(d)`` instead (this works in Python 2.5 too and is just
+   as efficient).
+ 
+-* Also, the :meth:`dict.iterkeys`, :meth:`dict.iteritems` and
+-  :meth:`dict.itervalues` methods are no longer supported.
++* Also, the :meth:`!dict.iterkeys`, :meth:`!dict.iteritems` and
++  :meth:`!dict.itervalues` methods are no longer supported.
+ 
+ * :func:`map` and :func:`filter` return iterators.  If you really need
+   a list and the input sequences are all of equal length, a quick
+@@ -170,7 +170,7 @@ Some well-known APIs no longer return lists:
+   :func:`itertools.zip_longest`, e.g. ``map(func, *sequences)`` becomes
+   ``list(map(func, itertools.zip_longest(*sequences)))``.
+ 
+-* :func:`range` now behaves like :func:`xrange` used to behave, except
++* :func:`range` now behaves like :func:`!xrange` used to behave, except
+   it works with values of arbitrary size.  The latter no longer
+   exists.
+ 
+@@ -192,33 +192,33 @@ Python 3.0 has simplified the rules for ordering comparisons:
+   operators: objects of different incomparable types always compare
+   unequal to each other.
+ 
+-* :meth:`builtin.sorted` and :meth:`list.sort` no longer accept the
++* :meth:`sorted` and :meth:`list.sort` no longer accept the
+   *cmp* argument providing a comparison function.  Use the *key*
+   argument instead. N.B. the *key* and *reverse* arguments are now
+   "keyword-only".
+ 
+-* The :func:`cmp` function should be treated as gone, and the :meth:`__cmp__`
+-  special method is no longer supported.  Use :meth:`__lt__` for sorting,
+-  :meth:`__eq__` with :meth:`__hash__`, and other rich comparisons as needed.
+-  (If you really need the :func:`cmp` functionality, you could use the
++* The :func:`!cmp` function should be treated as gone, and the :meth:`!__cmp__`
++  special method is no longer supported.  Use :meth:`~object.__lt__` for sorting,
++  :meth:`~object.__eq__` with :meth:`~object.__hash__`, and other rich comparisons as needed.
++  (If you really need the :func:`!cmp` functionality, you could use the
+   expression ``(a > b) - (a < b)`` as the equivalent for ``cmp(a, b)``.)
+ 
+ Integers
+ --------
+ 
+-* :pep:`237`: Essentially, :class:`long` renamed to :class:`int`.
++* :pep:`237`: Essentially, :class:`!long` renamed to :class:`int`.
+   That is, there is only one built-in integral type, named
+-  :class:`int`; but it behaves mostly like the old :class:`long` type.
++  :class:`int`; but it behaves mostly like the old :class:`!long` type.
+ 
+ * :pep:`238`: An expression like ``1/2`` returns a float.  Use
+   ``1//2`` to get the truncating behavior.  (The latter syntax has
+   existed for years, at least since Python 2.2.)
+ 
+-* The :data:`sys.maxint` constant was removed, since there is no
++* The :data:`!sys.maxint` constant was removed, since there is no
+   longer a limit to the value of integers.  However, :data:`sys.maxsize`
+   can be used as an integer larger than any practical list or string
+   index.  It conforms to the implementation's "natural" integer size
+-  and is typically the same as :data:`sys.maxint` in previous releases
++  and is typically the same as :data:`!sys.maxint` in previous releases
+   on the same platform (assuming the same build options).
+ 
+ * The :func:`repr` of a long integer doesn't include the trailing ``L``
+@@ -251,7 +251,7 @@ changed.
+   that uses Unicode, encodings or binary data most likely has to
+   change.  The change is for the better, as in the 2.x world there
+   were numerous bugs having to do with mixing encoded and unencoded
+-  text.  To be prepared in Python 2.x, start using :class:`unicode`
++  text.  To be prepared in Python 2.x, start using :class:`!unicode`
+   for all unencoded text, and :class:`str` for binary or encoded data
+   only.  Then the ``2to3`` tool will do most of the work for you.
+ 
+@@ -269,7 +269,7 @@ changed.
+   separate *mutable* type to hold buffered binary data,
+   :class:`bytearray`.  Nearly all APIs that accept :class:`bytes` also
+   accept :class:`bytearray`.  The mutable API is based on
+-  :class:`collections.MutableSequence`.
++  :class:`collections.MutableSequence <collections.abc.MutableSequence>`.
+ 
+ * All backslashes in raw string literals are interpreted literally.
+   This means that ``'\U'`` and ``'\u'`` escapes in raw strings are not
+@@ -278,11 +278,11 @@ changed.
+   single "euro" character.  (Of course, this change only affects raw
+   string literals; the euro character is ``'\u20ac'`` in Python 3.0.)
+ 
+-* The built-in :class:`basestring` abstract type was removed.  Use
++* The built-in :class:`!basestring` abstract type was removed.  Use
+   :class:`str` instead.  The :class:`str` and :class:`bytes` types
+   don't have functionality enough in common to warrant a shared base
+   class.  The ``2to3`` tool (see below) replaces every occurrence of
+-  :class:`basestring` with :class:`str`.
++  :class:`!basestring` with :class:`str`.
+ 
+ * Files opened as text files (still the default mode for :func:`open`)
+   always use an encoding to map between strings (in memory) and bytes
+@@ -357,7 +357,7 @@ New Syntax
+   provides a standardized way of annotating a function's parameters
+   and return value.  There are no semantics attached to such
+   annotations except that they can be introspected at runtime using
+-  the :attr:`~object.__annotations__` attribute.  The intent is to
++  the :attr:`!__annotations__` attribute.  The intent is to
+   encourage experimentation through metaclasses, decorators or frameworks.
+ 
+ * :pep:`3102`: Keyword-only arguments.  Named parameters occurring
+@@ -428,7 +428,7 @@ Changed Syntax
+     class C(metaclass=M):
+         ...
+ 
+-  The module-global :data:`__metaclass__` variable is no longer
++  The module-global :data:`!__metaclass__` variable is no longer
+   supported.  (It was a crutch to make it easier to default to
+   new-style classes without deriving every class from
+   :class:`object`.)
+@@ -522,19 +522,19 @@ consulted for longer descriptions.
+   *encoding*, *errors*, *newline* and *closefd*.  Also note that an
+   invalid *mode* argument now raises :exc:`ValueError`, not
+   :exc:`IOError`.  The binary file object underlying a text file
+-  object can be accessed as :attr:`f.buffer` (but beware that the
++  object can be accessed as :attr:`!f.buffer` (but beware that the
+   text object maintains a buffer of itself in order to speed up
+   the encoding and decoding operations).
+ 
+-* :ref:`pep-3118`.  The old builtin :func:`buffer` is now really gone;
++* :ref:`pep-3118`.  The old builtin :func:`!buffer` is now really gone;
+   the new builtin :func:`memoryview` provides (mostly) similar
+   functionality.
+ 
+ * :ref:`pep-3119`.  The :mod:`abc` module and the ABCs defined in the
+   :mod:`collections` module plays a somewhat more prominent role in
+   the language now, and built-in collection types like :class:`dict`
+-  and :class:`list` conform to the :class:`collections.MutableMapping`
+-  and :class:`collections.MutableSequence` ABCs, respectively.
++  and :class:`list` conform to the :class:`collections.MutableMapping <collections.abc.MutableMapping>`
++  and :class:`collections.MutableSequence <collections.abc.MutableSequence>` ABCs, respectively.
+ 
+ * :ref:`pep-3127`.  As mentioned above, the new octal literal
+   notation is the only one supported, and binary literals have been
+@@ -612,7 +612,7 @@ review:
+     :mod:`!CGIHTTPServer`, :mod:`!SimpleHTTPServer`, :mod:`!Cookie`,
+     :mod:`!cookielib`).
+ 
+-  * :mod:`tkinter` (all :mod:`Tkinter`-related modules except
++  * :mod:`tkinter` (all ``Tkinter``-related modules except
+     :mod:`turtle`).  The target audience of :mod:`turtle` doesn't
+     really care about :mod:`tkinter`.  Also note that as of Python
+     2.6, the functionality of :mod:`turtle` has been greatly enhanced.
+@@ -628,47 +628,47 @@ Some other changes to standard library modules, not covered by
+ 
+ * Killed :mod:`!sets`.  Use the built-in :func:`set` class.
+ 
+-* Cleanup of the :mod:`sys` module: removed :func:`sys.exitfunc`,
+-  :func:`sys.exc_clear`, :data:`sys.exc_type`, :data:`sys.exc_value`,
+-  :data:`sys.exc_traceback`.  (Note that :data:`sys.last_type`
++* Cleanup of the :mod:`sys` module: removed :func:`!sys.exitfunc`,
++  :func:`!sys.exc_clear`, :data:`!sys.exc_type`, :data:`!sys.exc_value`,
++  :data:`!sys.exc_traceback`.  (Note that :data:`sys.last_type`
+   etc. remain.)
+ 
+-* Cleanup of the :class:`array.array` type: the :meth:`read` and
+-  :meth:`write` methods are gone; use :meth:`fromfile` and
+-  :meth:`tofile` instead.  Also, the ``'c'`` typecode for array is
++* Cleanup of the :class:`array.array` type: the :meth:`!read` and
++  :meth:`!write` methods are gone; use :meth:`~array.array.fromfile` and
++  :meth:`~array.array.tofile` instead.  Also, the ``'c'`` typecode for array is
+   gone -- use either ``'b'`` for bytes or ``'u'`` for Unicode
+   characters.
+ 
+ * Cleanup of the :mod:`operator` module: removed
+-  :func:`sequenceIncludes` and :func:`isCallable`.
++  :func:`!sequenceIncludes` and :func:`!isCallable`.
+ 
+ * Cleanup of the :mod:`!thread` module: :func:`!acquire_lock` and
+   :func:`!release_lock` are gone; use :meth:`~threading.Lock.acquire` and
+   :meth:`~threading.Lock.release` instead.
+ 
+-* Cleanup of the :mod:`random` module: removed the :func:`jumpahead` API.
++* Cleanup of the :mod:`random` module: removed the :func:`!jumpahead` API.
+ 
+ * The :mod:`!new` module is gone.
+ 
+-* The functions :func:`os.tmpnam`, :func:`os.tempnam` and
+-  :func:`os.tmpfile` have been removed in favor of the :mod:`tempfile`
++* The functions :func:`!os.tmpnam`, :func:`!os.tempnam` and
++  :func:`!os.tmpfile` have been removed in favor of the :mod:`tempfile`
+   module.
+ 
+ * The :mod:`tokenize` module has been changed to work with bytes.  The
+   main entry point is now :func:`tokenize.tokenize`, instead of
+   generate_tokens.
+ 
+-* :data:`string.letters` and its friends (:data:`string.lowercase` and
+-  :data:`string.uppercase`) are gone.  Use
++* :data:`!string.letters` and its friends (:data:`!string.lowercase` and
++  :data:`!string.uppercase`) are gone.  Use
+   :data:`string.ascii_letters` etc. instead.  (The reason for the
+-  removal is that :data:`string.letters` and friends had
++  removal is that :data:`!string.letters` and friends had
+   locale-specific behavior, which is a bad idea for such
+   attractively named global "constants".)
+ 
+-* Renamed module :mod:`__builtin__` to :mod:`builtins` (removing the
+-  underscores, adding an 's').  The :data:`__builtins__` variable
++* Renamed module :mod:`!__builtin__` to :mod:`builtins` (removing the
++  underscores, adding an 's').  The :data:`!__builtins__` variable
+   found in most global namespaces is unchanged.  To modify a builtin,
+-  you should use :mod:`builtins`, not :data:`__builtins__`!
++  you should use :mod:`builtins`, not :data:`!__builtins__`!
+ 
+ 
+ :pep:`3101`: A New Approach To String Formatting
+@@ -702,9 +702,9 @@ new powerful features added:
+   idiom for handling all exceptions except for this latter category is
+   to use :keyword:`except` :exc:`Exception`.
+ 
+-* :exc:`StandardError` was removed.
++* :exc:`!StandardError` was removed.
+ 
+-* Exceptions no longer behave as sequences.  Use the :attr:`args`
++* Exceptions no longer behave as sequences.  Use the :attr:`~BaseException.args`
+   attribute instead.
+ 
+ * :pep:`3109`: Raising exceptions.  You must now use :samp:`raise
+@@ -765,20 +765,20 @@ Operators And Special Methods
+   When referencing a method as a class attribute, you now get a plain
+   function object.
+ 
+-* :meth:`__getslice__`, :meth:`__setslice__` and :meth:`__delslice__`
++* :meth:`!__getslice__`, :meth:`!__setslice__` and :meth:`!__delslice__`
+   were killed.  The syntax ``a[i:j]`` now translates to
+-  ``a.__getitem__(slice(i, j))`` (or :meth:`__setitem__` or
+-  :meth:`__delitem__`, when used as an assignment or deletion target,
++  ``a.__getitem__(slice(i, j))`` (or :meth:`~object.__setitem__` or
++  :meth:`~object.__delitem__`, when used as an assignment or deletion target,
+   respectively).
+ 
+ * :pep:`3114`: the standard :meth:`next` method has been renamed to
+   :meth:`~iterator.__next__`.
+ 
+-* The :meth:`__oct__` and :meth:`__hex__` special methods are removed
+-  -- :func:`oct` and :func:`hex` use :meth:`__index__` now to convert
++* The :meth:`!__oct__` and :meth:`!__hex__` special methods are removed
++  -- :func:`oct` and :func:`hex` use :meth:`~object.__index__` now to convert
+   the argument to an integer.
+ 
+-* Removed support for :attr:`__members__` and :attr:`__methods__`.
++* Removed support for :attr:`!__members__` and :attr:`!__methods__`.
+ 
+ * The function attributes named :attr:`!func_X` have been renamed to
+   use the :attr:`!__X__` form, freeing up these names in the function
+@@ -802,7 +802,7 @@ Builtins
+   instance will automatically be chosen.  With arguments, the behavior
+   of :func:`super` is unchanged.
+ 
+-* :pep:`3111`: :func:`raw_input` was renamed to :func:`input`.  That
++* :pep:`3111`: :func:`!raw_input` was renamed to :func:`input`.  That
+   is, the new :func:`input` function reads a line from
+   :data:`sys.stdin` and returns it with the trailing newline stripped.
+   It raises :exc:`EOFError` if the input is terminated prematurely.
+@@ -820,31 +820,31 @@ Builtins
+   argument and a value of the same type as ``x`` when called with two
+   arguments.
+ 
+-* Moved :func:`intern` to :func:`sys.intern`.
++* Moved :func:`!intern` to :func:`sys.intern`.
+ 
+-* Removed: :func:`apply`.  Instead of ``apply(f, args)`` use
++* Removed: :func:`!apply`.  Instead of ``apply(f, args)`` use
+   ``f(*args)``.
+ 
+ * Removed :func:`callable`.  Instead of ``callable(f)`` you can use
+-  ``isinstance(f, collections.Callable)``.  The :func:`operator.isCallable`
++  ``isinstance(f, collections.Callable)``.  The :func:`!operator.isCallable`
+   function is also gone.
+ 
+-* Removed :func:`coerce`.  This function no longer serves a purpose
++* Removed :func:`!coerce`.  This function no longer serves a purpose
+   now that classic classes are gone.
+ 
+-* Removed :func:`execfile`.  Instead of ``execfile(fn)`` use
++* Removed :func:`!execfile`.  Instead of ``execfile(fn)`` use
+   ``exec(open(fn).read())``.
+ 
+-* Removed the :class:`file` type.  Use :func:`open`.  There are now several
++* Removed the :class:`!file` type.  Use :func:`open`.  There are now several
+   different kinds of streams that open can return in the :mod:`io` module.
+ 
+-* Removed :func:`reduce`.  Use :func:`functools.reduce` if you really
++* Removed :func:`!reduce`.  Use :func:`functools.reduce` if you really
+   need it; however, 99 percent of the time an explicit :keyword:`for`
+   loop is more readable.
+ 
+-* Removed :func:`reload`.  Use :func:`!imp.reload`.
++* Removed :func:`!reload`.  Use :func:`!imp.reload`.
+ 
+-* Removed. :meth:`dict.has_key` -- use the :keyword:`in` operator
++* Removed. :meth:`!dict.has_key` -- use the :keyword:`in` operator
+   instead.
+ 
+ .. ======================================================================
+diff --git a/Include/cpython/initconfig.h b/Include/cpython/initconfig.h
+index 5da5ef9e543..20f5c9ad9bb 100644
+--- a/Include/cpython/initconfig.h
++++ b/Include/cpython/initconfig.h
+@@ -179,6 +179,9 @@ typedef struct PyConfig {
+     int use_frozen_modules;
+     int safe_path;
+     int int_max_str_digits;
++#ifdef __APPLE__
++    int use_system_logger;
++#endif
+ 
+     int cpu_count;
+ #ifdef Py_GIL_DISABLED
+diff --git a/Include/cpython/tracemalloc.h b/Include/cpython/tracemalloc.h
+index 61a16ea9a9f..6d094291ae2 100644
+--- a/Include/cpython/tracemalloc.h
++++ b/Include/cpython/tracemalloc.h
+@@ -1,6 +1,9 @@
+ #ifndef Py_LIMITED_API
+ #ifndef Py_TRACEMALLOC_H
+ #define Py_TRACEMALLOC_H
++#ifdef __cplusplus
++extern "C" {
++#endif
+ 
+ /* Track an allocated memory block in the tracemalloc module.
+    Return 0 on success, return -1 on error (failed to allocate memory to store
+@@ -22,5 +25,8 @@ PyAPI_FUNC(int) PyTraceMalloc_Untrack(
+     unsigned int domain,
+     uintptr_t ptr);
+ 
++#ifdef __cplusplus
++}
++#endif
+ #endif  // !Py_TRACEMALLOC_H
+ #endif  // !Py_LIMITED_API
+diff --git a/Include/internal/pycore_atexit.h b/Include/internal/pycore_atexit.h
+index 507a5c03cbc..72c66a05939 100644
+--- a/Include/internal/pycore_atexit.h
++++ b/Include/internal/pycore_atexit.h
+@@ -44,6 +44,7 @@ typedef struct {
+ 
+ struct atexit_state {
+     atexit_callback *ll_callbacks;
++    // Kept for ABI compatibility--do not use! (See GH-127791.)
+     atexit_callback *last_ll_callback;
+ 
+     // XXX The rest of the state could be moved to the atexit module state
+diff --git a/Include/internal/pycore_object.h b/Include/internal/pycore_object.h
+index d50a688d5b7..43a7e102ab3 100644
+--- a/Include/internal/pycore_object.h
++++ b/Include/internal/pycore_object.h
+@@ -105,6 +105,14 @@ PyAPI_FUNC(void) _Py_NO_RETURN _Py_FatalRefcountErrorFunc(
+ #define _Py_FatalRefcountError(message) \
+     _Py_FatalRefcountErrorFunc(__func__, (message))
+ 
++#define _PyReftracerTrack(obj, operation) \
++    do { \
++        struct _reftracer_runtime_state *tracer = &_PyRuntime.ref_tracer; \
++        if (tracer->tracer_func != NULL) { \
++            void *data = tracer->tracer_data; \
++            tracer->tracer_func((obj), (operation), data); \
++        } \
++    } while(0)
+ 
+ #ifdef Py_REF_DEBUG
+ /* The symbol is only exposed in the API for the sake of extensions
+@@ -216,11 +224,7 @@ _Py_DECREF_SPECIALIZED(PyObject *op, const destructor destruct)
+ #ifdef Py_TRACE_REFS
+         _Py_ForgetReference(op);
+ #endif
+-        struct _reftracer_runtime_state *tracer = &_PyRuntime.ref_tracer;
+-        if (tracer->tracer_func != NULL) {
+-            void* data = tracer->tracer_data;
+-            tracer->tracer_func(op, PyRefTracer_DESTROY, data);
+-        }
++        _PyReftracerTrack(op, PyRefTracer_DESTROY);
+         destruct(op);
+     }
+ }
+@@ -572,7 +576,51 @@ _PyObject_SetMaybeWeakref(PyObject *op)
+     }
+ }
+ 
++extern int _PyObject_ResurrectEndSlow(PyObject *op);
++#endif
++
++// Temporarily resurrects an object during deallocation. The refcount is set
++// to one.
++static inline void
++_PyObject_ResurrectStart(PyObject *op)
++{
++    assert(Py_REFCNT(op) == 0);
++#ifdef Py_REF_DEBUG
++    _Py_IncRefTotal(_PyThreadState_GET());
++#endif
++#ifdef Py_GIL_DISABLED
++    _Py_atomic_store_uintptr_relaxed(&op->ob_tid, _Py_ThreadId());
++    _Py_atomic_store_uint32_relaxed(&op->ob_ref_local, 1);
++    _Py_atomic_store_ssize_relaxed(&op->ob_ref_shared, 0);
++#else
++    Py_SET_REFCNT(op, 1);
++#endif
++}
++
++// Undoes an object resurrection by decrementing the refcount without calling
++// _Py_Dealloc(). Returns 0 if the object is dead (the normal case), and
++// deallocation should continue. Returns 1 if the object is still alive.
++static inline int
++_PyObject_ResurrectEnd(PyObject *op)
++{
++#ifdef Py_REF_DEBUG
++    _Py_DecRefTotal(_PyThreadState_GET());
++#endif
++#ifndef Py_GIL_DISABLED
++    Py_SET_REFCNT(op, Py_REFCNT(op) - 1);
++    return Py_REFCNT(op) != 0;
++#else
++    uint32_t local = _Py_atomic_load_uint32_relaxed(&op->ob_ref_local);
++    Py_ssize_t shared = _Py_atomic_load_ssize_acquire(&op->ob_ref_shared);
++    if (_Py_IsOwnedByCurrentThread(op) && local == 1 && shared == 0) {
++        // Fast-path: object has a single refcount and is owned by this thread
++        _Py_atomic_store_uint32_relaxed(&op->ob_ref_local, 0);
++        return 0;
++    }
++    // Slow-path: object has a shared refcount or is not owned by this thread
++    return _PyObject_ResurrectEndSlow(op);
+ #endif
++}
+ 
+ /* Tries to incref op and returns 1 if successful or 0 otherwise. */
+ static inline int
+diff --git a/Include/patchlevel.h b/Include/patchlevel.h
+index 93b0d7b7c79..59476c13eb6 100644
+--- a/Include/patchlevel.h
++++ b/Include/patchlevel.h
+@@ -23,7 +23,7 @@
+ #define PY_RELEASE_SERIAL       0
+ 
+ /* Version as a string */
+-#define PY_VERSION              "3.13.1"
++#define PY_VERSION              "3.13.1+"
+ /*--end constants--*/
+ 
+ /* Version as a single 4-byte hex number, e.g. 0x010502B2 == 1.5.2b2.
+diff --git a/Lib/_android_support.py b/Lib/_android_support.py
+index 7572745c851..ae506f6a4b5 100644
+--- a/Lib/_android_support.py
++++ b/Lib/_android_support.py
+@@ -6,7 +6,7 @@
+ # The maximum length of a log message in bytes, including the level marker and
+ # tag, is defined as LOGGER_ENTRY_MAX_PAYLOAD at
+ # https://cs.android.com/android/platform/superproject/+/android-14.0.0_r1:system/logging/liblog/include/log/log.h;l=71.
+-# Messages longer than this will be be truncated by logcat. This limit has already
++# Messages longer than this will be truncated by logcat. This limit has already
+ # been reduced at least once in the history of Android (from 4076 to 4068 between
+ # API level 23 and 26), so leave some headroom.
+ MAX_BYTES_PER_WRITE = 4000
+diff --git a/Lib/_apple_support.py b/Lib/_apple_support.py
+new file mode 100644
+index 00000000000..92febdcf587
+--- /dev/null
++++ b/Lib/_apple_support.py
+@@ -0,0 +1,66 @@
++import io
++import sys
++
++
++def init_streams(log_write, stdout_level, stderr_level):
++    # Redirect stdout and stderr to the Apple system log. This method is
++    # invoked by init_apple_streams() (initconfig.c) if config->use_system_logger
++    # is enabled.
++    sys.stdout = SystemLog(log_write, stdout_level, errors=sys.stderr.errors)
++    sys.stderr = SystemLog(log_write, stderr_level, errors=sys.stderr.errors)
++
++
++class SystemLog(io.TextIOWrapper):
++    def __init__(self, log_write, level, **kwargs):
++        kwargs.setdefault("encoding", "UTF-8")
++        kwargs.setdefault("line_buffering", True)
++        super().__init__(LogStream(log_write, level), **kwargs)
++
++    def __repr__(self):
++        return f"<SystemLog (level {self.buffer.level})>"
++
++    def write(self, s):
++        if not isinstance(s, str):
++            raise TypeError(
++                f"write() argument must be str, not {type(s).__name__}")
++
++        # In case `s` is a str subclass that writes itself to stdout or stderr
++        # when we call its methods, convert it to an actual str.
++        s = str.__str__(s)
++
++        # We want to emit one log message per line, so split
++        # the string before sending it to the superclass.
++        for line in s.splitlines(keepends=True):
++            super().write(line)
++
++        return len(s)
++
++
++class LogStream(io.RawIOBase):
++    def __init__(self, log_write, level):
++        self.log_write = log_write
++        self.level = level
++
++    def __repr__(self):
++        return f"<LogStream (level {self.level!r})>"
++
++    def writable(self):
++        return True
++
++    def write(self, b):
++        if type(b) is not bytes:
++            try:
++                b = bytes(memoryview(b))
++            except TypeError:
++                raise TypeError(
++                    f"write() argument must be bytes-like, not {type(b).__name__}"
++                ) from None
++
++        # Writing an empty string to the stream should have no effect.
++        if b:
++            # Encode null bytes using "modified UTF-8" to avoid truncating the
++            # message. This should not affect the return value, as the caller
++            # may be expecting it to match the length of the input.
++            self.log_write(self.level, b.replace(b"\x00", b"\xc0\x80"))
++
++        return len(b)
+diff --git a/Lib/_strptime.py b/Lib/_strptime.py
+index 4c68a6a88e5..8d763e5bd33 100644
+--- a/Lib/_strptime.py
++++ b/Lib/_strptime.py
+@@ -301,8 +301,6 @@ def __init__(self, locale_time=None):
+             'V': r"(?P<V>5[0-3]|0[1-9]|[1-4]\d|\d)",
+             # W is set below by using 'U'
+             'y': r"(?P<y>\d\d)",
+-            #XXX: Does 'Y' need to worry about having less or more than
+-            #     4 digits?
+             'Y': r"(?P<Y>\d\d\d\d)",
+             'z': r"(?P<z>[+-]\d\d:?[0-5]\d(:?[0-5]\d(\.\d{1,6})?)?|(?-i:Z))",
+             'A': self.__seqToRE(self.locale_time.f_weekday, 'A'),
+diff --git a/Lib/asyncio/selector_events.py b/Lib/asyncio/selector_events.py
+index f94bf10b422..f1ab9b12d69 100644
+--- a/Lib/asyncio/selector_events.py
++++ b/Lib/asyncio/selector_events.py
+@@ -1175,6 +1175,7 @@ def writelines(self, list_of_data):
+         # If the entire buffer couldn't be written, register a write handler
+         if self._buffer:
+             self._loop._add_writer(self._sock_fd, self._write_ready)
++            self._maybe_pause_protocol()
+ 
+     def can_write_eof(self):
+         return True
+diff --git a/Lib/dis.py b/Lib/dis.py
+index 76934eb00e6..797e0f8a088 100644
+--- a/Lib/dis.py
++++ b/Lib/dis.py
+@@ -1051,7 +1051,7 @@ def dis(self):
+             return output.getvalue()
+ 
+ 
+-def main():
++def main(args=None):
+     import argparse
+ 
+     parser = argparse.ArgumentParser()
+@@ -1060,7 +1060,7 @@ def main():
+     parser.add_argument('-O', '--show-offsets', action='store_true',
+                         help='show instruction offsets')
+     parser.add_argument('infile', nargs='?', default='-')
+-    args = parser.parse_args()
++    args = parser.parse_args(args=args)
+     if args.infile == '-':
+         name = '<stdin>'
+         source = sys.stdin.buffer.read()
+diff --git a/Lib/http/cookies.py b/Lib/http/cookies.py
+index 6b9ed24ad8e..57791c6ab08 100644
+--- a/Lib/http/cookies.py
++++ b/Lib/http/cookies.py
+@@ -424,9 +424,11 @@ def OutputString(self, attrs=None):
+     (                              # Optional group: there may not be a value.
+     \s*=\s*                          # Equal Sign
+     (?P<val>                         # Start of group 'val'
+-    "(?:[^\\"]|\\.)*"                  # Any doublequoted string
++    "(?:[^\\"]|\\.)*"                  # Any double-quoted string
+     |                                  # or
+-    \w{3},\s[\w\d\s-]{9,11}\s[\d:]{8}\sGMT  # Special case for "expires" attr
++    # Special case for "expires" attr
++    (\w{3,6}day|\w{3}),\s              # Day of the week or abbreviated day
++    [\w\d\s-]{9,11}\s[\d:]{8}\sGMT     # Date and time in specific format
+     |                                  # or
+     [""" + _LegalValueChars + r"""]*      # Any word or empty string
+     )                                # End of group 'val'
+diff --git a/Lib/linecache.py b/Lib/linecache.py
+index 4b38a0464d8..8ba2df73d5a 100644
+--- a/Lib/linecache.py
++++ b/Lib/linecache.py
+@@ -49,14 +49,17 @@ def checkcache(filename=None):
+     (This is not checked upon each call!)"""
+ 
+     if filename is None:
+-        filenames = list(cache.keys())
+-    elif filename in cache:
+-        filenames = [filename]
++        # get keys atomically
++        filenames = cache.copy().keys()
+     else:
+-        return
++        filenames = [filename]
+ 
+     for filename in filenames:
+-        entry = cache[filename]
++        try:
++            entry = cache[filename]
++        except KeyError:
++            continue
++
+         if len(entry) == 1:
+             # lazy cache entry, leave it lazy.
+             continue
+diff --git a/Lib/platform.py b/Lib/platform.py
+index 5958382276e..8895177e326 100755
+--- a/Lib/platform.py
++++ b/Lib/platform.py
+@@ -354,7 +354,8 @@ def _wmi_query(table, *keys):
+ ]
+ 
+ _WIN32_SERVER_RELEASES = [
+-    ((10, 1, 0), "post2022Server"),
++    ((10, 1, 0), "post2025Server"),
++    ((10, 0, 26100), "2025Server"),
+     ((10, 0, 20348), "2022Server"),
+     ((10, 0, 17763), "2019Server"),
+     ((6, 4, 0), "2016Server"),
+diff --git a/Lib/poplib.py b/Lib/poplib.py
+index 1a1629d175b..beb93a0d57c 100644
+--- a/Lib/poplib.py
++++ b/Lib/poplib.py
+@@ -309,7 +309,7 @@ def close(self):
+     # optional commands:
+ 
+     def rpop(self, user):
+-        """Not sure what this does."""
++        """Send RPOP command to access the mailbox with an alternate user."""
+         return self._shortcmd('RPOP %s' % user)
+ 
+ 
+diff --git a/Lib/test/test__locale.py b/Lib/test/test__locale.py
+index 89c20325055..606dd297452 100644
+--- a/Lib/test/test__locale.py
++++ b/Lib/test/test__locale.py
+@@ -102,6 +102,11 @@ def accept(loc):
+     # ps_AF doesn't work on Windows: see bpo-38324 (msg361830)
+     del known_numerics['ps_AF']
+ 
++if sys.platform == 'sunos5':
++    # On Solaris, Japanese ERAs start with the year 1927,
++    # and thus there's less of them.
++    known_era['ja_JP'] = (5, '+:1:2019/05/01:2019/12/31:令和:%EC元年')
++
+ class _LocaleTests(unittest.TestCase):
+ 
+     def setUp(self):
+diff --git a/Lib/test/test_apple.py b/Lib/test/test_apple.py
+new file mode 100644
+index 00000000000..ab5296afad1
+--- /dev/null
++++ b/Lib/test/test_apple.py
+@@ -0,0 +1,155 @@
++import unittest
++from _apple_support import SystemLog
++from test.support import is_apple
++from unittest.mock import Mock, call
++
++if not is_apple:
++    raise unittest.SkipTest("Apple-specific")
++
++
++# Test redirection of stdout and stderr to the Apple system log.
++class TestAppleSystemLogOutput(unittest.TestCase):
++    maxDiff = None
++
++    def assert_writes(self, output):
++        self.assertEqual(
++            self.log_write.mock_calls,
++            [
++                call(self.log_level, line)
++                for line in output
++            ]
++        )
++
++        self.log_write.reset_mock()
++
++    def setUp(self):
++        self.log_write = Mock()
++        self.log_level = 42
++        self.log = SystemLog(self.log_write, self.log_level, errors="replace")
++
++    def test_repr(self):
++        self.assertEqual(repr(self.log), "<SystemLog (level 42)>")
++        self.assertEqual(repr(self.log.buffer), "<LogStream (level 42)>")
++
++    def test_log_config(self):
++        self.assertIs(self.log.writable(), True)
++        self.assertIs(self.log.readable(), False)
++
++        self.assertEqual("UTF-8", self.log.encoding)
++        self.assertEqual("replace", self.log.errors)
++
++        self.assertIs(self.log.line_buffering, True)
++        self.assertIs(self.log.write_through, False)
++
++    def test_empty_str(self):
++        self.log.write("")
++        self.log.flush()
++
++        self.assert_writes([])
++
++    def test_simple_str(self):
++        self.log.write("hello world\n")
++
++        self.assert_writes([b"hello world\n"])
++
++    def test_buffered_str(self):
++        self.log.write("h")
++        self.log.write("ello")
++        self.log.write(" ")
++        self.log.write("world\n")
++        self.log.write("goodbye.")
++        self.log.flush()
++
++        self.assert_writes([b"hello world\n", b"goodbye."])
++
++    def test_manual_flush(self):
++        self.log.write("Hello")
++
++        self.assert_writes([])
++
++        self.log.write(" world\nHere for a while...\nGoodbye")
++        self.assert_writes([b"Hello world\n", b"Here for a while...\n"])
++
++        self.log.write(" world\nHello again")
++        self.assert_writes([b"Goodbye world\n"])
++
++        self.log.flush()
++        self.assert_writes([b"Hello again"])
++
++    def test_non_ascii(self):
++        # Spanish
++        self.log.write("ol\u00e9\n")
++        self.assert_writes([b"ol\xc3\xa9\n"])
++
++        # Chinese
++        self.log.write("\u4e2d\u6587\n")
++        self.assert_writes([b"\xe4\xb8\xad\xe6\x96\x87\n"])
++
++        # Printing Non-BMP emoji
++        self.log.write("\U0001f600\n")
++        self.assert_writes([b"\xf0\x9f\x98\x80\n"])
++
++        # Non-encodable surrogates are replaced
++        self.log.write("\ud800\udc00\n")
++        self.assert_writes([b"??\n"])
++
++    def test_modified_null(self):
++        # Null characters are logged using "modified UTF-8".
++        self.log.write("\u0000\n")
++        self.assert_writes([b"\xc0\x80\n"])
++        self.log.write("a\u0000\n")
++        self.assert_writes([b"a\xc0\x80\n"])
++        self.log.write("\u0000b\n")
++        self.assert_writes([b"\xc0\x80b\n"])
++        self.log.write("a\u0000b\n")
++        self.assert_writes([b"a\xc0\x80b\n"])
++
++    def test_nonstandard_str(self):
++        # String subclasses are accepted, but they should be converted
++        # to a standard str without calling any of their methods.
++        class CustomStr(str):
++            def splitlines(self, *args, **kwargs):
++                raise AssertionError()
++
++            def __len__(self):
++                raise AssertionError()
++
++            def __str__(self):
++                raise AssertionError()
++
++        self.log.write(CustomStr("custom\n"))
++        self.assert_writes([b"custom\n"])
++
++    def test_non_str(self):
++        # Non-string classes are not accepted.
++        for obj in [b"", b"hello", None, 42]:
++            with self.subTest(obj=obj):
++                with self.assertRaisesRegex(
++                    TypeError,
++                    fr"write\(\) argument must be str, not "
++                    fr"{type(obj).__name__}"
++                ):
++                    self.log.write(obj)
++
++    def test_byteslike_in_buffer(self):
++        # The underlying buffer *can* accept bytes-like objects
++        self.log.buffer.write(bytearray(b"hello"))
++        self.log.flush()
++
++        self.log.buffer.write(b"")
++        self.log.flush()
++
++        self.log.buffer.write(b"goodbye")
++        self.log.flush()
++
++        self.assert_writes([b"hello", b"goodbye"])
++
++    def test_non_byteslike_in_buffer(self):
++        for obj in ["hello", None, 42]:
++            with self.subTest(obj=obj):
++                with self.assertRaisesRegex(
++                    TypeError,
++                    fr"write\(\) argument must be bytes-like, not "
++                    fr"{type(obj).__name__}"
++                ):
++                    self.log.buffer.write(obj)
+diff --git a/Lib/test/test_asyncio/test_selector_events.py b/Lib/test/test_asyncio/test_selector_events.py
+index aaeda33dd0c..efca30f3741 100644
+--- a/Lib/test/test_asyncio/test_selector_events.py
++++ b/Lib/test/test_asyncio/test_selector_events.py
+@@ -805,6 +805,18 @@ def test_writelines_send_partial(self):
+         self.assertTrue(self.sock.send.called)
+         self.assertTrue(self.loop.writers)
+ 
++    def test_writelines_pauses_protocol(self):
++        data = memoryview(b'data')
++        self.sock.send.return_value = 2
++        self.sock.send.fileno.return_value = 7
++
++        transport = self.socket_transport()
++        transport._high_water = 1
++        transport.writelines([data])
++        self.assertTrue(self.protocol.pause_writing.called)
++        self.assertTrue(self.sock.send.called)
++        self.assertTrue(self.loop.writers)
++
+     @unittest.skipUnless(selector_events._HAS_SENDMSG, 'no sendmsg')
+     def test_write_sendmsg_full(self):
+         data = memoryview(b'data')
+diff --git a/Lib/test/test_dis.py b/Lib/test/test_dis.py
+index a7f6919655b..73807d7fa95 100644
+--- a/Lib/test/test_dis.py
++++ b/Lib/test/test_dis.py
+@@ -4,15 +4,19 @@
+ import dis
+ import functools
+ import io
++import itertools
++import opcode
+ import re
+ import sys
++import tempfile
++import textwrap
+ import types
+ import unittest
+ from test.support import (captured_stdout, requires_debug_ranges,
+-                          requires_specialization, cpython_only)
++                          requires_specialization, cpython_only,
++                          os_helper)
+ from test.support.bytecode_helper import BytecodeTestCase
+ 
+-import opcode
+ 
+ CACHE = dis.opmap["CACHE"]
+ 
+@@ -2281,5 +2285,91 @@ def _unroll_caches_as_Instructions(instrs, show_caches=False):
+                                   False, None, None, instr.positions)
+ 
+ 
++class TestDisCLI(unittest.TestCase):
++
++    def setUp(self):
++        self.filename = tempfile.mktemp()
++        self.addCleanup(os_helper.unlink, self.filename)
++
++    @staticmethod
++    def text_normalize(string):
++        """Dedent *string* and strip it from its surrounding whitespaces.
++
++        This method is used by the other utility functions so that any
++        string to write or to match against can be freely indented.
++        """
++        return textwrap.dedent(string).strip()
++
++    def set_source(self, content):
++        with open(self.filename, 'w') as fp:
++            fp.write(self.text_normalize(content))
++
++    def invoke_dis(self, *flags):
++        output = io.StringIO()
++        with contextlib.redirect_stdout(output):
++            dis.main(args=[*flags, self.filename])
++        return self.text_normalize(output.getvalue())
++
++    def check_output(self, source, expect, *flags):
++        with self.subTest(source=source, flags=flags):
++            self.set_source(source)
++            res = self.invoke_dis(*flags)
++            expect = self.text_normalize(expect)
++            self.assertListEqual(res.splitlines(), expect.splitlines())
++
++    def test_invocation(self):
++        # test various combinations of parameters
++        base_flags = [
++            ('-C', '--show-caches'),
++            ('-O', '--show-offsets'),
++        ]
++
++        self.set_source('''
++            def f():
++                print(x)
++                return None
++        ''')
++
++        for r in range(1, len(base_flags) + 1):
++            for choices in itertools.combinations(base_flags, r=r):
++                for args in itertools.product(*choices):
++                    with self.subTest(args=args[1:]):
++                        _ = self.invoke_dis(*args)
++
++        with self.assertRaises(SystemExit):
++            # suppress argparse error message
++            with contextlib.redirect_stderr(io.StringIO()):
++                _ = self.invoke_dis('--unknown')
++
++    def test_show_cache(self):
++        # test 'python -m dis -C/--show-caches'
++        source = 'print()'
++        expect = '''
++            0           RESUME                   0
++
++            1           LOAD_NAME                0 (print)
++                        PUSH_NULL
++                        CALL                     0
++                        CACHE                    0 (counter: 0)
++                        CACHE                    0 (func_version: 0)
++                        CACHE                    0
++                        POP_TOP
++                        RETURN_CONST             0 (None)
++        '''
++        for flag in ['-C', '--show-caches']:
++            self.check_output(source, expect, flag)
++
++    def test_show_offsets(self):
++        # test 'python -m dis -O/--show-offsets'
++        source = 'pass'
++        expect = '''
++            0          0       RESUME                   0
++
++            1          2       RETURN_CONST             0 (None)
++        '''
++        for flag in ['-O', '--show-offsets']:
++            self.check_output(source, expect, flag)
++
++
+ if __name__ == "__main__":
+     unittest.main()
+diff --git a/Lib/test/test_embed.py b/Lib/test/test_embed.py
+index 3b43e422f82..5f70632182e 100644
+--- a/Lib/test/test_embed.py
++++ b/Lib/test/test_embed.py
+@@ -627,6 +627,8 @@ class InitConfigTests(EmbeddingTestsMixin, unittest.TestCase):
+         CONFIG_COMPAT.update({
+             'legacy_windows_stdio': 0,
+         })
++    if support.is_apple:
++        CONFIG_COMPAT['use_system_logger'] = False
+ 
+     CONFIG_PYTHON = dict(CONFIG_COMPAT,
+         _config_init=API_PYTHON,
+diff --git a/Lib/test/test_http_cookies.py b/Lib/test/test_http_cookies.py
+index 8879902a6e2..7b3dc0fdaed 100644
+--- a/Lib/test/test_http_cookies.py
++++ b/Lib/test/test_http_cookies.py
+@@ -59,6 +59,52 @@ def test_basic(self):
+             for k, v in sorted(case['dict'].items()):
+                 self.assertEqual(C[k].value, v)
+ 
++    def test_obsolete_rfc850_date_format(self):
++        # Test cases with different days and dates in obsolete RFC 850 format
++        test_cases = [
++            # from RFC 850, change EST to GMT
++            # https://datatracker.ietf.org/doc/html/rfc850#section-2
++            {
++                'data': 'key=value; expires=Saturday, 01-Jan-83 00:00:00 GMT',
++                'output': 'Saturday, 01-Jan-83 00:00:00 GMT'
++            },
++            {
++                'data': 'key=value; expires=Friday, 19-Nov-82 16:59:30 GMT',
++                'output': 'Friday, 19-Nov-82 16:59:30 GMT'
++            },
++            # from RFC 9110
++            # https://www.rfc-editor.org/rfc/rfc9110.html#section-5.6.7-6
++            {
++                'data': 'key=value; expires=Sunday, 06-Nov-94 08:49:37 GMT',
++                'output': 'Sunday, 06-Nov-94 08:49:37 GMT'
++            },
++            # other test cases
++            {
++                'data': 'key=value; expires=Wednesday, 09-Nov-94 08:49:37 GMT',
++                'output': 'Wednesday, 09-Nov-94 08:49:37 GMT'
++            },
++            {
++                'data': 'key=value; expires=Friday, 11-Nov-94 08:49:37 GMT',
++                'output': 'Friday, 11-Nov-94 08:49:37 GMT'
++            },
++            {
++                'data': 'key=value; expires=Monday, 14-Nov-94 08:49:37 GMT',
++                'output': 'Monday, 14-Nov-94 08:49:37 GMT'
++            },
++        ]
++
++        for case in test_cases:
++            with self.subTest(data=case['data']):
++                C = cookies.SimpleCookie()
++                C.load(case['data'])
++
++                # Extract the cookie name from the data string
++                cookie_name = case['data'].split('=')[0]
++
++                # Check if the cookie is loaded correctly
++                self.assertIn(cookie_name, C)
++                self.assertEqual(C[cookie_name].get('expires'), case['output'])
++
+     def test_unquote(self):
+         cases = [
+             (r'a="b=\""', 'b="'),
+diff --git a/Lib/test/test_import/__init__.py b/Lib/test/test_import/__init__.py
+index 9139d455f4a..58c6aaf0986 100644
+--- a/Lib/test/test_import/__init__.py
++++ b/Lib/test/test_import/__init__.py
+@@ -826,6 +826,50 @@ def test_issue105979(self):
+         self.assertIn("Frozen object named 'x' is invalid",
+                       str(cm.exception))
+ 
++    def test_frozen_module_from_import_error(self):
++        with self.assertRaises(ImportError) as cm:
++            from os import this_will_never_exist
++        self.assertIn(
++            f"cannot import name 'this_will_never_exist' from 'os' ({os.__file__})",
++            str(cm.exception),
++        )
++        with self.assertRaises(ImportError) as cm:
++            from sys import this_will_never_exist
++        self.assertIn(
++            "cannot import name 'this_will_never_exist' from 'sys' (unknown location)",
++            str(cm.exception),
++        )
++
++        scripts = [
++            """
++import os
++os.__spec__.has_location = False
++os.__file__ = []
++from os import this_will_never_exist
++""",
++            """
++import os
++os.__spec__.has_location = False
++del os.__file__
++from os import this_will_never_exist
++""",
++              """
++import os
++os.__spec__.origin = []
++os.__file__ = []
++from os import this_will_never_exist
++"""
++        ]
++        for script in scripts:
++            with self.subTest(script=script):
++                expected_error = (
++                    b"cannot import name 'this_will_never_exist' "
++                    b"from 'os' (unknown location)"
++                )
++                popen = script_helper.spawn_python("-c", script)
++                stdout, stderr = popen.communicate()
++                self.assertIn(expected_error, stdout)
++
+     def test_script_shadowing_stdlib(self):
+         script_errors = [
+             (
+@@ -1087,7 +1131,7 @@ class substr(str):
+ except AttributeError as e:
+     print(str(e))
+ 
+-fractions.__spec__.origin = 0
++fractions.__spec__.origin = []
+ try:
+     fractions.Fraction
+ except AttributeError as e:
+@@ -1111,7 +1155,7 @@ class substr(str):
+ except ImportError as e:
+     print(str(e))
+ 
+-fractions.__spec__.origin = 0
++fractions.__spec__.origin = []
+ try:
+     from fractions import Fraction
+ except ImportError as e:
+diff --git a/Lib/test/test_readline.py b/Lib/test/test_readline.py
+index 50e77cbbb6b..8b8772c66ee 100644
+--- a/Lib/test/test_readline.py
++++ b/Lib/test/test_readline.py
+@@ -114,6 +114,14 @@ def test_write_read_append(self):
+         # write_history_file can create the target
+         readline.write_history_file(hfilename)
+ 
++        # Negative values should be disallowed
++        with self.assertRaises(ValueError):
++            readline.append_history_file(-42, hfilename)
++
++        # See gh-122431, using the minimum signed integer value caused a segfault
++        with self.assertRaises(ValueError):
++            readline.append_history_file(-2147483648, hfilename)
++
+     def test_nonascii_history(self):
+         readline.clear_history()
+         try:
+diff --git a/Lib/test/test_threading.py b/Lib/test/test_threading.py
+index c13d1bd0f81..c4cf3e6a14a 100644
+--- a/Lib/test/test_threading.py
++++ b/Lib/test/test_threading.py
+@@ -1192,11 +1192,12 @@ def f():
+             resource.setrlimit(resource.RLIMIT_NPROC, (0, hard))
+ 
+             try:
+-                _thread.start_new_thread(f, ())
++                handle = _thread.start_joinable_thread(f)
+             except RuntimeError:
+                 print('ok')
+             else:
+                 print('!skip!')
++                handle.join()
+         """
+         _, out, err = assert_python_ok("-u", "-c", code)
+         out = out.strip()
+diff --git a/Lib/urllib/request.py b/Lib/urllib/request.py
+index b4882f4129e..a2504a2b9c7 100644
+--- a/Lib/urllib/request.py
++++ b/Lib/urllib/request.py
+@@ -878,9 +878,9 @@ def find_user_password(self, realm, authuri):
+ 
+ class HTTPPasswordMgrWithPriorAuth(HTTPPasswordMgrWithDefaultRealm):
+ 
+-    def __init__(self, *args, **kwargs):
++    def __init__(self):
+         self.authenticated = {}
+-        super().__init__(*args, **kwargs)
++        super().__init__()
+ 
+     def add_password(self, realm, uri, user, passwd, is_authenticated=False):
+         self.update_authenticated(uri, is_authenticated)
+diff --git a/Makefile.pre.in b/Makefile.pre.in
+index 03ca4cb635b..ac695e635cf 100644
+--- a/Makefile.pre.in
++++ b/Makefile.pre.in
+@@ -2061,7 +2061,6 @@ testuniversal: all
+ # This must be run *after* a `make install` has completed the build. The
+ # `--with-framework-name` argument *cannot* be used when configuring the build.
+ XCFOLDER:=iOSTestbed.$(MULTIARCH).$(shell date +%s)
+-XCRESULT=$(XCFOLDER)/$(MULTIARCH).xcresult
+ .PHONY: testios
+ testios:
+ 	@if test "$(MACHDEP)" != "ios"; then \
+@@ -2080,29 +2079,12 @@ testios:
+ 		echo "Cannot find a finalized iOS Python.framework. Have you run 'make install' to finalize the framework build?"; \
+ 		exit 1;\
+ 	fi
+-	# Copy the testbed project into the build folder
+-	cp -r $(srcdir)/iOS/testbed $(XCFOLDER)
+-	# Copy the framework from the install location to the testbed project.
+-	cp -r $(PYTHONFRAMEWORKPREFIX)/* $(XCFOLDER)/Python.xcframework/ios-arm64_x86_64-simulator
+-
+-	# Run the test suite for the Xcode project, targeting the iOS simulator.
+-	# If the suite fails, touch a file in the test folder as a marker
+-	if ! xcodebuild test -project $(XCFOLDER)/iOSTestbed.xcodeproj -scheme "iOSTestbed" -destination "platform=iOS Simulator,name=iPhone SE (3rd Generation)" -resultBundlePath $(XCRESULT) -derivedDataPath $(XCFOLDER)/DerivedData ; then \
+-	 	touch $(XCFOLDER)/failed; \
+-	fi
+ 
+-	# Regardless of success or failure, extract and print the test output
+-	xcrun xcresulttool get --path $(XCRESULT) \
+-		--id $$( \
+-			xcrun xcresulttool get --path $(XCRESULT) --format json | \
+-			$(PYTHON_FOR_BUILD) -c "import sys, json; result = json.load(sys.stdin); print(result['actions']['_values'][0]['actionResult']['logRef']['id']['_value'])" \
+-		) \
+-		--format json | \
+-		$(PYTHON_FOR_BUILD) -c "import sys, json; result = json.load(sys.stdin); print(result['subsections']['_values'][1]['subsections']['_values'][0]['emittedOutput']['_value'])"
++	# Clone the testbed project into the XCFOLDER
++	$(PYTHON_FOR_BUILD) $(srcdir)/iOS/testbed clone --framework $(PYTHONFRAMEWORKPREFIX) "$(XCFOLDER)"
+ 
+-	@if test -e $(XCFOLDER)/failed ; then \
+-		exit 1; \
+-	fi
++	# Run the testbed project
++	$(PYTHON_FOR_BUILD) "$(XCFOLDER)" run -- test -uall --single-process --rerun -W
+ 
+ # Like test, but using --slow-ci which enables all test resources and use
+ # longer timeout. Run an optional pybuildbot.identify script to include
+diff --git a/Modules/_testcapimodule.c b/Modules/_testcapimodule.c
+index 01b6bd89d13..b8c13c63f95 100644
+--- a/Modules/_testcapimodule.c
++++ b/Modules/_testcapimodule.c
+@@ -3338,6 +3338,54 @@ pyeval_getlocals(PyObject *module, PyObject *Py_UNUSED(args))
+     return Py_XNewRef(PyEval_GetLocals());
+ }
+ 
++struct atexit_data {
++    int called;
++    PyThreadState *tstate;
++    PyInterpreterState *interp;
++};
++
++static void
++atexit_callback(void *data)
++{
++    struct atexit_data *at_data = (struct atexit_data *)data;
++    // Ensure that the callback is from the same interpreter
++    assert(PyThreadState_Get() == at_data->tstate);
++    assert(PyInterpreterState_Get() == at_data->interp);
++    ++at_data->called;
++}
++
++static PyObject *
++test_atexit(PyObject *self, PyObject *Py_UNUSED(args))
++{
++    PyThreadState *oldts = PyThreadState_Swap(NULL);
++    PyThreadState *tstate = Py_NewInterpreter();
++
++    struct atexit_data data = {0};
++    data.tstate = PyThreadState_Get();
++    data.interp = PyInterpreterState_Get();
++
++    int amount = 10;
++    for (int i = 0; i < amount; ++i)
++    {
++        int res = PyUnstable_AtExit(tstate->interp, atexit_callback, (void *)&data);
++        if (res < 0) {
++            Py_EndInterpreter(tstate);
++            PyThreadState_Swap(oldts);
++            PyErr_SetString(PyExc_RuntimeError, "atexit callback failed");
++            return NULL;
++        }
++    }
++
++    Py_EndInterpreter(tstate);
++    PyThreadState_Swap(oldts);
++
++    if (data.called != amount) {
++        PyErr_SetString(PyExc_RuntimeError, "atexit callback not called");
++        return NULL;
++    }
++    Py_RETURN_NONE;
++}
++
+ static PyMethodDef TestMethods[] = {
+     {"set_errno",               set_errno,                       METH_VARARGS},
+     {"test_config",             test_config,                     METH_NOARGS},
+@@ -3483,6 +3531,7 @@ static PyMethodDef TestMethods[] = {
+     {"function_set_warning", function_set_warning, METH_NOARGS},
+     {"test_critical_sections", test_critical_sections, METH_NOARGS},
+     {"pyeval_getlocals", pyeval_getlocals, METH_NOARGS},
++    {"test_atexit", test_atexit, METH_NOARGS},
+     {NULL, NULL} /* sentinel */
+ };
+ 
+diff --git a/Modules/_testinternalcapi.c b/Modules/_testinternalcapi.c
+index 6185fa313da..dd0fe61d42d 100644
+--- a/Modules/_testinternalcapi.c
++++ b/Modules/_testinternalcapi.c
+@@ -1234,39 +1234,6 @@ unicode_transformdecimalandspacetoascii(PyObject *self, PyObject *arg)
+     return _PyUnicode_TransformDecimalAndSpaceToASCII(arg);
+ }
+ 
+-
+-struct atexit_data {
+-    int called;
+-};
+-
+-static void
+-callback(void *data)
+-{
+-    ((struct atexit_data *)data)->called += 1;
+-}
+-
+-static PyObject *
+-test_atexit(PyObject *self, PyObject *Py_UNUSED(args))
+-{
+-    PyThreadState *oldts = PyThreadState_Swap(NULL);
+-    PyThreadState *tstate = Py_NewInterpreter();
+-
+-    struct atexit_data data = {0};
+-    int res = PyUnstable_AtExit(tstate->interp, callback, (void *)&data);
+-    Py_EndInterpreter(tstate);
+-    PyThreadState_Swap(oldts);
+-    if (res < 0) {
+-        return NULL;
+-    }
+-
+-    if (data.called == 0) {
+-        PyErr_SetString(PyExc_RuntimeError, "atexit callback not called");
+-        return NULL;
+-    }
+-    Py_RETURN_NONE;
+-}
+-
+-
+ static PyObject *
+ test_pyobject_is_freed(const char *test_name, PyObject *op)
+ {
+@@ -2065,7 +2032,6 @@ static PyMethodDef module_functions[] = {
+     {"_PyTraceMalloc_GetTraceback", tracemalloc_get_traceback, METH_VARARGS},
+     {"test_tstate_capi", test_tstate_capi, METH_NOARGS, NULL},
+     {"_PyUnicode_TransformDecimalAndSpaceToASCII", unicode_transformdecimalandspacetoascii, METH_O},
+-    {"test_atexit", test_atexit, METH_NOARGS},
+     {"check_pyobject_forbidden_bytes_is_freed",
+                             check_pyobject_forbidden_bytes_is_freed, METH_NOARGS},
+     {"check_pyobject_freed_is_freed", check_pyobject_freed_is_freed, METH_NOARGS},
+diff --git a/Modules/atexitmodule.c b/Modules/atexitmodule.c
+index 297a8d74ba3..c009235b7a3 100644
+--- a/Modules/atexitmodule.c
++++ b/Modules/atexitmodule.c
+@@ -27,7 +27,10 @@ int
+ PyUnstable_AtExit(PyInterpreterState *interp,
+                   atexit_datacallbackfunc func, void *data)
+ {
+-    assert(interp == _PyInterpreterState_GET());
++    PyThreadState *tstate = _PyThreadState_GET();
++    _Py_EnsureTstateNotNULL(tstate);
++    assert(tstate->interp == interp);
++
+     atexit_callback *callback = PyMem_Malloc(sizeof(atexit_callback));
+     if (callback == NULL) {
+         PyErr_NoMemory();
+@@ -38,12 +41,13 @@ PyUnstable_AtExit(PyInterpreterState *interp,
+     callback->next = NULL;
+ 
+     struct atexit_state *state = &interp->atexit;
+-    if (state->ll_callbacks == NULL) {
++    atexit_callback *top = state->ll_callbacks;
++    if (top == NULL) {
+         state->ll_callbacks = callback;
+-        state->last_ll_callback = callback;
+     }
+     else {
+-        state->last_ll_callback->next = callback;
++        callback->next = top;
++        state->ll_callbacks = callback;
+     }
+     return 0;
+ }
+diff --git a/Modules/posixmodule.c b/Modules/posixmodule.c
+index a09305c91ec..401160640df 100644
+--- a/Modules/posixmodule.c
++++ b/Modules/posixmodule.c
+@@ -73,6 +73,9 @@
+ #ifdef HAVE_SYS_TIME_H
+ #  include <sys/time.h>           // futimes()
+ #endif
++#ifdef HAVE_SYS_PIDFD_H
++#  include <sys/pidfd.h>          // PIDFD_NONBLOCK
++#endif
+ 
+ 
+ // SGI apparently needs this forward declaration
+diff --git a/Modules/readline.c b/Modules/readline.c
+index 35655c70a46..7d1f703f7db 100644
+--- a/Modules/readline.c
++++ b/Modules/readline.c
+@@ -351,6 +351,12 @@ readline_append_history_file_impl(PyObject *module, int nelements,
+                                   PyObject *filename_obj)
+ /*[clinic end generated code: output=5df06fc9da56e4e4 input=784b774db3a4b7c5]*/
+ {
++    if (nelements < 0)
++    {
++        PyErr_SetString(PyExc_ValueError, "nelements must be positive");
++        return NULL;
++    }
++
+     PyObject *filename_bytes;
+     const char *filename;
+     int err;
+diff --git a/Objects/bytesobject.c b/Objects/bytesobject.c
+index b8bcef27cf1..32cb9966ff1 100644
+--- a/Objects/bytesobject.c
++++ b/Objects/bytesobject.c
+@@ -3171,6 +3171,7 @@ _PyBytes_Resize(PyObject **pv, Py_ssize_t newsize)
+ #ifdef Py_TRACE_REFS
+     _Py_ForgetReference(v);
+ #endif
++    _PyReftracerTrack(v, PyRefTracer_DESTROY);
+     *pv = (PyObject *)
+         PyObject_Realloc(v, PyBytesObject_SIZE + newsize);
+     if (*pv == NULL) {
+diff --git a/Objects/codeobject.c b/Objects/codeobject.c
+index 83b477e19c7..6c4eef8e011 100644
+--- a/Objects/codeobject.c
++++ b/Objects/codeobject.c
+@@ -1845,14 +1845,11 @@ free_monitoring_data(_PyCoMonitoringData *data)
+ static void
+ code_dealloc(PyCodeObject *co)
+ {
+-    assert(Py_REFCNT(co) == 0);
+-    Py_SET_REFCNT(co, 1);
++    _PyObject_ResurrectStart((PyObject *)co);
+     notify_code_watchers(PY_CODE_EVENT_DESTROY, co);
+-    if (Py_REFCNT(co) > 1) {
+-        Py_SET_REFCNT(co, Py_REFCNT(co) - 1);
++    if (_PyObject_ResurrectEnd((PyObject *)co)) {
+         return;
+     }
+-    Py_SET_REFCNT(co, 0);
+ 
+ #ifdef Py_GIL_DISABLED
+     PyObject_GC_UnTrack(co);
+diff --git a/Objects/dictobject.c b/Objects/dictobject.c
+index f1f9110ff73..ff16a41b9a5 100644
+--- a/Objects/dictobject.c
++++ b/Objects/dictobject.c
+@@ -624,11 +624,14 @@ estimate_log2_keysize(Py_ssize_t n)
+ 
+ /* This immutable, empty PyDictKeysObject is used for PyDict_Clear()
+  * (which cannot fail and thus can do no allocation).
++ *
++ * See https://github.com/python/cpython/pull/127568#discussion_r1868070614
++ * for the rationale of using dk_log2_index_bytes=3 instead of 0.
+  */
+ static PyDictKeysObject empty_keys_struct = {
+         _Py_IMMORTAL_REFCNT, /* dk_refcnt */
+         0, /* dk_log2_size */
+-        0, /* dk_log2_index_bytes */
++        3, /* dk_log2_index_bytes */
+         DICT_KEYS_UNICODE, /* dk_kind */
+ #ifdef Py_GIL_DISABLED
+         {0}, /* dk_mutex */
+@@ -3150,14 +3153,11 @@ dict_dealloc(PyObject *self)
+ {
+     PyDictObject *mp = (PyDictObject *)self;
+     PyInterpreterState *interp = _PyInterpreterState_GET();
+-    assert(Py_REFCNT(mp) == 0);
+-    Py_SET_REFCNT(mp, 1);
++    _PyObject_ResurrectStart(self);
+     _PyDict_NotifyEvent(interp, PyDict_EVENT_DEALLOCATED, mp, NULL, NULL);
+-    if (Py_REFCNT(mp) > 1) {
+-        Py_SET_REFCNT(mp, Py_REFCNT(mp) - 1);
++    if (_PyObject_ResurrectEnd(self)) {
+         return;
+     }
+-    Py_SET_REFCNT(mp, 0);
+     PyDictValues *values = mp->ma_values;
+     PyDictKeysObject *keys = mp->ma_keys;
+     Py_ssize_t i, n;
+diff --git a/Objects/funcobject.c b/Objects/funcobject.c
+index 8a30213888e..12d60f99153 100644
+--- a/Objects/funcobject.c
++++ b/Objects/funcobject.c
+@@ -986,14 +986,11 @@ func_clear(PyFunctionObject *op)
+ static void
+ func_dealloc(PyFunctionObject *op)
+ {
+-    assert(Py_REFCNT(op) == 0);
+-    Py_SET_REFCNT(op, 1);
++    _PyObject_ResurrectStart((PyObject *)op);
+     handle_func_event(PyFunction_EVENT_DESTROY, op, NULL);
+-    if (Py_REFCNT(op) > 1) {
+-        Py_SET_REFCNT(op, Py_REFCNT(op) - 1);
++    if (_PyObject_ResurrectEnd((PyObject *)op)) {
+         return;
+     }
+-    Py_SET_REFCNT(op, 0);
+     _PyObject_GC_UNTRACK(op);
+     if (op->func_weakreflist != NULL) {
+         PyObject_ClearWeakRefs((PyObject *) op);
+diff --git a/Objects/listobject.c b/Objects/listobject.c
+index 89abbda155a..ee53a8bddbe 100644
+--- a/Objects/listobject.c
++++ b/Objects/listobject.c
+@@ -3,6 +3,7 @@
+ #include "Python.h"
+ #include "pycore_abstract.h"      // _PyIndex_Check()
+ #include "pycore_ceval.h"         // _PyEval_GetBuiltin()
++#include "pycore_critical_section.h"  // _Py_CRITICAL_SECTION_ASSERT_OBJECT_LOCKED()
+ #include "pycore_dict.h"          // _PyDictViewObject
+ #include "pycore_pyatomic_ft_wrappers.h"
+ #include "pycore_interp.h"        // PyInterpreterState.list
+@@ -81,6 +82,11 @@ static void
+ ensure_shared_on_resize(PyListObject *self)
+ {
+ #ifdef Py_GIL_DISABLED
++    // We can't use _Py_CRITICAL_SECTION_ASSERT_OBJECT_LOCKED here because
++    // the `CALL_LIST_APPEND` bytecode handler may lock the list without
++    // a critical section.
++    assert(Py_REFCNT(self) == 1 || PyMutex_IsLocked(&_PyObject_CAST(self)->ob_mutex));
++
+     // Ensure that the list array is freed using QSBR if we are not the
+     // owning thread.
+     if (!_Py_IsOwnedByCurrentThread((PyObject *)self) &&
+@@ -995,10 +1001,12 @@ list_ass_slice(PyListObject *a, Py_ssize_t ilow, Py_ssize_t ihigh, PyObject *v)
+         Py_ssize_t n = PyList_GET_SIZE(a);
+         PyObject *copy = list_slice_lock_held(a, 0, n);
+         if (copy == NULL) {
+-            return -1;
++            ret = -1;
++        }
++        else {
++            ret = list_ass_slice_lock_held(a, ilow, ihigh, copy);
++            Py_DECREF(copy);
+         }
+-        ret = list_ass_slice_lock_held(a, ilow, ihigh, copy);
+-        Py_DECREF(copy);
+         Py_END_CRITICAL_SECTION();
+     }
+     else if (v != NULL && PyList_CheckExact(v)) {
+@@ -1475,7 +1483,9 @@ PyList_Clear(PyObject *self)
+         PyErr_BadInternalCall();
+         return -1;
+     }
++    Py_BEGIN_CRITICAL_SECTION(self);
+     list_clear((PyListObject*)self);
++    Py_END_CRITICAL_SECTION();
+     return 0;
+ }
+ 
+@@ -3446,7 +3456,9 @@ list___init___impl(PyListObject *self, PyObject *iterable)
+ 
+     /* Empty previous contents */
+     if (self->ob_item != NULL) {
++        Py_BEGIN_CRITICAL_SECTION(self);
+         list_clear(self);
++        Py_END_CRITICAL_SECTION();
+     }
+     if (iterable != NULL) {
+         if (_list_extend(self, iterable) < 0) {
+@@ -3619,8 +3631,10 @@ adjust_slice_indexes(PyListObject *lst,
+ }
+ 
+ static int
+-list_ass_subscript(PyObject* _self, PyObject* item, PyObject* value)
++list_ass_subscript_lock_held(PyObject *_self, PyObject *item, PyObject *value)
+ {
++    _Py_CRITICAL_SECTION_ASSERT_OBJECT_LOCKED(_self);
++
+     PyListObject *self = (PyListObject *)_self;
+     if (_PyIndex_Check(item)) {
+         Py_ssize_t i = PyNumber_AsSsize_t(item, PyExc_IndexError);
+@@ -3628,7 +3642,7 @@ list_ass_subscript(PyObject* _self, PyObject* item, PyObject* value)
+             return -1;
+         if (i < 0)
+             i += PyList_GET_SIZE(self);
+-        return list_ass_item((PyObject *)self, i, value);
++        return list_ass_item_lock_held(self, i, value);
+     }
+     else if (PySlice_Check(item)) {
+         Py_ssize_t start, stop, step;
+@@ -3648,7 +3662,7 @@ list_ass_subscript(PyObject* _self, PyObject* item, PyObject* value)
+                                                           step);
+ 
+             if (step == 1)
+-                return list_ass_slice(self, start, stop, value);
++                return list_ass_slice_lock_held(self, start, stop, value);
+ 
+             if (slicelength <= 0)
+                 return 0;
+@@ -3714,10 +3728,8 @@ list_ass_subscript(PyObject* _self, PyObject* item, PyObject* value)
+ 
+             /* protect against a[::-1] = a */
+             if (self == (PyListObject*)value) {
+-                Py_BEGIN_CRITICAL_SECTION(value);
+-                seq = list_slice_lock_held((PyListObject*)value, 0,
++                seq = list_slice_lock_held((PyListObject *)value, 0,
+                                             Py_SIZE(value));
+-                Py_END_CRITICAL_SECTION();
+             }
+             else {
+                 seq = PySequence_Fast(value,
+@@ -3731,7 +3743,7 @@ list_ass_subscript(PyObject* _self, PyObject* item, PyObject* value)
+                                                           step);
+ 
+             if (step == 1) {
+-                int res = list_ass_slice(self, start, stop, seq);
++                int res = list_ass_slice_lock_held(self, start, stop, seq);
+                 Py_DECREF(seq);
+                 return res;
+             }
+@@ -3787,6 +3799,24 @@ list_ass_subscript(PyObject* _self, PyObject* item, PyObject* value)
+     }
+ }
+ 
++static int
++list_ass_subscript(PyObject *self, PyObject *item, PyObject *value)
++{
++    int res;
++#ifdef Py_GIL_DISABLED
++    if (PySlice_Check(item) && value != NULL && PyList_CheckExact(value)) {
++        Py_BEGIN_CRITICAL_SECTION2(self, value);
++        res = list_ass_subscript_lock_held(self, item, value);
++        Py_END_CRITICAL_SECTION2();
++        return res;
++    }
++#endif
++    Py_BEGIN_CRITICAL_SECTION(self);
++    res = list_ass_subscript_lock_held(self, item, value);
++    Py_END_CRITICAL_SECTION();
++    return res;
++}
++
+ static PyMappingMethods list_as_mapping = {
+     list_length,
+     list_subscript,
+diff --git a/Objects/object.c b/Objects/object.c
+index a03c0cc55b4..a80d20c182a 100644
+--- a/Objects/object.c
++++ b/Objects/object.c
+@@ -360,8 +360,10 @@ is_dead(PyObject *o)
+ }
+ # endif
+ 
+-void
+-_Py_DecRefSharedDebug(PyObject *o, const char *filename, int lineno)
++// Decrement the shared reference count of an object. Return 1 if the object
++// is dead and should be deallocated, 0 otherwise.
++static int
++_Py_DecRefSharedIsDead(PyObject *o, const char *filename, int lineno)
+ {
+     // Should we queue the object for the owning thread to merge?
+     int should_queue;
+@@ -402,6 +404,15 @@ _Py_DecRefSharedDebug(PyObject *o, const char *filename, int lineno)
+     }
+     else if (new_shared == _Py_REF_MERGED) {
+         // refcount is zero AND merged
++        return 1;
++    }
++    return 0;
++}
++
++void
++_Py_DecRefSharedDebug(PyObject *o, const char *filename, int lineno)
++{
++    if (_Py_DecRefSharedIsDead(o, filename, lineno)) {
+         _Py_Dealloc(o);
+     }
+ }
+@@ -470,6 +481,26 @@ _Py_ExplicitMergeRefcount(PyObject *op, Py_ssize_t extra)
+                                                 &shared, new_shared));
+     return refcnt;
+ }
++
++// The more complicated "slow" path for undoing the resurrection of an object.
++int
++_PyObject_ResurrectEndSlow(PyObject *op)
++{
++    if (_Py_IsImmortal(op)) {
++        return 1;
++    }
++    if (_Py_IsOwnedByCurrentThread(op)) {
++        // If the object is owned by the current thread, give up ownership and
++        // merge the refcount. This isn't necessary in all cases, but it
++        // simplifies the implementation.
++        Py_ssize_t refcount = _Py_ExplicitMergeRefcount(op, -1);
++        return refcount != 0;
++    }
++    int is_dead = _Py_DecRefSharedIsDead(op, NULL, 0);
++    return !is_dead;
++}
++
++
+ #endif  /* Py_GIL_DISABLED */
+ 
+ 
+@@ -548,7 +579,7 @@ PyObject_CallFinalizerFromDealloc(PyObject *self)
+     }
+ 
+     /* Temporarily resurrect the object. */
+-    Py_SET_REFCNT(self, 1);
++    _PyObject_ResurrectStart(self);
+ 
+     PyObject_CallFinalizer(self);
+ 
+@@ -558,8 +589,7 @@ PyObject_CallFinalizerFromDealloc(PyObject *self)
+ 
+     /* Undo the temporary resurrection; can't use DECREF here, it would
+      * cause a recursive call. */
+-    Py_SET_REFCNT(self, Py_REFCNT(self) - 1);
+-    if (Py_REFCNT(self) == 0) {
++    if (!_PyObject_ResurrectEnd(self)) {
+         return 0;         /* this is the normal path out */
+     }
+ 
+@@ -2437,11 +2467,7 @@ new_reference(PyObject *op)
+ #ifdef Py_TRACE_REFS
+     _Py_AddToAllObjects(op);
+ #endif
+-    struct _reftracer_runtime_state *tracer = &_PyRuntime.ref_tracer;
+-    if (tracer->tracer_func != NULL) {
+-        void* data = tracer->tracer_data;
+-        tracer->tracer_func(op, PyRefTracer_CREATE, data);
+-    }
++    _PyReftracerTrack(op, PyRefTracer_CREATE);
+ }
+ 
+ void
+@@ -2513,10 +2539,6 @@ _Py_ResurrectReference(PyObject *op)
+ #ifdef Py_TRACE_REFS
+     _Py_AddToAllObjects(op);
+ #endif
+-    if (_PyRuntime.ref_tracer.tracer_func != NULL) {
+-        void* data = _PyRuntime.ref_tracer.tracer_data;
+-        _PyRuntime.ref_tracer.tracer_func(op, PyRefTracer_CREATE, data);
+-    }
+ }
+ 
+ 
+@@ -2906,15 +2928,10 @@ _Py_Dealloc(PyObject *op)
+     Py_INCREF(type);
+ #endif
+ 
+-    struct _reftracer_runtime_state *tracer = &_PyRuntime.ref_tracer;
+-    if (tracer->tracer_func != NULL) {
+-        void* data = tracer->tracer_data;
+-        tracer->tracer_func(op, PyRefTracer_DESTROY, data);
+-    }
+-
+ #ifdef Py_TRACE_REFS
+     _Py_ForgetReference(op);
+ #endif
++    _PyReftracerTrack(op, PyRefTracer_DESTROY);
+     (*dealloc)(op);
+ 
+ #ifdef Py_DEBUG
+diff --git a/Objects/tupleobject.c b/Objects/tupleobject.c
+index 371fb074387..818814b663d 100644
+--- a/Objects/tupleobject.c
++++ b/Objects/tupleobject.c
+@@ -942,6 +942,7 @@ _PyTuple_Resize(PyObject **pv, Py_ssize_t newsize)
+     for (i = newsize; i < oldsize; i++) {
+         Py_CLEAR(v->ob_item[i]);
+     }
++    _PyReftracerTrack((PyObject *)v, PyRefTracer_DESTROY);
+     sv = PyObject_GC_Resize(PyTupleObject, v, newsize);
+     if (sv == NULL) {
+         *pv = NULL;
+diff --git a/Objects/unicodeobject.c b/Objects/unicodeobject.c
+index 7ea058b9730..d4ce7fd7c97 100644
+--- a/Objects/unicodeobject.c
++++ b/Objects/unicodeobject.c
+@@ -1121,6 +1121,7 @@ resize_compact(PyObject *unicode, Py_ssize_t length)
+ #ifdef Py_TRACE_REFS
+     _Py_ForgetReference(unicode);
+ #endif
++    _PyReftracerTrack(unicode, PyRefTracer_DESTROY);
+ 
+     new_unicode = (PyObject *)PyObject_Realloc(unicode, new_size);
+     if (new_unicode == NULL) {
+diff --git a/Python/ceval.c b/Python/ceval.c
+index d970ffa0309..4796ed30182 100644
+--- a/Python/ceval.c
++++ b/Python/ceval.c
+@@ -95,11 +95,7 @@
+         } \
+         _Py_DECREF_STAT_INC(); \
+         if (--op->ob_refcnt == 0) { \
+-            struct _reftracer_runtime_state *tracer = &_PyRuntime.ref_tracer; \
+-            if (tracer->tracer_func != NULL) { \
+-                void* data = tracer->tracer_data; \
+-                tracer->tracer_func(op, PyRefTracer_DESTROY, data); \
+-            } \
++            _PyReftracerTrack(op, PyRefTracer_DESTROY); \
+             destructor d = (destructor)(dealloc); \
+             d(op); \
+         } \
+@@ -2785,6 +2781,20 @@ import_from(PyThreadState *tstate, PyObject *v, PyObject *name)
+         }
+     }
+ 
++    if (origin == NULL) {
++        // Fall back to __file__ for diagnostics if we don't have
++        // an origin that is a location
++        origin = PyModule_GetFilenameObject(v);
++        if (origin == NULL) {
++            if (!PyErr_ExceptionMatches(PyExc_SystemError)) {
++                goto done;
++            }
++            // PyModule_GetFilenameObject raised "module filename missing"
++            _PyErr_Clear(tstate);
++        }
++        assert(origin == NULL || PyUnicode_Check(origin));
++    }
++
+     if (is_possibly_shadowing_stdlib) {
+         assert(origin);
+         errmsg = PyUnicode_FromFormat(
+@@ -2845,9 +2855,11 @@ import_from(PyThreadState *tstate, PyObject *v, PyObject *name)
+     }
+ 
+ done_with_errmsg:
+-    /* NULL checks for errmsg, mod_name, origin done by PyErr_SetImportError. */
+-    _PyErr_SetImportErrorWithNameFrom(errmsg, mod_name, origin, name);
+-    Py_DECREF(errmsg);
++    if (errmsg != NULL) {
++        /* NULL checks for mod_name and origin done by _PyErr_SetImportErrorWithNameFrom */
++        _PyErr_SetImportErrorWithNameFrom(errmsg, mod_name, origin, name);
++        Py_DECREF(errmsg);
++    }
+ 
+ done:
+     Py_XDECREF(origin);
+diff --git a/Python/initconfig.c b/Python/initconfig.c
+index 84717b4e3c9..5746416c826 100644
+--- a/Python/initconfig.c
++++ b/Python/initconfig.c
+@@ -129,6 +129,10 @@ static const PyConfigSpec PYCONFIG_SPEC[] = {
+ #ifdef Py_DEBUG
+     SPEC(run_presite, WSTR_OPT),
+ #endif
++#ifdef __APPLE__
++    SPEC(use_system_logger, BOOL),
++#endif
++
+     {NULL, 0, 0},
+ };
+ 
+@@ -744,6 +748,9 @@ config_check_consistency(const PyConfig *config)
+     assert(config->cpu_count != 0);
+     // config->use_frozen_modules is initialized later
+     // by _PyConfig_InitImportConfig().
++#ifdef __APPLE__
++    assert(config->use_system_logger >= 0);
++#endif
+ #ifdef Py_STATS
+     assert(config->_pystats >= 0);
+ #endif
+@@ -846,6 +853,9 @@ _PyConfig_InitCompatConfig(PyConfig *config)
+     config->_is_python_build = 0;
+     config->code_debug_ranges = 1;
+     config->cpu_count = -1;
++#ifdef __APPLE__
++    config->use_system_logger = 0;
++#endif
+ #ifdef Py_GIL_DISABLED
+     config->enable_gil = _PyConfig_GIL_DEFAULT;
+ #endif
+@@ -874,6 +884,9 @@ config_init_defaults(PyConfig *config)
+ #ifdef MS_WINDOWS
+     config->legacy_windows_stdio = 0;
+ #endif
++#ifdef __APPLE__
++    config->use_system_logger = 0;
++#endif
+ }
+ 
+ 
+@@ -909,6 +922,9 @@ PyConfig_InitIsolatedConfig(PyConfig *config)
+ #ifdef MS_WINDOWS
+     config->legacy_windows_stdio = 0;
+ #endif
++#ifdef __APPLE__
++    config->use_system_logger = 0;
++#endif
+ }
+ 
+ 
+diff --git a/Python/pylifecycle.c b/Python/pylifecycle.c
+index 8fe5bb8b300..d23cfc62d0f 100644
+--- a/Python/pylifecycle.c
++++ b/Python/pylifecycle.c
+@@ -43,7 +43,9 @@
+ #endif
+ 
+ #if defined(__APPLE__)
++#  include <AvailabilityMacros.h>
+ #  include <mach-o/loader.h>
++#  include <os/log.h>
+ #endif
+ 
+ #ifdef HAVE_SIGNAL_H
+@@ -73,6 +75,9 @@ static PyStatus init_sys_streams(PyThreadState *tstate);
+ #ifdef __ANDROID__
+ static PyStatus init_android_streams(PyThreadState *tstate);
+ #endif
++#if defined(__APPLE__)
++static PyStatus init_apple_streams(PyThreadState *tstate);
++#endif
+ static void wait_for_thread_shutdown(PyThreadState *tstate);
+ static void finalize_subinterpreters(void);
+ static void call_ll_exitfuncs(_PyRuntimeState *runtime);
+@@ -1253,6 +1258,14 @@ init_interp_main(PyThreadState *tstate)
+         return status;
+     }
+ #endif
++#if defined(__APPLE__)
++    if (config->use_system_logger) {
++        status = init_apple_streams(tstate);
++        if (_PyStatus_EXCEPTION(status)) {
++            return status;
++        }
++    }
++#endif
+ 
+ #ifdef Py_DEBUG
+     run_presite(tstate);
+@@ -2920,6 +2933,75 @@ init_android_streams(PyThreadState *tstate)
+ 
+ #endif  // __ANDROID__
+ 
++#if defined(__APPLE__)
++
++static PyObject *
++apple_log_write_impl(PyObject *self, PyObject *args)
++{
++    int logtype = 0;
++    const char *text = NULL;
++    if (!PyArg_ParseTuple(args, "iy", &logtype, &text)) {
++        return NULL;
++    }
++
++    // Call the underlying Apple logging API. The os_log unified logging APIs
++    // were introduced in macOS 10.12, iOS 10.0, tvOS 10.0, and watchOS 3.0;
++    // this call is a no-op on older versions.
++    #if TARGET_OS_IPHONE || (TARGET_OS_OSX && MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_12)
++    // Pass the user-provided text through explicit %s formatting
++    // to avoid % literals being interpreted as a formatting directive.
++    os_log_with_type(OS_LOG_DEFAULT, logtype, "%s", text);
++    #endif
++    Py_RETURN_NONE;
++}
++
++
++static PyMethodDef apple_log_write_method = {
++    "apple_log_write", apple_log_write_impl, METH_VARARGS
++};
++
++
++static PyStatus
++init_apple_streams(PyThreadState *tstate)
++{
++    PyStatus status = _PyStatus_OK();
++    PyObject *_apple_support = NULL;
++    PyObject *apple_log_write = NULL;
++    PyObject *result = NULL;
++
++    _apple_support = PyImport_ImportModule("_apple_support");
++    if (_apple_support == NULL) {
++        goto error;
++    }
++
++    apple_log_write = PyCFunction_New(&apple_log_write_method, NULL);
++    if (apple_log_write == NULL) {
++        goto error;
++    }
++
++    // Initialize the logging streams, sending stdout -> Default; stderr -> Error
++    result = PyObject_CallMethod(
++        _apple_support, "init_streams", "Oii",
++        apple_log_write, OS_LOG_TYPE_DEFAULT, OS_LOG_TYPE_ERROR);
++    if (result == NULL) {
++        goto error;
++    }
++
++    goto done;
++
++error:
++    _PyErr_Print(tstate);
++    status = _PyStatus_ERR("failed to initialize Apple log streams");
++
++done:
++    Py_XDECREF(result);
++    Py_XDECREF(apple_log_write);
++    Py_XDECREF(_apple_support);
++    return status;
++}
++
++#endif  // __APPLE__
++
+ 
+ static void
+ _Py_FatalError_DumpTracebacks(int fd, PyInterpreterState *interp,
+diff --git a/Python/specialize.c b/Python/specialize.c
+index 1a2043d0e8d..ad166ea091b 100644
+--- a/Python/specialize.c
++++ b/Python/specialize.c
+@@ -841,7 +841,10 @@ specialize_dict_access(
+         return 0;
+     }
+     _PyAttrCache *cache = (_PyAttrCache *)(instr + 1);
+-    if (type->tp_flags & Py_TPFLAGS_INLINE_VALUES && _PyObject_InlineValues(owner)->valid) {
++    if (type->tp_flags & Py_TPFLAGS_INLINE_VALUES &&
++        _PyObject_InlineValues(owner)->valid &&
++        !(base_op == STORE_ATTR && _PyObject_GetManagedDict(owner) != NULL))
++    {
+         PyDictKeysObject *keys = ((PyHeapTypeObject *)type)->ht_cached_keys;
+         assert(PyUnicode_CheckExact(name));
+         Py_ssize_t index = _PyDictKeys_StringLookup(keys, name);
+diff --git a/Python/stdlib_module_names.h b/Python/stdlib_module_names.h
+index faeed0b7125..dfe0fa2acd8 100644
+--- a/Python/stdlib_module_names.h
++++ b/Python/stdlib_module_names.h
+@@ -6,6 +6,7 @@ static const char* _Py_stdlib_module_names[] = {
+ "_abc",
+ "_aix_support",
+ "_android_support",
++"_apple_support",
+ "_ast",
+ "_asyncio",
+ "_bisect",
+diff --git a/configure.ac b/configure.ac
+index a764028e49f..68ca1d0de1b 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -2985,7 +2985,7 @@ AC_CHECK_HEADERS([ \
+   linux/tipc.h linux/wait.h netdb.h net/ethernet.h netinet/in.h netpacket/packet.h poll.h process.h pthread.h pty.h \
+   sched.h setjmp.h shadow.h signal.h spawn.h stropts.h sys/audioio.h sys/bsdtty.h sys/devpoll.h \
+   sys/endian.h sys/epoll.h sys/event.h sys/eventfd.h sys/file.h sys/ioctl.h sys/kern_control.h \
+-  sys/loadavg.h sys/lock.h sys/memfd.h sys/mkdev.h sys/mman.h sys/modem.h sys/param.h sys/poll.h \
++  sys/loadavg.h sys/lock.h sys/memfd.h sys/mkdev.h sys/mman.h sys/modem.h sys/param.h sys/pidfd.h sys/poll.h \
+   sys/random.h sys/resource.h sys/select.h sys/sendfile.h sys/socket.h sys/soundcard.h sys/stat.h \
+   sys/statvfs.h sys/sys_domain.h sys/syscall.h sys/sysmacros.h sys/termio.h sys/time.h sys/times.h sys/timerfd.h \
+   sys/types.h sys/uio.h sys/un.h sys/utsname.h sys/wait.h sys/xattr.h sysexits.h syslog.h \
+diff --git a/iOS/README.rst b/iOS/README.rst
+index e33455eef8f..13b88514493 100644
+--- a/iOS/README.rst
++++ b/iOS/README.rst
+@@ -285,52 +285,42 @@ This will:
+ * Install the Python iOS framework into the copy of the testbed project; and
+ * Run the test suite on an "iPhone SE (3rd generation)" simulator.
+ 
+-While the test suite is running, Xcode does not display any console output.
+-After showing some Xcode build commands, the console output will print ``Testing
+-started``, and then appear to stop. It will remain in this state until the test
+-suite completes. On a 2022 M1 MacBook Pro, the test suite takes approximately 12
+-minutes to run; a couple of extra minutes is required to boot and prepare the
+-iOS simulator.
+-
+ On success, the test suite will exit and report successful completion of the
+-test suite. No output of the Python test suite will be displayed.
+-
+-On failure, the output of the Python test suite *will* be displayed. This will
+-show the details of the tests that failed.
++test suite. On a 2022 M1 MacBook Pro, the test suite takes approximately 15
++minutes to run; a couple of extra minutes is required to compile the testbed
++project, and then boot and prepare the iOS simulator.
+ 
+ Debugging test failures
+ -----------------------
+ 
+-The easiest way to diagnose a single test failure is to open the testbed project
+-in Xcode and run the tests from there using the "Product > Test" menu item.
+-
+-To test in Xcode, you must ensure the testbed project has a copy of a compiled
+-framework. If you've configured your build with the default install location of
+-``iOS/Frameworks``, you can copy from that location into the test project. To
+-test on an ARM64 simulator, run::
+-
+-    $ rm -rf iOS/testbed/Python.xcframework/ios-arm64_x86_64-simulator/*
+-    $ cp -r iOS/Frameworks/arm64-iphonesimulator/* iOS/testbed/Python.xcframework/ios-arm64_x86_64-simulator
++Running ``make test`` generates a standalone version of the ``iOS/testbed``
++project, and runs the full test suite. It does this using ``iOS/testbed``
++itself - the folder is an executable module that can be used to create and run
++a clone of the testbed project.
+ 
+-To test on an x86-64 simulator, run::
++You can generate your own standalone testbed instance by running::
+ 
+-    $ rm -rf iOS/testbed/Python.xcframework/ios-arm64_x86_64-simulator/*
+-    $ cp -r iOS/Frameworks/x86_64-iphonesimulator/* iOS/testbed/Python.xcframework/ios-arm64_x86_64-simulator
++    $ python iOS/testbed clone --framework iOS/Frameworks/arm64-iphonesimulator my-testbed
+ 
+-To test on a physical device::
++This invocation assumes that ``iOS/Frameworks/arm64-iphonesimulator`` is the
++path to the iOS simulator framework for your platform (ARM64 in this case);
++``my-testbed`` is the name of the folder for the new testbed clone.
+ 
+-    $ rm -rf iOS/testbed/Python.xcframework/ios-arm64/*
+-    $ cp -r iOS/Frameworks/arm64-iphoneos/* iOS/testbed/Python.xcframework/ios-arm64
++You can then use the ``my-testbed`` folder to run the Python test suite,
++passing in any command line arguments you may require. For example, if you're
++trying to diagnose a failure in the ``os`` module, you might run::
+ 
+-Alternatively, you can configure your build to install directly into the
+-testbed project. For a simulator, use::
++    $ python my-testbed run -- test -W test_os
+ 
+-    --enable-framework=$(pwd)/iOS/testbed/Python.xcframework/ios-arm64_x86_64-simulator
++This is the equivalent of running ``python -m test -W test_os`` on a desktop
++Python build. Any arguments after the ``--`` will be passed to testbed as if
++they were arguments to ``python -m`` on a desktop machine.
+ 
+-For a physical device, use::
++You can also open the testbed project in Xcode by running::
+ 
+-    --enable-framework=$(pwd)/iOS/testbed/Python.xcframework/ios-arm64
++    $ open my-testbed/iOSTestbed.xcodeproj
+ 
++This will allow you to use the full Xcode suite of tools for debugging.
+ 
+ Testing on an iOS device
+ ^^^^^^^^^^^^^^^^^^^^^^^^
+diff --git a/iOS/Resources/bin/arm64-apple-ios-ar b/iOS/Resources/bin/arm64-apple-ios-ar
+index 8122332b9c1..3cf3eb21874 100755
+--- a/iOS/Resources/bin/arm64-apple-ios-ar
++++ b/iOS/Resources/bin/arm64-apple-ios-ar
+@@ -1,2 +1,2 @@
+ #!/bin/sh
+-xcrun --sdk iphoneos${IOS_SDK_VERSION} ar $@
++xcrun --sdk iphoneos${IOS_SDK_VERSION} ar "$@"
+diff --git a/iOS/Resources/bin/arm64-apple-ios-clang b/iOS/Resources/bin/arm64-apple-ios-clang
+index 4d525751eba..c39519cd1f8 100755
+--- a/iOS/Resources/bin/arm64-apple-ios-clang
++++ b/iOS/Resources/bin/arm64-apple-ios-clang
+@@ -1,2 +1,2 @@
+ #!/bin/sh
+-xcrun --sdk iphoneos${IOS_SDK_VERSION} clang -target arm64-apple-ios $@
++xcrun --sdk iphoneos${IOS_SDK_VERSION} clang -target arm64-apple-ios "$@"
+diff --git a/iOS/Resources/bin/arm64-apple-ios-clang++ b/iOS/Resources/bin/arm64-apple-ios-clang++
+index f24bec11268..d9b12925f38 100755
+--- a/iOS/Resources/bin/arm64-apple-ios-clang++
++++ b/iOS/Resources/bin/arm64-apple-ios-clang++
+@@ -1,2 +1,2 @@
+ #!/bin/sh
+-xcrun --sdk iphoneos${IOS_SDK_VERSION} clang++ -target arm64-apple-ios $@
++xcrun --sdk iphoneos${IOS_SDK_VERSION} clang++ -target arm64-apple-ios "$@"
+diff --git a/iOS/Resources/bin/arm64-apple-ios-cpp b/iOS/Resources/bin/arm64-apple-ios-cpp
+index 891bb25bb43..24da23d3448 100755
+--- a/iOS/Resources/bin/arm64-apple-ios-cpp
++++ b/iOS/Resources/bin/arm64-apple-ios-cpp
+@@ -1,2 +1,2 @@
+ #!/bin/sh
+-xcrun --sdk iphoneos${IOS_SDK_VERSION} clang -target arm64-apple-ios -E $@
++xcrun --sdk iphoneos${IOS_SDK_VERSION} clang -target arm64-apple-ios -E "$@"
+diff --git a/iOS/Resources/bin/arm64-apple-ios-simulator-ar b/iOS/Resources/bin/arm64-apple-ios-simulator-ar
+index 74ed3bc6df1..b836b6db902 100755
+--- a/iOS/Resources/bin/arm64-apple-ios-simulator-ar
++++ b/iOS/Resources/bin/arm64-apple-ios-simulator-ar
+@@ -1,2 +1,2 @@
+ #!/bin/sh
+-xcrun --sdk iphonesimulator${IOS_SDK_VERSION} ar $@
++xcrun --sdk iphonesimulator${IOS_SDK_VERSION} ar "$@"
+diff --git a/iOS/Resources/bin/arm64-apple-ios-simulator-clang b/iOS/Resources/bin/arm64-apple-ios-simulator-clang
+index 32574cad284..92e8d853d6e 100755
+--- a/iOS/Resources/bin/arm64-apple-ios-simulator-clang
++++ b/iOS/Resources/bin/arm64-apple-ios-simulator-clang
+@@ -1,2 +1,2 @@
+ #!/bin/sh
+-xcrun --sdk iphonesimulator${IOS_SDK_VERSION} clang -target arm64-apple-ios-simulator $@
++xcrun --sdk iphonesimulator${IOS_SDK_VERSION} clang -target arm64-apple-ios-simulator "$@"
+diff --git a/iOS/Resources/bin/arm64-apple-ios-simulator-clang++ b/iOS/Resources/bin/arm64-apple-ios-simulator-clang++
+index ef37d05b512..076469cc70c 100755
+--- a/iOS/Resources/bin/arm64-apple-ios-simulator-clang++
++++ b/iOS/Resources/bin/arm64-apple-ios-simulator-clang++
+@@ -1,2 +1,2 @@
+ #!/bin/sh
+-xcrun --sdk iphonesimulator${IOS_SDK_VERSION} clang++ -target arm64-apple-ios-simulator $@
++xcrun --sdk iphonesimulator${IOS_SDK_VERSION} clang++ -target arm64-apple-ios-simulator "$@"
+diff --git a/iOS/Resources/bin/arm64-apple-ios-simulator-cpp b/iOS/Resources/bin/arm64-apple-ios-simulator-cpp
+index 6aaf6fbe188..c57f28cee5b 100755
+--- a/iOS/Resources/bin/arm64-apple-ios-simulator-cpp
++++ b/iOS/Resources/bin/arm64-apple-ios-simulator-cpp
+@@ -1,2 +1,2 @@
+ #!/bin/sh
+-xcrun --sdk iphonesimulator${IOS_SDK_VERSION} clang -target arm64-apple-ios-simulator -E $@
++xcrun --sdk iphonesimulator${IOS_SDK_VERSION} clang -target arm64-apple-ios-simulator -E "$@"
+diff --git a/iOS/Resources/bin/x86_64-apple-ios-simulator-ar b/iOS/Resources/bin/x86_64-apple-ios-simulator-ar
+index 74ed3bc6df1..b836b6db902 100755
+--- a/iOS/Resources/bin/x86_64-apple-ios-simulator-ar
++++ b/iOS/Resources/bin/x86_64-apple-ios-simulator-ar
+@@ -1,2 +1,2 @@
+ #!/bin/sh
+-xcrun --sdk iphonesimulator${IOS_SDK_VERSION} ar $@
++xcrun --sdk iphonesimulator${IOS_SDK_VERSION} ar "$@"
+diff --git a/iOS/Resources/bin/x86_64-apple-ios-simulator-clang b/iOS/Resources/bin/x86_64-apple-ios-simulator-clang
+index bcbe91f6061..17cbe0c8a1e 100755
+--- a/iOS/Resources/bin/x86_64-apple-ios-simulator-clang
++++ b/iOS/Resources/bin/x86_64-apple-ios-simulator-clang
+@@ -1,2 +1,2 @@
+ #!/bin/sh
+-xcrun --sdk iphonesimulator${IOS_SDK_VERSION} clang -target x86_64-apple-ios-simulator $@
++xcrun --sdk iphonesimulator${IOS_SDK_VERSION} clang -target x86_64-apple-ios-simulator "$@"
+diff --git a/iOS/Resources/bin/x86_64-apple-ios-simulator-clang++ b/iOS/Resources/bin/x86_64-apple-ios-simulator-clang++
+index 86f03ea32bc..565d47b24c2 100755
+--- a/iOS/Resources/bin/x86_64-apple-ios-simulator-clang++
++++ b/iOS/Resources/bin/x86_64-apple-ios-simulator-clang++
+@@ -1,2 +1,2 @@
+ #!/bin/sh
+-xcrun --sdk iphonesimulator${IOS_SDK_VERSION} clang++ -target x86_64-apple-ios-simulator $@
++xcrun --sdk iphonesimulator${IOS_SDK_VERSION} clang++ -target x86_64-apple-ios-simulator "$@"
+diff --git a/iOS/Resources/bin/x86_64-apple-ios-simulator-cpp b/iOS/Resources/bin/x86_64-apple-ios-simulator-cpp
+index e6a42d9b85d..63fc8e8de2d 100755
+--- a/iOS/Resources/bin/x86_64-apple-ios-simulator-cpp
++++ b/iOS/Resources/bin/x86_64-apple-ios-simulator-cpp
+@@ -1,2 +1,2 @@
+ #!/bin/sh
+-xcrun --sdk iphonesimulator${IOS_SDK_VERSION} clang -target x86_64-apple-ios-simulator -E $@
++xcrun --sdk iphonesimulator${IOS_SDK_VERSION} clang -target x86_64-apple-ios-simulator -E "$@"
+diff --git a/iOS/testbed/__main__.py b/iOS/testbed/__main__.py
+new file mode 100644
+index 00000000000..22570ee0f3e
+--- /dev/null
++++ b/iOS/testbed/__main__.py
+@@ -0,0 +1,365 @@
++import argparse
++import asyncio
++import json
++import plistlib
++import shutil
++import subprocess
++import sys
++from contextlib import asynccontextmanager
++from datetime import datetime
++from pathlib import Path
++
++
++DECODE_ARGS = ("UTF-8", "backslashreplace")
++
++
++# Work around a bug involving sys.exit and TaskGroups
++# (https://github.com/python/cpython/issues/101515).
++def exit(*args):
++    raise MySystemExit(*args)
++
++
++class MySystemExit(Exception):
++    pass
++
++
++# All subprocesses are executed through this context manager so that no matter
++# what happens, they can always be cancelled from another task, and they will
++# always be cleaned up on exit.
++@asynccontextmanager
++async def async_process(*args, **kwargs):
++    process = await asyncio.create_subprocess_exec(*args, **kwargs)
++    try:
++        yield process
++    finally:
++        if process.returncode is None:
++            # Allow a reasonably long time for Xcode to clean itself up,
++            # because we don't want stale emulators left behind.
++            timeout = 10
++            process.terminate()
++            try:
++                await asyncio.wait_for(process.wait(), timeout)
++            except TimeoutError:
++                print(
++                    f"Command {args} did not terminate after {timeout} seconds "
++                    f" - sending SIGKILL"
++                )
++                process.kill()
++
++                # Even after killing the process we must still wait for it,
++                # otherwise we'll get the warning "Exception ignored in __del__".
++                await asyncio.wait_for(process.wait(), timeout=1)
++
++
++async def async_check_output(*args, **kwargs):
++    async with async_process(
++        *args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, **kwargs
++    ) as process:
++        stdout, stderr = await process.communicate()
++        if process.returncode == 0:
++            return stdout.decode(*DECODE_ARGS)
++        else:
++            raise subprocess.CalledProcessError(
++                process.returncode,
++                args,
++                stdout.decode(*DECODE_ARGS),
++                stderr.decode(*DECODE_ARGS),
++            )
++
++
++# Return a list of UDIDs associated with booted simulators
++async def list_devices():
++    # List the testing simulators, in JSON format
++    raw_json = await async_check_output(
++        "xcrun", "simctl", "--set", "testing", "list", "-j"
++    )
++    json_data = json.loads(raw_json)
++
++    # Filter out the booted iOS simulators
++    return [
++        simulator["udid"]
++        for runtime, simulators in json_data["devices"].items()
++        for simulator in simulators
++        if runtime.split(".")[-1].startswith("iOS") and simulator["state"] == "Booted"
++    ]
++
++
++async def find_device(initial_devices):
++    while True:
++        new_devices = set(await list_devices()).difference(initial_devices)
++        if len(new_devices) == 0:
++            await asyncio.sleep(1)
++        elif len(new_devices) == 1:
++            udid = new_devices.pop()
++            print(f"{datetime.now():%Y-%m-%d %H:%M:%S}: New test simulator detected")
++            print(f"UDID: {udid}")
++            return udid
++        else:
++            exit(f"Found more than one new device: {new_devices}")
++
++
++async def log_stream_task(initial_devices):
++    # Wait up to 5 minutes for the build to complete and the simulator to boot.
++    udid = await asyncio.wait_for(find_device(initial_devices), 5 * 60)
++
++    # Stream the iOS device's logs, filtering out messages that come from the
++    # XCTest test suite (catching NSLog messages from the test method), or
++    # Python itself (catching stdout/stderr content routed to the system log
++    # with config->use_system_logger).
++    args = [
++        "xcrun",
++        "simctl",
++        "--set",
++        "testing",
++        "spawn",
++        udid,
++        "log",
++        "stream",
++        "--style",
++        "compact",
++        "--predicate",
++        (
++            'senderImagePath ENDSWITH "/iOSTestbedTests.xctest/iOSTestbedTests"'
++            ' OR senderImagePath ENDSWITH "/Python.framework/Python"'
++        ),
++    ]
++
++    async with async_process(
++        *args,
++        stdout=subprocess.PIPE,
++        stderr=subprocess.STDOUT,
++    ) as process:
++        suppress_dupes = False
++        while line := (await process.stdout.readline()).decode(*DECODE_ARGS):
++            # The iOS log streamer can sometimes lag; when it does, it outputs
++            # a warning about messages being dropped... often multiple times.
++            # Only print the first of these duplicated warnings.
++            if line.startswith("=== Messages dropped "):
++                if not suppress_dupes:
++                    suppress_dupes = True
++                    sys.stdout.write(line)
++            else:
++                suppress_dupes = False
++                sys.stdout.write(line)
++
++
++async def xcode_test(location, simulator):
++    # Run the test suite on the named simulator
++    args = [
++        "xcodebuild",
++        "test",
++        "-project",
++        str(location / "iOSTestbed.xcodeproj"),
++        "-scheme",
++        "iOSTestbed",
++        "-destination",
++        f"platform=iOS Simulator,name={simulator}",
++        "-resultBundlePath",
++        str(location / f"{datetime.now():%Y%m%d-%H%M%S}.xcresult"),
++        "-derivedDataPath",
++        str(location / "DerivedData"),
++    ]
++    async with async_process(
++        *args,
++        stdout=subprocess.PIPE,
++        stderr=subprocess.STDOUT,
++    ) as process:
++        while line := (await process.stdout.readline()).decode(*DECODE_ARGS):
++            sys.stdout.write(line)
++
++        status = await asyncio.wait_for(process.wait(), timeout=1)
++        exit(status)
++
++
++def clone_testbed(
++    source: Path,
++    target: Path,
++    framework: Path,
++    apps: list[Path],
++) -> None:
++    if target.exists():
++        print(f"{target} already exists; aborting without creating project.")
++        sys.exit(10)
++
++    if framework is None:
++        if not (source / "Python.xcframework/ios-arm64_x86_64-simulator/bin").is_dir():
++            print(
++                f"The testbed being cloned ({source}) does not contain "
++                f"a simulator framework. Re-run with --framework"
++            )
++            sys.exit(11)
++    else:
++        if not framework.is_dir():
++            print(f"{framework} does not exist.")
++            sys.exit(12)
++        elif not (
++            framework.suffix == ".xcframework"
++            or (framework / "Python.framework").is_dir()
++        ):
++            print(
++                f"{framework} is not an XCframework, "
++                f"or a simulator slice of a framework build."
++            )
++            sys.exit(13)
++
++    print("Cloning testbed project...")
++    shutil.copytree(source, target)
++
++    if framework is not None:
++        if framework.suffix == ".xcframework":
++            print("Installing XCFramework...")
++            xc_framework_path = target / "Python.xcframework"
++            shutil.rmtree(xc_framework_path)
++            shutil.copytree(framework, xc_framework_path)
++        else:
++            print("Installing simulator Framework...")
++            sim_framework_path = (
++                target / "Python.xcframework" / "ios-arm64_x86_64-simulator"
++            )
++            shutil.rmtree(sim_framework_path)
++            shutil.copytree(framework, sim_framework_path)
++    else:
++        print("Using pre-existing iOS framework.")
++
++    for app_src in apps:
++        print(f"Installing app {app_src.name!r}...")
++        app_target = target / f"iOSTestbed/app/{app_src.name}"
++        if app_target.is_dir():
++            shutil.rmtree(app_target)
++        shutil.copytree(app_src, app_target)
++
++    print(f"Testbed project created in {target}")
++
++
++def update_plist(testbed_path, args):
++    # Add the test runner arguments to the testbed's Info.plist file.
++    info_plist = testbed_path / "iOSTestbed" / "iOSTestbed-Info.plist"
++    with info_plist.open("rb") as f:
++        info = plistlib.load(f)
++
++    info["TestArgs"] = args
++
++    with info_plist.open("wb") as f:
++        plistlib.dump(info, f)
++
++
++async def run_testbed(simulator: str, args: list[str]):
++    location = Path(__file__).parent
++    print("Updating plist...")
++    update_plist(location, args)
++
++    # Get the list of devices that are booted at the start of the test run.
++    # The simulator started by the test suite will be detected as the new
++    # entry that appears on the device list.
++    initial_devices = await list_devices()
++
++    try:
++        async with asyncio.TaskGroup() as tg:
++            tg.create_task(log_stream_task(initial_devices))
++            tg.create_task(xcode_test(location, simulator))
++    except* MySystemExit as e:
++        raise SystemExit(*e.exceptions[0].args) from None
++    except* subprocess.CalledProcessError as e:
++        # Extract it from the ExceptionGroup so it can be handled by `main`.
++        raise e.exceptions[0]
++
++
++def main():
++    parser = argparse.ArgumentParser(
++        description=(
++            "Manages the process of testing a Python project in the iOS simulator."
++        ),
++    )
++
++    subcommands = parser.add_subparsers(dest="subcommand")
++
++    clone = subcommands.add_parser(
++        "clone",
++        description=(
++            "Clone the testbed project, copying in an iOS Python framework and"
++            "any specified application code."
++        ),
++        help="Clone a testbed project to a new location.",
++    )
++    clone.add_argument(
++        "--framework",
++        help=(
++            "The location of the XCFramework (or simulator-only slice of an "
++            "XCFramework) to use when running the testbed"
++        ),
++    )
++    clone.add_argument(
++        "--app",
++        dest="apps",
++        action="append",
++        default=[],
++        help="The location of any code to include in the testbed project",
++    )
++    clone.add_argument(
++        "location",
++        help="The path where the testbed will be cloned.",
++    )
++
++    run = subcommands.add_parser(
++        "run",
++        usage="%(prog)s [-h] [--simulator SIMULATOR] -- <test arg> [<test arg> ...]",
++        description=(
++            "Run a testbed project. The arguments provided after `--` will be "
++            "passed to the running iOS process as if they were arguments to "
++            "`python -m`."
++        ),
++        help="Run a testbed project",
++    )
++    run.add_argument(
++        "--simulator",
++        default="iPhone SE (3rd Generation)",
++        help="The name of the simulator to use (default: 'iPhone SE (3rd Generation)')",
++    )
++
++    try:
++        pos = sys.argv.index("--")
++        testbed_args = sys.argv[1:pos]
++        test_args = sys.argv[pos + 1 :]
++    except ValueError:
++        testbed_args = sys.argv[1:]
++        test_args = []
++
++    context = parser.parse_args(testbed_args)
++
++    if context.subcommand == "clone":
++        clone_testbed(
++            source=Path(__file__).parent,
++            target=Path(context.location),
++            framework=Path(context.framework) if context.framework else None,
++            apps=[Path(app) for app in context.apps],
++        )
++    elif context.subcommand == "run":
++        if test_args:
++            if not (
++                Path(__file__).parent / "Python.xcframework/ios-arm64_x86_64-simulator/bin"
++            ).is_dir():
++                print(
++                    f"Testbed does not contain a compiled iOS framework. Use "
++                    f"`python {sys.argv[0]} clone ...` to create a runnable "
++                    f"clone of this testbed."
++                )
++                sys.exit(20)
++
++            asyncio.run(
++                run_testbed(
++                    simulator=context.simulator,
++                    args=test_args,
++                )
++            )
++        else:
++            print(f"Must specify test arguments (e.g., {sys.argv[0]} run -- test)")
++            print()
++            parser.print_help(sys.stderr)
++            sys.exit(21)
++    else:
++        parser.print_help(sys.stderr)
++        sys.exit(1)
++
++
++if __name__ == "__main__":
++    main()
+diff --git a/iOS/testbed/iOSTestbed.xcodeproj/project.pbxproj b/iOS/testbed/iOSTestbed.xcodeproj/project.pbxproj
+index 6819ac0eeed..c7d63909ee2 100644
+--- a/iOS/testbed/iOSTestbed.xcodeproj/project.pbxproj
++++ b/iOS/testbed/iOSTestbed.xcodeproj/project.pbxproj
+@@ -263,6 +263,7 @@
+ 			runOnlyForDeploymentPostprocessing = 0;
+ 			shellPath = /bin/sh;
+ 			shellScript = "set -e\n\nmkdir -p \"$CODESIGNING_FOLDER_PATH/python/lib\"\nif [ \"$EFFECTIVE_PLATFORM_NAME\" = \"-iphonesimulator\" ]; then\n    echo \"Installing Python modules for iOS Simulator\"\n    rsync -au --delete \"$PROJECT_DIR/Python.xcframework/ios-arm64_x86_64-simulator/lib/\" \"$CODESIGNING_FOLDER_PATH/python/lib/\" \nelse\n    echo \"Installing Python modules for iOS Device\"\n    rsync -au --delete \"$PROJECT_DIR/Python.xcframework/ios-arm64/lib/\" \"$CODESIGNING_FOLDER_PATH/python/lib/\" \nfi\n";
++			showEnvVarsInLog = 0;
+ 		};
+ 		607A66562B0F06200010BFC8 /* Prepare Python Binary Modules */ = {
+ 			isa = PBXShellScriptBuildPhase;
+@@ -282,6 +283,7 @@
+ 			runOnlyForDeploymentPostprocessing = 0;
+ 			shellPath = /bin/sh;
+ 			shellScript = "set -e\n\ninstall_dylib () {\n    INSTALL_BASE=$1\n    FULL_EXT=$2\n\n    # The name of the extension file\n    EXT=$(basename \"$FULL_EXT\")\n    # The location of the extension file, relative to the bundle\n    RELATIVE_EXT=${FULL_EXT#$CODESIGNING_FOLDER_PATH/} \n    # The path to the extension file, relative to the install base\n    PYTHON_EXT=${RELATIVE_EXT/$INSTALL_BASE/}\n    # The full dotted name of the extension module, constructed from the file path.\n    FULL_MODULE_NAME=$(echo $PYTHON_EXT | cut -d \".\" -f 1 | tr \"/\" \".\"); \n    # A bundle identifier; not actually used, but required by Xcode framework packaging\n    FRAMEWORK_BUNDLE_ID=$(echo $PRODUCT_BUNDLE_IDENTIFIER.$FULL_MODULE_NAME | tr \"_\" \"-\")\n    # The name of the framework folder.\n    FRAMEWORK_FOLDER=\"Frameworks/$FULL_MODULE_NAME.framework\"\n\n    # If the framework folder doesn't exist, create it.\n    if [ ! -d \"$CODESIGNING_FOLDER_PATH/$FRAMEWORK_FOLDER\" ]; then\n        echo \"Creating framework for $RELATIVE_EXT\" \n        mkdir -p \"$CODESIGNING_FOLDER_PATH/$FRAMEWORK_FOLDER\"\n        cp \"$CODESIGNING_FOLDER_PATH/dylib-Info-template.plist\" \"$CODESIGNING_FOLDER_PATH/$FRAMEWORK_FOLDER/Info.plist\"\n        plutil -replace CFBundleExecutable -string \"$FULL_MODULE_NAME\" \"$CODESIGNING_FOLDER_PATH/$FRAMEWORK_FOLDER/Info.plist\"\n        plutil -replace CFBundleIdentifier -string \"$FRAMEWORK_BUNDLE_ID\" \"$CODESIGNING_FOLDER_PATH/$FRAMEWORK_FOLDER/Info.plist\"\n    fi\n    \n    echo \"Installing binary for $FRAMEWORK_FOLDER/$FULL_MODULE_NAME\" \n    mv \"$FULL_EXT\" \"$CODESIGNING_FOLDER_PATH/$FRAMEWORK_FOLDER/$FULL_MODULE_NAME\"\n    # Create a placeholder .fwork file where the .so was\n    echo \"$FRAMEWORK_FOLDER/$FULL_MODULE_NAME\" > ${FULL_EXT%.so}.fwork\n    # Create a back reference to the .so file location in the framework\n    echo \"${RELATIVE_EXT%.so}.fwork\" > \"$CODESIGNING_FOLDER_PATH/$FRAMEWORK_FOLDER/$FULL_MODULE_NAME.origin\"             \n}\n\nPYTHON_VER=$(ls -1 \"$CODESIGNING_FOLDER_PATH/python/lib\")\necho \"Install Python $PYTHON_VER standard library extension modules...\"\nfind \"$CODESIGNING_FOLDER_PATH/python/lib/$PYTHON_VER/lib-dynload\" -name \"*.so\" | while read FULL_EXT; do\n    install_dylib python/lib/$PYTHON_VER/lib-dynload/ \"$FULL_EXT\"\ndone\necho \"Install app package extension modules...\"\nfind \"$CODESIGNING_FOLDER_PATH/app_packages\" -name \"*.so\" | while read FULL_EXT; do\n    install_dylib app_packages/ \"$FULL_EXT\"\ndone\necho \"Install app extension modules...\"\nfind \"$CODESIGNING_FOLDER_PATH/app\" -name \"*.so\" | while read FULL_EXT; do\n    install_dylib app/ \"$FULL_EXT\"\ndone\n\n# Clean up dylib template \nrm -f \"$CODESIGNING_FOLDER_PATH/dylib-Info-template.plist\"\necho \"Signing frameworks as $EXPANDED_CODE_SIGN_IDENTITY_NAME ($EXPANDED_CODE_SIGN_IDENTITY)...\"\nfind \"$CODESIGNING_FOLDER_PATH/Frameworks\" -name \"*.framework\" -exec /usr/bin/codesign --force --sign \"$EXPANDED_CODE_SIGN_IDENTITY\" ${OTHER_CODE_SIGN_FLAGS:-} -o runtime --timestamp=none --preserve-metadata=identifier,entitlements,flags --generate-entitlement-der \"{}\" \\; \n";
++			showEnvVarsInLog = 0;
+ 		};
+ /* End PBXShellScriptBuildPhase section */
+ 
+diff --git a/iOS/testbed/iOSTestbedTests/iOSTestbedTests.m b/iOS/testbed/iOSTestbedTests/iOSTestbedTests.m
+index db00d43da85..ac78456a61e 100644
+--- a/iOS/testbed/iOSTestbedTests/iOSTestbedTests.m
++++ b/iOS/testbed/iOSTestbedTests/iOSTestbedTests.m
+@@ -50,6 +50,8 @@
+     // Enforce UTF-8 encoding for stderr, stdout, file-system encoding and locale.
+     // See https://docs.python.org/3/library/os.html#python-utf-8-mode.
+     preconfig.utf8_mode = 1;
++    // Use the system logger for stdout/err
++    config.use_system_logger = 1;
+     // Don't buffer stdio. We want output to appears in the log immediately
+     config.buffered_stdio = 0;
+     // Don't write bytecode; we can't modify the app bundle
+diff --git a/pyconfig.h.in b/pyconfig.h.in
+index 4531dadee38..59bbdc1c162 100644
+--- a/pyconfig.h.in
++++ b/pyconfig.h.in
+@@ -1385,6 +1385,9 @@
+ /* Define to 1 if you have the <sys/param.h> header file. */
+ #undef HAVE_SYS_PARAM_H
+ 
++/* Define to 1 if you have the <sys/pidfd.h> header file. */
++#undef HAVE_SYS_PIDFD_H
++
+ /* Define to 1 if you have the <sys/poll.h> header file. */
+ #undef HAVE_SYS_POLL_H
+ 
