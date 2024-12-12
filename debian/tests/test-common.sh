@@ -63,3 +63,10 @@ TESTEXCLUSIONS="$TESTEXCLUSIONS test_multiprocessing_fork"
 if [ "$vendor" = Ubuntu ]; then
   TESTNEVERCOMPLETE="$TESTNEVERCOMPLETE test_exceptions test_repl"
 fi
+
+# FIXME: Fails with Ubuntu's autopkg test infrastructure
+if [ "$vendor" = Ubuntu ]; then
+  if [ "$(dpkg --print-architecture)" = armhf ]; then
+    TESTEXCLUSIONS="$TESTEXCLUSIONS test_structseq"
+  fi
+fi
