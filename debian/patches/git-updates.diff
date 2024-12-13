@@ -1,9 +1,40 @@
-Description: Updates from the 3.12 branch (until 2024-12-12).
+Description: Updates from the 3.12 branch (until 2024-12-13).
  We pick the latest updates from the maintainance branch, and carry them in a
  patch, rather than creating and uploading uploading a new .orig tarball.
 
-# git diff --no-renames 2dc476bcb9142cd25d7e1d52392b73a3dcdf1756 b0615a8a9aa26480025a1e82a9693097a8520e46 | filterdiff -x ?/.hgignore -x ?/.hgeol -x ?/.hgtags -x ?/.hgtouch -x ?/.gitignore -x ?/.gitattributes -x '?/.github/*' -x '?/.git*' -x ?/.codecov.yml -x ?/.travis.yml -x ?/configure --remove-timestamps
+# git diff --no-renames 2dc476bcb9142cd25d7e1d52392b73a3dcdf1756 6544f994637c7d4fc86d8a360e519a4e560606db | filterdiff -x ?/.hgignore -x ?/.hgeol -x ?/.hgtags -x ?/.hgtouch -x ?/.gitignore -x ?/.gitattributes -x '?/.github/*' -x '?/.git*' -x ?/.codecov.yml -x ?/.travis.yml -x ?/configure --remove-timestamps
 
+diff --git a/Doc/c-api/object.rst b/Doc/c-api/object.rst
+index 2109b12bac9..cefd384fd35 100644
+--- a/Doc/c-api/object.rst
++++ b/Doc/c-api/object.rst
+@@ -410,6 +410,12 @@ Object Protocol
+    iterated.
+ 
+ 
++.. c:function:: PyObject* PyObject_SelfIter(PyObject *obj)
++
++   This is equivalent to the Python ``__iter__(self): return self`` method.
++   It is intended for :term:`iterator` types, to be used in the :c:member:`PyTypeObject.tp_iter` slot.
++
++
+ .. c:function:: PyObject* PyObject_GetAIter(PyObject *o)
+ 
+    This is the equivalent to the Python expression ``aiter(o)``. Takes an
+diff --git a/Doc/data/refcounts.dat b/Doc/data/refcounts.dat
+index 28532620ba6..88d283aa51e 100644
+--- a/Doc/data/refcounts.dat
++++ b/Doc/data/refcounts.dat
+@@ -1818,6 +1818,9 @@ PyObject_RichCompareBool:PyObject*:o1:0:
+ PyObject_RichCompareBool:PyObject*:o2:0:
+ PyObject_RichCompareBool:int:opid::
+ 
++PyObject_SelfIter:PyObject*::+1:
++PyObject_SelfIter:PyObject*:obj:0:
++
+ PyObject_SetAttr:int:::
+ PyObject_SetAttr:PyObject*:o:0:
+ PyObject_SetAttr:PyObject*:attr_name:0:
 diff --git a/Doc/howto/enum.rst b/Doc/howto/enum.rst
 index 9b6bb613749..3743e68192f 100644
 --- a/Doc/howto/enum.rst
@@ -104,8 +135,21 @@ index 5a392f94da4..597de77a828 100644
  =============
  Logging HOWTO
  =============
+diff --git a/Doc/library/http.cookies.rst b/Doc/library/http.cookies.rst
+index 4ce2e3c4f4c..ad37a0fca47 100644
+--- a/Doc/library/http.cookies.rst
++++ b/Doc/library/http.cookies.rst
+@@ -98,7 +98,7 @@ Cookie Objects
+ .. method:: BaseCookie.output(attrs=None, header='Set-Cookie:', sep='\r\n')
+ 
+    Return a string representation suitable to be sent as HTTP headers. *attrs* and
+-   *header* are sent to each :class:`Morsel`'s :meth:`output` method. *sep* is used
++   *header* are sent to each :class:`Morsel`'s :meth:`~Morsel.output` method. *sep* is used
+    to join the headers together, and is by default the combination ``'\r\n'``
+    (CRLF).
+ 
 diff --git a/Doc/library/traceback.rst b/Doc/library/traceback.rst
-index 9d57c354523..07960e4b104 100644
+index 9d57c354523..0a2b9c5cfb1 100644
 --- a/Doc/library/traceback.rst
 +++ b/Doc/library/traceback.rst
 @@ -157,6 +157,13 @@ Module-Level Functions
@@ -122,6 +166,15 @@ index 9d57c354523..07960e4b104 100644
  .. function:: format_list(extracted_list)
  
     Given a list of tuples or :class:`FrameSummary` objects as returned by
+@@ -256,7 +263,7 @@ Module-Level Functions
+ :class:`!TracebackException` objects are created from actual exceptions to
+ capture data for later printing.  They offer a more lightweight method of
+ storing this information by avoiding holding references to
+-:ref:`traceback<traceback-objects>` and :ref:`frame<frame-objects>` objects
++:ref:`traceback<traceback-objects>` and :ref:`frame<frame-objects>` objects.
+ In addition, they expose more options to configure the output compared to
+ the module-level functions described above.
+ 
 diff --git a/Doc/library/xmlrpc.client.rst b/Doc/library/xmlrpc.client.rst
 index c57f433e6ef..971e6560584 100644
 --- a/Doc/library/xmlrpc.client.rst
@@ -506,6 +559,19 @@ index 766db5ecc67..7cd2ffd39c9 100644
    instead.
  
  .. ======================================================================
+diff --git a/Include/cpython/pytime.h b/Include/cpython/pytime.h
+index 16d88d191e9..46cc97bd7cf 100644
+--- a/Include/cpython/pytime.h
++++ b/Include/cpython/pytime.h
+@@ -53,7 +53,7 @@ functions and constants
+ extern "C" {
+ #endif
+ 
+-#ifdef __clang__
++#if defined(__clang__) || defined(_MSC_VER)
+ struct timeval;
+ #endif
+ 
 diff --git a/Include/patchlevel.h b/Include/patchlevel.h
 index 6c597837da0..2fa45090034 100644
 --- a/Include/patchlevel.h
@@ -519,19 +585,42 @@ index 6c597837da0..2fa45090034 100644
  /*--end constants--*/
  
  /* Version as a single 4-byte hex number, e.g. 0x010502B2 == 1.5.2b2.
+diff --git a/Include/pymacro.h b/Include/pymacro.h
+index d5700dc3893..94e6248d283 100644
+--- a/Include/pymacro.h
++++ b/Include/pymacro.h
+@@ -118,6 +118,15 @@
+  */
+ #if defined(__GNUC__) || defined(__clang__)
+ #  define Py_UNUSED(name) _unused_ ## name __attribute__((unused))
++#elif defined(_MSC_VER)
++   // Disable warning C4100: unreferenced formal parameter,
++   // declare the parameter,
++   // restore old compiler warnings.
++#  define Py_UNUSED(name) \
++        __pragma(warning(push)) \
++        __pragma(warning(suppress: 4100)) \
++        _unused_ ## name \
++        __pragma(warning(pop))
+ #else
+ #  define Py_UNUSED(name) _unused_ ## name
+ #endif
 diff --git a/Include/tracemalloc.h b/Include/tracemalloc.h
-index 580027a8e36..b6865f1f683 100644
+index 580027a8e36..4db34b9509e 100644
 --- a/Include/tracemalloc.h
 +++ b/Include/tracemalloc.h
-@@ -1,5 +1,8 @@
+@@ -1,7 +1,10 @@
  #ifndef Py_TRACEMALLOC_H
  #define Py_TRACEMALLOC_H
+-
+ #ifndef Py_LIMITED_API
 +#ifdef __cplusplus
 +extern "C" {
 +#endif
- 
- #ifndef Py_LIMITED_API
++
  /* Track an allocated memory block in the tracemalloc module.
+    Return 0 on success, return -1 on error (failed to allocate memory to store
+    the trace).
 @@ -67,6 +70,8 @@ PyAPI_FUNC(PyObject *) _PyTraceMalloc_GetTracedMemory(void);
  /* Set the peak size of traced memory blocks to the current size */
  PyAPI_FUNC(void) _PyTraceMalloc_ResetPeak(void);
@@ -542,6 +631,28 @@ index 580027a8e36..b6865f1f683 100644
 -
 +#endif /* !Py_LIMITED_API */
  #endif /* !Py_TRACEMALLOC_H */
+diff --git a/Lib/_pydecimal.py b/Lib/_pydecimal.py
+index 75df3db2624..ff80180a79e 100644
+--- a/Lib/_pydecimal.py
++++ b/Lib/_pydecimal.py
+@@ -97,7 +97,7 @@ class DecimalException(ArithmeticError):
+ 
+     Used exceptions derive from this.
+     If an exception derives from another exception besides this (such as
+-    Underflow (Inexact, Rounded, Subnormal) that indicates that it is only
++    Underflow (Inexact, Rounded, Subnormal)) that indicates that it is only
+     called if the others are present.  This isn't actually used for
+     anything, though.
+ 
+@@ -145,7 +145,7 @@ class InvalidOperation(DecimalException):
+     x ** (+-)INF
+     An operand is invalid
+ 
+-    The result of the operation after these is a quiet positive NaN,
++    The result of the operation after this is a quiet positive NaN,
+     except when the cause is a signaling NaN, in which case the result is
+     also a quiet NaN, but with the original sign, and an optional
+     diagnostic information.
 diff --git a/Lib/_strptime.py b/Lib/_strptime.py
 index dfd2bc5d8b4..5d9df2b12f8 100644
 --- a/Lib/_strptime.py
@@ -678,6 +789,281 @@ index 47693ea4d3c..736c19796ef 100644
      @unittest.skipUnless(selector_events._HAS_SENDMSG, 'no sendmsg')
      def test_write_sendmsg_full(self):
          data = memoryview(b'data')
+diff --git a/Lib/test/test_cppext/__init__.py b/Lib/test/test_cppext/__init__.py
+index f02a823bd22..efd79448c66 100644
+--- a/Lib/test/test_cppext/__init__.py
++++ b/Lib/test/test_cppext/__init__.py
+@@ -1,45 +1,52 @@
+ # gh-91321: Build a basic C++ test extension to check that the Python C API is
+ # compatible with C++ and does not emit C++ compiler warnings.
+ import os.path
++import shlex
+ import shutil
+-import sys
+-import unittest
+ import subprocess
+-import sysconfig
++import unittest
+ from test import support
+-from test.support import os_helper
+ 
+ 
+ SOURCE = os.path.join(os.path.dirname(__file__), 'extension.cpp')
+ SETUP = os.path.join(os.path.dirname(__file__), 'setup.py')
+ 
+ 
++# With MSVC on a debug build, the linker fails with: cannot open file
++# 'python311.lib', it should look 'python311_d.lib'.
++@unittest.skipIf(support.MS_WINDOWS and support.Py_DEBUG,
++                 'test fails on Windows debug build')
++# Building and running an extension in clang sanitizing mode is not
++# straightforward
++@support.skip_if_sanitizer('test does not work with analyzing builds',
++                           address=True, memory=True, ub=True, thread=True)
++# the test uses venv+pip: skip if it's not available
++@support.requires_venv_with_pip()
+ @support.requires_subprocess()
++@support.requires_resource('cpu')
+ class TestCPPExt(unittest.TestCase):
+-    @support.requires_resource('cpu')
+-    def test_build_cpp11(self):
+-        self.check_build(False, '_testcpp11ext')
++    def test_build(self):
++        self.check_build('_testcppext')
+ 
+-    @support.requires_resource('cpu')
+     def test_build_cpp03(self):
+-        self.check_build(True, '_testcpp03ext')
++        self.check_build('_testcpp03ext', std='c++03')
++
++    @unittest.skipIf(support.MS_WINDOWS, "MSVC doesn't support /std:c++11")
++    def test_build_cpp11(self):
++        self.check_build('_testcpp11ext', std='c++11')
++
++    # Only test C++14 on MSVC.
++    # On s390x RHEL7, GCC 4.8.5 doesn't support C++14.
++    @unittest.skipIf(not support.MS_WINDOWS, "need Windows")
++    def test_build_cpp14(self):
++        self.check_build('_testcpp14ext', std='c++14')
+ 
+-    # With MSVC, the linker fails with: cannot open file 'python311.lib'
+-    # https://github.com/python/cpython/pull/32175#issuecomment-1111175897
+-    @unittest.skipIf(support.MS_WINDOWS, 'test fails on Windows')
+-    # Building and running an extension in clang sanitizing mode is not
+-    # straightforward
+-    @unittest.skipIf(
+-        '-fsanitize' in (sysconfig.get_config_var('PY_CFLAGS') or ''),
+-        'test does not work with analyzing builds')
+-    # the test uses venv+pip: skip if it's not available
+-    @support.requires_venv_with_pip()
+-    def check_build(self, std_cpp03, extension_name):
++    def check_build(self, extension_name, std=None):
+         venv_dir = 'env'
+         with support.setup_venv_with_pip_setuptools_wheel(venv_dir) as python_exe:
+-            self._check_build(std_cpp03, extension_name, python_exe)
++            self._check_build(extension_name, python_exe, std=std)
+ 
+-    def _check_build(self, std_cpp03, extension_name, python_exe):
++    def _check_build(self, extension_name, python_exe, std):
+         pkg_dir = 'pkg'
+         os.mkdir(pkg_dir)
+         shutil.copy(SETUP, os.path.join(pkg_dir, os.path.basename(SETUP)))
+@@ -47,10 +54,11 @@ def _check_build(self, std_cpp03, extension_name, python_exe):
+ 
+         def run_cmd(operation, cmd):
+             env = os.environ.copy()
+-            env['CPYTHON_TEST_CPP_STD'] = 'c++03' if std_cpp03 else 'c++11'
++            if std:
++                env['CPYTHON_TEST_CPP_STD'] = std
+             env['CPYTHON_TEST_EXT_NAME'] = extension_name
+             if support.verbose:
+-                print('Run:', ' '.join(cmd))
++                print('Run:', ' '.join(map(shlex.quote, cmd)))
+                 subprocess.run(cmd, check=True, env=env)
+             else:
+                 proc = subprocess.run(cmd,
+@@ -59,6 +67,7 @@ def run_cmd(operation, cmd):
+                                       stderr=subprocess.STDOUT,
+                                       text=True)
+                 if proc.returncode:
++                    print('Run:', ' '.join(map(shlex.quote, cmd)))
+                     print(proc.stdout, end='')
+                     self.fail(
+                         f"{operation} failed with exit code {proc.returncode}")
+@@ -67,6 +76,8 @@ def run_cmd(operation, cmd):
+         cmd = [python_exe, '-X', 'dev',
+                '-m', 'pip', 'install', '--no-build-isolation',
+                os.path.abspath(pkg_dir)]
++        if support.verbose:
++            cmd.append('-v')
+         run_cmd('Install', cmd)
+ 
+         # Do a reference run. Until we test that running python
+diff --git a/Lib/test/test_cppext/extension.cpp b/Lib/test/test_cppext/extension.cpp
+index 90669b10cb2..ab485b629b7 100644
+--- a/Lib/test/test_cppext/extension.cpp
++++ b/Lib/test/test_cppext/extension.cpp
+@@ -8,10 +8,8 @@
+ 
+ #include "Python.h"
+ 
+-#if __cplusplus >= 201103
+-#  define NAME _testcpp11ext
+-#else
+-#  define NAME _testcpp03ext
++#ifndef MODULE_NAME
++#  error "MODULE_NAME macro must be defined"
+ #endif
+ 
+ #define _STR(NAME) #NAME
+@@ -160,7 +158,7 @@ PyType_Slot VirtualPyObject_Slots[] = {
+ };
+ 
+ PyType_Spec VirtualPyObject_Spec = {
+-    /* .name */ STR(NAME) ".VirtualPyObject",
++    /* .name */ STR(MODULE_NAME) ".VirtualPyObject",
+     /* .basicsize */ sizeof(VirtualPyObject),
+     /* .itemsize */ 0,
+     /* .flags */ Py_TPFLAGS_DEFAULT,
+@@ -227,6 +225,10 @@ _testcppext_exec(PyObject *module)
+     if (!result) return -1;
+     Py_DECREF(result);
+ 
++    // test Py_BUILD_ASSERT() and Py_BUILD_ASSERT_EXPR()
++    Py_BUILD_ASSERT(sizeof(int) == sizeof(unsigned int));
++    assert(Py_BUILD_ASSERT_EXPR(sizeof(int) == sizeof(unsigned int)) == 0);
++
+     return 0;
+ }
+ 
+@@ -240,7 +242,7 @@ PyDoc_STRVAR(_testcppext_doc, "C++ test extension.");
+ 
+ static struct PyModuleDef _testcppext_module = {
+     PyModuleDef_HEAD_INIT,  // m_base
+-    STR(NAME),  // m_name
++    STR(MODULE_NAME),  // m_name
+     _testcppext_doc,  // m_doc
+     0,  // m_size
+     _testcppext_methods,  // m_methods
+@@ -254,7 +256,7 @@ static struct PyModuleDef _testcppext_module = {
+ #define FUNC_NAME(NAME) _FUNC_NAME(NAME)
+ 
+ PyMODINIT_FUNC
+-FUNC_NAME(NAME)(void)
++FUNC_NAME(MODULE_NAME)(void)
+ {
+     return PyModuleDef_Init(&_testcppext_module);
+ }
+diff --git a/Lib/test/test_cppext/setup.py b/Lib/test/test_cppext/setup.py
+index c7ba1efb4dd..d97b238b8d1 100644
+--- a/Lib/test/test_cppext/setup.py
++++ b/Lib/test/test_cppext/setup.py
+@@ -1,8 +1,8 @@
+ # gh-91321: Build a basic C++ test extension to check that the Python C API is
+ # compatible with C++ and does not emit C++ compiler warnings.
+ import os
++import platform
+ import shlex
+-import sys
+ import sysconfig
+ from test import support
+ 
+@@ -10,6 +10,7 @@
+ 
+ 
+ SOURCE = 'extension.cpp'
++
+ if not support.MS_WINDOWS:
+     # C++ compiler flags for GCC and clang
+     CPPFLAGS = [
+@@ -19,34 +20,77 @@
+         '-Werror',
+     ]
+ else:
+-    # Don't pass any compiler flag to MSVC
+-    CPPFLAGS = []
++    # MSVC compiler flags
++    CPPFLAGS = [
++        # Display warnings level 1 to 4
++        '/W4',
++        # Treat all compiler warnings as compiler errors
++        '/WX',
++    ]
+ 
+ 
+ def main():
+     cppflags = list(CPPFLAGS)
+-    std = os.environ["CPYTHON_TEST_CPP_STD"]
+-    name = os.environ["CPYTHON_TEST_EXT_NAME"]
++    std = os.environ.get("CPYTHON_TEST_CPP_STD", "")
++    module_name = os.environ["CPYTHON_TEST_EXT_NAME"]
+ 
+-    cppflags = [*CPPFLAGS, f'-std={std}']
++    cppflags = list(CPPFLAGS)
++    cppflags.append(f'-DMODULE_NAME={module_name}')
++
++    # Add -std=STD or /std:STD (MSVC) compiler flag
++    if std:
++        if support.MS_WINDOWS:
++            cppflags.append(f'/std:{std}')
++        else:
++            cppflags.append(f'-std={std}')
+ 
+     # gh-105776: When "gcc -std=11" is used as the C++ compiler, -std=c11
+     # option emits a C++ compiler warning. Remove "-std11" option from the
+     # CC command.
+     cmd = (sysconfig.get_config_var('CC') or '')
+     if cmd is not None:
++        if support.MS_WINDOWS:
++            std_prefix = '/std'
++        else:
++            std_prefix = '-std'
+         cmd = shlex.split(cmd)
+-        cmd = [arg for arg in cmd if not arg.startswith('-std=')]
++        cmd = [arg for arg in cmd if not arg.startswith(std_prefix)]
+         cmd = shlex.join(cmd)
+         # CC env var overrides sysconfig CC variable in setuptools
+         os.environ['CC'] = cmd
+ 
+-    cpp_ext = Extension(
+-        name,
++    # On Windows, add PCbuild\amd64\ to include and library directories
++    include_dirs = []
++    library_dirs = []
++    if support.MS_WINDOWS:
++        srcdir = sysconfig.get_config_var('srcdir')
++        machine = platform.uname().machine
++        pcbuild = os.path.join(srcdir, 'PCbuild', machine)
++        if os.path.exists(pcbuild):
++            # pyconfig.h is generated in PCbuild\amd64\
++            include_dirs.append(pcbuild)
++            # python313.lib is generated in PCbuild\amd64\
++            library_dirs.append(pcbuild)
++            print(f"Add PCbuild directory: {pcbuild}")
++
++    # Display information to help debugging
++    for env_name in ('CC', 'CFLAGS', 'CPPFLAGS'):
++        if env_name in os.environ:
++            print(f"{env_name} env var: {os.environ[env_name]!r}")
++        else:
++            print(f"{env_name} env var: <missing>")
++    print(f"extra_compile_args: {cppflags!r}")
++
++    ext = Extension(
++        module_name,
+         sources=[SOURCE],
+         language='c++',
+-        extra_compile_args=cppflags)
+-    setup(name='internal' + name, version='0.0', ext_modules=[cpp_ext])
++        extra_compile_args=cppflags,
++        include_dirs=include_dirs,
++        library_dirs=library_dirs)
++    setup(name=f'internal_{module_name}',
++          version='0.0',
++          ext_modules=[ext])
+ 
+ 
+ if __name__ == "__main__":
 diff --git a/Lib/test/test_exceptions.py b/Lib/test/test_exceptions.py
 index 72c86eecae2..f4f2011a51a 100644
 --- a/Lib/test/test_exceptions.py
@@ -841,6 +1227,26 @@ index 0b6f96fdbfd..db2e7e35a49 100644
      PyObject *filename_bytes;
      const char *filename;
      int err;
+diff --git a/Objects/dictobject.c b/Objects/dictobject.c
+index 4e965314945..7337e290e89 100644
+--- a/Objects/dictobject.c
++++ b/Objects/dictobject.c
+@@ -458,11 +458,14 @@ estimate_log2_keysize(Py_ssize_t n)
+ 
+ /* This immutable, empty PyDictKeysObject is used for PyDict_Clear()
+  * (which cannot fail and thus can do no allocation).
++ *
++ * See https://github.com/python/cpython/pull/127568#discussion_r1868070614
++ * for the rationale of using dk_log2_index_bytes=3 instead of 0.
+  */
+ static PyDictKeysObject empty_keys_struct = {
+         _Py_IMMORTAL_REFCNT, /* dk_refcnt */
+         0, /* dk_log2_size */
+-        0, /* dk_log2_index_bytes */
++        3, /* dk_log2_index_bytes */
+         DICT_KEYS_UNICODE, /* dk_kind */
+         1, /* dk_version */
+         0, /* dk_usable (immutable) */
 diff --git a/Objects/typeobject.c b/Objects/typeobject.c
 index 5bca4b4e788..06857e36857 100644
 --- a/Objects/typeobject.c
