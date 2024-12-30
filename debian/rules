@@ -1381,6 +1381,14 @@ ifeq ($(with_nopie),yes)
 	cp -p $(buildd_nopie)/python $(d_npie)/usr/bin/$(PVER)
 endif
 
+	# Compatibility with older python3.X builds carrying sysconfigdata-name.diff
+	dh_link -p$(p_lmin) \
+		/usr/lib/python$(VER)/_sysconfigdata__$(PLAT)_$(DEB_HOST_MULTIARCH).py \
+		/usr/lib/python$(VER)/_sysconfigdata__$(DEB_HOST_MULTIARCH).py
+	dh_link -p$(p_ldbg) \
+		/usr/lib/python$(VER)/_sysconfigdata_d_$(PLAT)_$(DEB_HOST_MULTIARCH).py \
+		/usr/lib/python$(VER)/_sysconfigdata_d_$(DEB_HOST_MULTIARCH).py
+
 	for i in debian/*.overrides; do \
 	  b=$$(basename $$i .overrides); \
 	  install -D -m 644 $$i debian/$$b/usr/share/lintian/overrides/$$b; \
