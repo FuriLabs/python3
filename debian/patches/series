@@ -15,7 +15,6 @@ disable-sem-check.diff
 multiarch.diff
 ensurepip-disabled.diff
 local-doc-references.diff
-sysconfigdata-name.diff
 destshared-location.diff
 min-tempfile.diff
 min-lib-argparse.diff
