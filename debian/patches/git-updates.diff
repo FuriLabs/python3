@@ -1,14 +1,142 @@
-Description: Updates from the 3.12 branch (until 2024-12-13).
+Description: Updates from the 3.12 branch (until 2025-01-08).
  We pick the latest updates from the maintainance branch, and carry them in a
  patch, rather than creating and uploading uploading a new .orig tarball.
 
-# git diff --no-renames 2dc476bcb9142cd25d7e1d52392b73a3dcdf1756 6544f994637c7d4fc86d8a360e519a4e560606db | filterdiff -x ?/.hgignore -x ?/.hgeol -x ?/.hgtags -x ?/.hgtouch -x ?/.gitignore -x ?/.gitattributes -x '?/.github/*' -x '?/.git*' -x ?/.codecov.yml -x ?/.travis.yml -x ?/configure --remove-timestamps
+# git diff --no-renames 2dc476bcb9142cd25d7e1d52392b73a3dcdf1756 4c130c9238d0bd8d2641f1d2ec667641d8de2abd | filterdiff -x ?/.hgignore -x ?/.hgeol -x ?/.hgtags -x ?/.hgtouch -x ?/.gitignore -x ?/.gitattributes -x '?/.github/*' -x '?/.git*' -x ?/.codecov.yml -x ?/.travis.yml -x ?/configure --remove-timestamps
 
+diff --git a/Doc/about.rst b/Doc/about.rst
+index 5e6160ff270..8f635d7f743 100644
+--- a/Doc/about.rst
++++ b/Doc/about.rst
+@@ -1,10 +1,11 @@
+-=====================
+-About these documents
+-=====================
++========================
++About this documentation
++========================
+ 
+ 
+-These documents are generated from `reStructuredText`_ sources by `Sphinx`_, a
+-document processor specifically written for the Python documentation.
++Python's documentation is generated from `reStructuredText`_ sources
++using `Sphinx`_, a documentation generator originally created for Python
++and now maintained as an independent project.
+ 
+ .. _reStructuredText: https://docutils.sourceforge.io/rst.html
+ .. _Sphinx: https://www.sphinx-doc.org/
+@@ -20,14 +21,14 @@ volunteers are always welcome!
+ Many thanks go to:
+ 
+ * Fred L. Drake, Jr., the creator of the original Python documentation toolset
+-  and writer of much of the content;
++  and author of much of the content;
+ * the `Docutils <https://docutils.sourceforge.io/>`_ project for creating
+   reStructuredText and the Docutils suite;
+ * Fredrik Lundh for his Alternative Python Reference project from which Sphinx
+   got many good ideas.
+ 
+ 
+-Contributors to the Python Documentation
++Contributors to the Python documentation
+ ----------------------------------------
+ 
+ Many people have contributed to the Python language, the Python standard
+diff --git a/Doc/c-api/arg.rst b/Doc/c-api/arg.rst
+index b8af24f53c3..76a197bbec7 100644
+--- a/Doc/c-api/arg.rst
++++ b/Doc/c-api/arg.rst
+@@ -229,12 +229,24 @@ There are three ways strings and buffers can be converted to C:
+ Numbers
+ -------
+ 
++These formats allow representing Python numbers or single characters as C numbers.
++Formats that require :class:`int`, :class:`float` or :class:`complex` can
++also use the corresponding special methods :meth:`~object.__index__`,
++:meth:`~object.__float__` or :meth:`~object.__complex__` to convert
++the Python object to the required type.
++
++For signed integer formats, :exc:`OverflowError` is raised if the value
++is out of range for the C type.
++For unsigned integer formats, no range checking is done --- the
++most significant bits are silently truncated when the receiving field is too
++small to receive the value.
++
+ ``b`` (:class:`int`) [unsigned char]
+-   Convert a nonnegative Python integer to an unsigned tiny int, stored in a C
++   Convert a nonnegative Python integer to an unsigned tiny integer, stored in a C
+    :c:expr:`unsigned char`.
+ 
+ ``B`` (:class:`int`) [unsigned char]
+-   Convert a Python integer to a tiny int without overflow checking, stored in a C
++   Convert a Python integer to a tiny integer without overflow checking, stored in a C
+    :c:expr:`unsigned char`.
+ 
+ ``h`` (:class:`int`) [short int]
+@@ -307,7 +319,7 @@ Other objects
+ 
+ .. _o_ampersand:
+ 
+-``O&`` (object) [*converter*, *anything*]
++``O&`` (object) [*converter*, *address*]
+    Convert a Python object to a C variable through a *converter* function.  This
+    takes two arguments: the first is a function, the second is the address of a C
+    variable (of arbitrary type), converted to :c:expr:`void *`.  The *converter*
+@@ -321,14 +333,20 @@ Other objects
+    the conversion has failed.  When the conversion fails, the *converter* function
+    should raise an exception and leave the content of *address* unmodified.
+ 
+-   If the *converter* returns ``Py_CLEANUP_SUPPORTED``, it may get called a
++   .. c:macro:: Py_CLEANUP_SUPPORTED
++      :no-typesetting:
++
++   If the *converter* returns :c:macro:`!Py_CLEANUP_SUPPORTED`, it may get called a
+    second time if the argument parsing eventually fails, giving the converter a
+    chance to release any memory that it had already allocated. In this second
+    call, the *object* parameter will be ``NULL``; *address* will have the same value
+    as in the original call.
+ 
++   Examples of converters: :c:func:`PyUnicode_FSConverter` and
++   :c:func:`PyUnicode_FSDecoder`.
++
+    .. versionchanged:: 3.1
+-      ``Py_CLEANUP_SUPPORTED`` was added.
++      :c:macro:`!Py_CLEANUP_SUPPORTED` was added.
+ 
+ ``p`` (:class:`bool`) [int]
+    Tests the value passed in for truth (a boolean **p**\ redicate) and converts
+@@ -344,12 +362,6 @@ Other objects
+    in *items*.  The C arguments must correspond to the individual format units in
+    *items*.  Format units for sequences may be nested.
+ 
+-It is possible to pass "long" integers (integers whose value exceeds the
+-platform's :c:macro:`LONG_MAX`) however no proper range checking is done --- the
+-most significant bits are silently truncated when the receiving field is too
+-small to receive the value (actually, the semantics are inherited from downcasts
+-in C --- your mileage may vary).
+-
+ A few other characters have a meaning in a format string.  These may not occur
+ inside nested parentheses.  They are:
+ 
 diff --git a/Doc/c-api/object.rst b/Doc/c-api/object.rst
-index 2109b12bac9..cefd384fd35 100644
+index 2109b12bac9..b7f1a54972e 100644
 --- a/Doc/c-api/object.rst
 +++ b/Doc/c-api/object.rst
-@@ -410,6 +410,12 @@ Object Protocol
+@@ -393,6 +393,13 @@ Object Protocol
+    on failure.  This is equivalent to the Python statement ``del o[key]``.
+ 
+ 
++.. c:function:: int PyObject_DelItemString(PyObject *o, const char *key)
++
++   This is the same as :c:func:`PyObject_DelItem`, but *key* is
++   specified as a :c:expr:`const char*` UTF-8 encoded bytes string,
++   rather than a :c:expr:`PyObject*`.
++
++
+ .. c:function:: PyObject* PyObject_Dir(PyObject *o)
+ 
+    This is equivalent to the Python expression ``dir(o)``, returning a (possibly
+@@ -410,6 +417,12 @@ Object Protocol
     iterated.
  
  
@@ -21,6 +149,108 @@ index 2109b12bac9..cefd384fd35 100644
  .. c:function:: PyObject* PyObject_GetAIter(PyObject *o)
  
     This is the equivalent to the Python expression ``aiter(o)``. Takes an
+diff --git a/Doc/c-api/typeobj.rst b/Doc/c-api/typeobj.rst
+index 9fc3d358371..3d27784d4fe 100644
+--- a/Doc/c-api/typeobj.rst
++++ b/Doc/c-api/typeobj.rst
+@@ -355,7 +355,7 @@ slot typedefs
+ +-----------------------------+-----------------------------+----------------------+
+ | :c:type:`newfunc`           | .. line-block::             | :c:type:`PyObject` * |
+ |                             |                             |                      |
+-|                             |    :c:type:`PyObject` *     |                      |
++|                             |    :c:type:`PyTypeObject` * |                      |
+ |                             |    :c:type:`PyObject` *     |                      |
+ |                             |    :c:type:`PyObject` *     |                      |
+ +-----------------------------+-----------------------------+----------------------+
+@@ -2610,7 +2610,7 @@ Slot Type typedefs
+ 
+    See :c:member:`~PyTypeObject.tp_free`.
+ 
+-.. c:type:: PyObject *(*newfunc)(PyObject *, PyObject *, PyObject *)
++.. c:type:: PyObject *(*newfunc)(PyTypeObject *, PyObject *, PyObject *)
+ 
+    See :c:member:`~PyTypeObject.tp_new`.
+ 
+diff --git a/Doc/c-api/unicode.rst b/Doc/c-api/unicode.rst
+index 4d9f9ce0201..9b49569ad27 100644
+--- a/Doc/c-api/unicode.rst
++++ b/Doc/c-api/unicode.rst
+@@ -770,16 +770,25 @@ Functions encoding to and decoding from the :term:`filesystem encoding and
+ error handler` (:pep:`383` and :pep:`529`).
+ 
+ To encode file names to :class:`bytes` during argument parsing, the ``"O&"``
+-converter should be used, passing :c:func:`PyUnicode_FSConverter` as the
++converter should be used, passing :c:func:`!PyUnicode_FSConverter` as the
+ conversion function:
+ 
+ .. c:function:: int PyUnicode_FSConverter(PyObject* obj, void* result)
+ 
+-   ParseTuple converter: encode :class:`str` objects -- obtained directly or
++   :ref:`PyArg_Parse\* converter <arg-parsing>`: encode :class:`str` objects -- obtained directly or
+    through the :class:`os.PathLike` interface -- to :class:`bytes` using
+    :c:func:`PyUnicode_EncodeFSDefault`; :class:`bytes` objects are output as-is.
+-   *result* must be a :c:expr:`PyBytesObject*` which must be released when it is
+-   no longer used.
++   *result* must be an address of a C variable of type :c:expr:`PyObject*`
++   (or :c:expr:`PyBytesObject*`).
++   On success, set the variable to a new :term:`strong reference` to
++   a :ref:`bytes object <bytesobjects>` which must be released
++   when it is no longer used and return a non-zero value
++   (:c:macro:`Py_CLEANUP_SUPPORTED`).
++   Embedded null bytes are not allowed in the result.
++   On failure, return ``0`` with an exception set.
++
++   If *obj* is ``NULL``, the function releases a strong reference
++   stored in the variable referred by *result* and returns ``1``.
+ 
+    .. versionadded:: 3.1
+ 
+@@ -787,16 +796,26 @@ conversion function:
+       Accepts a :term:`path-like object`.
+ 
+ To decode file names to :class:`str` during argument parsing, the ``"O&"``
+-converter should be used, passing :c:func:`PyUnicode_FSDecoder` as the
++converter should be used, passing :c:func:`!PyUnicode_FSDecoder` as the
+ conversion function:
+ 
+ .. c:function:: int PyUnicode_FSDecoder(PyObject* obj, void* result)
+ 
+-   ParseTuple converter: decode :class:`bytes` objects -- obtained either
++   :ref:`PyArg_Parse\* converter <arg-parsing>`: decode :class:`bytes` objects -- obtained either
+    directly or indirectly through the :class:`os.PathLike` interface -- to
+    :class:`str` using :c:func:`PyUnicode_DecodeFSDefaultAndSize`; :class:`str`
+-   objects are output as-is. *result* must be a :c:expr:`PyUnicodeObject*` which
+-   must be released when it is no longer used.
++   objects are output as-is.
++   *result* must be an address of a C variable of type :c:expr:`PyObject*`
++   (or :c:expr:`PyUnicodeObject*`).
++   On success, set the variable to a new :term:`strong reference` to
++   a :ref:`Unicode object <unicodeobjects>` which must be released
++   when it is no longer used and return a non-zero value
++   (:c:macro:`Py_CLEANUP_SUPPORTED`).
++   Embedded null characters are not allowed in the result.
++   On failure, return ``0`` with an exception set.
++
++   If *obj* is ``NULL``, release the strong reference
++   to the object referred to by *result* and return ``1``.
+ 
+    .. versionadded:: 3.2
+ 
+diff --git a/Doc/conf.py b/Doc/conf.py
+index 4e76c21fe0c..4b18d02a943 100644
+--- a/Doc/conf.py
++++ b/Doc/conf.py
+@@ -89,9 +89,7 @@
+ 
+ # Create table of contents entries for domain objects (e.g. functions, classes,
+ # attributes, etc.). Default is True.
+-toc_object_entries = True
+-# Hide parents to tidy up long entries in sidebar
+-toc_object_entries_show_parents = 'hide'
++toc_object_entries = False
+ 
+ # Ignore any .rst files in the includes/ directory;
+ # they're embedded in pages but not rendered as individual pages.
 diff --git a/Doc/data/refcounts.dat b/Doc/data/refcounts.dat
 index 28532620ba6..88d283aa51e 100644
 --- a/Doc/data/refcounts.dat
@@ -135,6 +365,178 @@ index 5a392f94da4..597de77a828 100644
  =============
  Logging HOWTO
  =============
+diff --git a/Doc/library/calendar.rst b/Doc/library/calendar.rst
+index 102bc287179..88a90f420e9 100644
+--- a/Doc/library/calendar.rst
++++ b/Doc/library/calendar.rst
+@@ -38,13 +38,33 @@ interpreted as prescribed by the ISO 8601 standard.  Year 0 is 1 BC, year -1 is
+    itself. This is the job of subclasses.
+ 
+ 
+-   :class:`Calendar` instances have the following methods:
++   :class:`Calendar` instances have the following methods and attributes:
++
++   .. attribute:: firstweekday
++
++      The first weekday as an integer (0--6).
++
++      This property can also be set and read using
++      :meth:`~Calendar.setfirstweekday` and
++      :meth:`~Calendar.getfirstweekday` respectively.
++
++   .. method:: getfirstweekday()
++
++      Return an :class:`int` for the current first weekday (0--6).
++
++      Identical to reading the :attr:`~Calendar.firstweekday` property.
++
++   .. method:: setfirstweekday(firstweekday)
++
++      Set the first weekday to *firstweekday*, passed as an :class:`int` (0--6)
++
++      Identical to setting the :attr:`~Calendar.firstweekday` property.
+ 
+    .. method:: iterweekdays()
+ 
+       Return an iterator for the week day numbers that will be used for one
+       week.  The first value from the iterator will be the same as the value of
+-      the :attr:`firstweekday` property.
++      the :attr:`~Calendar.firstweekday` property.
+ 
+ 
+    .. method:: itermonthdates(year, month)
+@@ -138,6 +158,33 @@ interpreted as prescribed by the ISO 8601 standard.  Year 0 is 1 BC, year -1 is
+ 
+    :class:`TextCalendar` instances have the following methods:
+ 
++
++   .. method:: formatday(theday, weekday, width)
++
++      Return a string representing a single day formatted with the given *width*.
++      If *theday* is ``0``, return a string of spaces of
++      the specified width, representing an empty day. The *weekday* parameter
++      is unused.
++
++   .. method:: formatweek(theweek, w=0)
++
++      Return a single week in a string with no newline. If *w* is provided, it
++      specifies the width of the date columns, which are centered. Depends
++      on the first weekday as specified in the constructor or set by the
++      :meth:`setfirstweekday` method.
++
++   .. method:: formatweekday(weekday, width)
++
++      Return a string representing the name of a single weekday formatted to
++      the specified *width*. The *weekday* parameter is an integer representing
++      the day of the week, where ``0`` is Monday and ``6`` is Sunday.
++
++   .. method:: formatweekheader(width)
++
++      Return a string containing the header row of weekday names, formatted
++      with the given *width* for each column. The names depend on the locale
++      settings and are padded to the specified width.
++
+    .. method:: formatmonth(theyear, themonth, w=0, l=0)
+ 
+       Return a month's calendar in a multi-line string. If *w* is provided, it
+@@ -146,6 +193,12 @@ interpreted as prescribed by the ISO 8601 standard.  Year 0 is 1 BC, year -1 is
+       on the first weekday as specified in the constructor or set by the
+       :meth:`setfirstweekday` method.
+ 
++   .. method:: formatmonthname(theyear, themonth, width=0, withyear=True)
++
++      Return a string representing the month's name centered within the
++      specified *width*. If *withyear* is ``True``, include the year in the
++      output. The *theyear* and *themonth* parameters specify the year
++      and month for the name to be formatted respectively.
+ 
+    .. method:: prmonth(theyear, themonth, w=0, l=0)
+ 
+@@ -437,7 +490,7 @@ The :mod:`calendar` module exports the following data attributes:
+ 
+    A sequence that represents the months of the year in the current locale.  This
+    follows normal convention of January being month number 1, so it has a length of
+-   13 and  ``month_name[0]`` is the empty string.
++   13 and ``month_name[0]`` is the empty string.
+ 
+        >>> import calendar
+        >>> list(calendar.month_name)
+diff --git a/Doc/library/collections.abc.rst b/Doc/library/collections.abc.rst
+index 0adbd305b46..85085334699 100644
+--- a/Doc/library/collections.abc.rst
++++ b/Doc/library/collections.abc.rst
+@@ -146,7 +146,8 @@ ABC                            Inherits from          Abstract Methods        Mi
+ 
+ :class:`Set`                   :class:`Collection`    ``__contains__``,       ``__le__``, ``__lt__``, ``__eq__``, ``__ne__``,
+                                                       ``__iter__``,           ``__gt__``, ``__ge__``, ``__and__``, ``__or__``,
+-                                                      ``__len__``             ``__sub__``, ``__xor__``, and ``isdisjoint``
++                                                      ``__len__``             ``__sub__``, ``__rsub__``, ``__xor__``, ``__rxor__``
++                                                                              and ``isdisjoint``
+ 
+ :class:`MutableSet`            :class:`Set`           ``__contains__``,       Inherited :class:`Set` methods and
+                                                       ``__iter__``,           ``clear``, ``pop``, ``remove``, ``__ior__``,
+@@ -165,7 +166,7 @@ ABC                            Inherits from          Abstract Methods        Mi
+                                                       ``__len__``
+ 
+ 
+-:class:`MappingView`           :class:`Sized`                                 ``__len__``
++:class:`MappingView`           :class:`Sized`                                 ``__init__``, ``__len__`` and ``__repr__``
+ :class:`ItemsView`             :class:`MappingView`,                          ``__contains__``,
+                                :class:`Set`                                   ``__iter__``
+ :class:`KeysView`              :class:`MappingView`,                          ``__contains__``,
+diff --git a/Doc/library/decimal.rst b/Doc/library/decimal.rst
+index c5544f6216f..2ce4c913ff4 100644
+--- a/Doc/library/decimal.rst
++++ b/Doc/library/decimal.rst
+@@ -1016,7 +1016,7 @@ New contexts can also be created using the :class:`Context` constructor
+ described below. In addition, the module provides three pre-made contexts:
+ 
+ 
+-.. class:: BasicContext
++.. data:: BasicContext
+ 
+    This is a standard context defined by the General Decimal Arithmetic
+    Specification.  Precision is set to nine.  Rounding is set to
+@@ -1027,7 +1027,7 @@ described below. In addition, the module provides three pre-made contexts:
+    Because many of the traps are enabled, this context is useful for debugging.
+ 
+ 
+-.. class:: ExtendedContext
++.. data:: ExtendedContext
+ 
+    This is a standard context defined by the General Decimal Arithmetic
+    Specification.  Precision is set to nine.  Rounding is set to
+@@ -1040,7 +1040,7 @@ described below. In addition, the module provides three pre-made contexts:
+    presence of conditions that would otherwise halt the program.
+ 
+ 
+-.. class:: DefaultContext
++.. data:: DefaultContext
+ 
+    This context is used by the :class:`Context` constructor as a prototype for new
+    contexts.  Changing a field (such a precision) has the effect of changing the
+diff --git a/Doc/library/email.policy.rst b/Doc/library/email.policy.rst
+index 51d65dc5ba9..152350b0b02 100644
+--- a/Doc/library/email.policy.rst
++++ b/Doc/library/email.policy.rst
+@@ -267,7 +267,7 @@ added matters.  To illustrate::
+ 
+       Handle a *defect* found on *obj*.  When the email package calls this
+       method, *defect* will always be a subclass of
+-      :class:`~email.errors.Defect`.
++      :class:`~email.errors.MessageDefect`.
+ 
+       The default implementation checks the :attr:`raise_on_defect` flag.  If
+       it is ``True``, *defect* is raised as an exception.  If it is ``False``
+@@ -277,7 +277,7 @@ added matters.  To illustrate::
+    .. method:: register_defect(obj, defect)
+ 
+       Register a *defect* on *obj*.  In the email package, *defect* will always
+-      be a subclass of :class:`~email.errors.Defect`.
++      be a subclass of :class:`~email.errors.MessageDefect`.
+ 
+       The default implementation calls the ``append`` method of the ``defects``
+       attribute of *obj*.  When the email package calls :attr:`handle_defect`,
 diff --git a/Doc/library/http.cookies.rst b/Doc/library/http.cookies.rst
 index 4ce2e3c4f4c..ad37a0fca47 100644
 --- a/Doc/library/http.cookies.rst
@@ -147,6 +549,365 @@ index 4ce2e3c4f4c..ad37a0fca47 100644
 +   *header* are sent to each :class:`Morsel`'s :meth:`~Morsel.output` method. *sep* is used
     to join the headers together, and is by default the combination ``'\r\n'``
     (CRLF).
+ 
+diff --git a/Doc/library/itertools.rst b/Doc/library/itertools.rst
+index 047d805eda6..a82fd8630b7 100644
+--- a/Doc/library/itertools.rst
++++ b/Doc/library/itertools.rst
+@@ -664,7 +664,7 @@ loops that truncate the stream.
+    consumed from the input iterator and there is no way to access it.
+    This could be an issue if an application wants to further consume the
+    input iterator after *takewhile* has been run to exhaustion.  To work
+-   around this problem, consider using `more-iterools before_and_after()
++   around this problem, consider using `more-itertools before_and_after()
+    <https://more-itertools.readthedocs.io/en/stable/api.html#more_itertools.before_and_after>`_
+    instead.
+ 
+diff --git a/Doc/library/json.rst b/Doc/library/json.rst
+index 88882aee2b2..8d7d76c7bc5 100644
+--- a/Doc/library/json.rst
++++ b/Doc/library/json.rst
+@@ -140,69 +140,94 @@ Basic Usage
+                    sort_keys=False, **kw)
+ 
+    Serialize *obj* as a JSON formatted stream to *fp* (a ``.write()``-supporting
+-   :term:`file-like object`) using this :ref:`conversion table
++   :term:`file-like object`) using this :ref:`Python-to-JSON conversion table
+    <py-to-json-table>`.
+ 
+-   If *skipkeys* is true (default: ``False``), then dict keys that are not
+-   of a basic type (:class:`str`, :class:`int`, :class:`float`, :class:`bool`,
+-   ``None``) will be skipped instead of raising a :exc:`TypeError`.
+-
+-   The :mod:`json` module always produces :class:`str` objects, not
+-   :class:`bytes` objects. Therefore, ``fp.write()`` must support :class:`str`
+-   input.
+-
+-   If *ensure_ascii* is true (the default), the output is guaranteed to
+-   have all incoming non-ASCII characters escaped.  If *ensure_ascii* is
+-   false, these characters will be output as-is.
+-
+-   If *check_circular* is false (default: ``True``), then the circular
+-   reference check for container types will be skipped and a circular reference
+-   will result in a :exc:`RecursionError` (or worse).
++   .. note::
+ 
+-   If *allow_nan* is false (default: ``True``), then it will be a
+-   :exc:`ValueError` to serialize out of range :class:`float` values (``nan``,
+-   ``inf``, ``-inf``) in strict compliance of the JSON specification.
+-   If *allow_nan* is true, their JavaScript equivalents (``NaN``,
+-   ``Infinity``, ``-Infinity``) will be used.
++      Unlike :mod:`pickle` and :mod:`marshal`, JSON is not a framed protocol,
++      so trying to serialize multiple objects with repeated calls to
++      :func:`dump` using the same *fp* will result in an invalid JSON file.
+ 
+-   If *indent* is a non-negative integer or string, then JSON array elements and
+-   object members will be pretty-printed with that indent level.  An indent level
+-   of 0, negative, or ``""`` will only insert newlines.  ``None`` (the default)
+-   selects the most compact representation. Using a positive integer indent
+-   indents that many spaces per level.  If *indent* is a string (such as ``"\t"``),
+-   that string is used to indent each level.
++   :param object obj:
++      The Python object to be serialized.
++
++   :param fp:
++      The file-like object *obj* will be serialized to.
++      The :mod:`!json` module always produces :class:`str` objects,
++      not :class:`bytes` objects,
++      therefore ``fp.write()`` must support :class:`str` input.
++   :type fp: :term:`file-like object`
++
++   :param bool skipkeys:
++      If ``True``, keys that are not of a basic type
++      (:class:`str`, :class:`int`, :class:`float`, :class:`bool`, ``None``)
++      will be skipped instead of raising a :exc:`TypeError`.
++      Default ``False``.
++
++   :param bool ensure_ascii:
++      If ``True`` (the default), the output is guaranteed to
++      have all incoming non-ASCII characters escaped.
++      If ``False``, these characters will be outputted as-is.
++
++   :param bool check_circular:
++      If ``False``, the circular reference check for container types is skipped
++      and a circular reference will result in a :exc:`RecursionError` (or worse).
++      Default ``True``.
++
++   :param bool allow_nan:
++      If ``False``, serialization of out-of-range :class:`float` values
++      (``nan``, ``inf``, ``-inf``) will result in a :exc:`ValueError`,
++      in strict compliance with the JSON specification.
++      If ``True`` (the default), their JavaScript equivalents
++      (``NaN``, ``Infinity``, ``-Infinity``) are used.
++
++   :param cls:
++      If set, a custom JSON encoder with the
++      :meth:`~JSONEncoder.default` method overridden,
++      for serializing into custom datatypes.
++      If ``None`` (the default), :class:`!JSONEncoder` is used.
++   :type cls: a :class:`JSONEncoder` subclass
++
++   :param indent:
++      If a positive integer or string, JSON array elements and
++      object members will be pretty-printed with that indent level.
++      A positive integer indents that many spaces per level;
++      a string (such as ``"\t"``) is used to indent each level.
++      If zero, negative, or ``""`` (the empty string),
++      only newlines are inserted.
++      If ``None`` (the default), the most compact representation is used.
++   :type indent: int | str | None
++
++   :param separators:
++      A two-tuple: ``(item_separator, key_separator)``.
++      If ``None`` (the default), *separators* defaults to
++      ``(', ', ': ')`` if *indent* is ``None``,
++      and ``(',', ': ')`` otherwise.
++      For the most compact JSON,
++      specify ``(',', ':')`` to eliminate whitespace.
++   :type separators: tuple | None
++
++   :param default:
++      A function that is called for objects that can't otherwise be serialized.
++      It should return a JSON encodable version of the object
++      or raise a :exc:`TypeError`.
++      If ``None`` (the default), :exc:`!TypeError` is raised.
++   :type default: :term:`callable` | None
++
++   :param bool sort_keys:
++      If ``True``, dictionaries will be outputted sorted by key.
++      Default ``False``.
+ 
+    .. versionchanged:: 3.2
+       Allow strings for *indent* in addition to integers.
+ 
+-   If specified, *separators* should be an ``(item_separator, key_separator)``
+-   tuple.  The default is ``(', ', ': ')`` if *indent* is ``None`` and
+-   ``(',', ': ')`` otherwise.  To get the most compact JSON representation,
+-   you should specify ``(',', ':')`` to eliminate whitespace.
+-
+    .. versionchanged:: 3.4
+       Use ``(',', ': ')`` as default if *indent* is not ``None``.
+ 
+-   If specified, *default* should be a function that gets called for objects that
+-   can't otherwise be serialized.  It should return a JSON encodable version of
+-   the object or raise a :exc:`TypeError`.  If not specified, :exc:`TypeError`
+-   is raised.
+-
+-   If *sort_keys* is true (default: ``False``), then the output of
+-   dictionaries will be sorted by key.
+-
+-   To use a custom :class:`JSONEncoder` subclass (e.g. one that overrides the
+-   :meth:`~JSONEncoder.default` method to serialize additional types), specify it with the
+-   *cls* kwarg; otherwise :class:`JSONEncoder` is used.
+-
+    .. versionchanged:: 3.6
+       All optional parameters are now :ref:`keyword-only <keyword-only_parameter>`.
+ 
+-   .. note::
+-
+-      Unlike :mod:`pickle` and :mod:`marshal`, JSON is not a framed protocol,
+-      so trying to serialize multiple objects with repeated calls to
+-      :func:`dump` using the same *fp* will result in an invalid JSON file.
+ 
+ .. function:: dumps(obj, *, skipkeys=False, ensure_ascii=True, \
+                     check_circular=True, allow_nan=True, cls=None, \
+@@ -222,36 +247,86 @@ Basic Usage
+       the original one. That is, ``loads(dumps(x)) != x`` if x has non-string
+       keys.
+ 
+-.. function:: load(fp, *, cls=None, object_hook=None, parse_float=None, parse_int=None, parse_constant=None, object_pairs_hook=None, **kw)
+-
+-   Deserialize *fp* (a ``.read()``-supporting :term:`text file` or
+-   :term:`binary file` containing a JSON document) to a Python object using
+-   this :ref:`conversion table <json-to-py-table>`.
+-
+-   *object_hook* is an optional function that will be called with the result of
+-   any object literal decoded (a :class:`dict`).  The return value of
+-   *object_hook* will be used instead of the :class:`dict`.  This feature can
+-   be used to implement custom decoders (e.g. `JSON-RPC
+-   <https://www.jsonrpc.org>`_ class hinting).
+-
+-   *object_pairs_hook* is an optional function that will be called with the
+-   result of any object literal decoded with an ordered list of pairs.  The
+-   return value of *object_pairs_hook* will be used instead of the
+-   :class:`dict`.  This feature can be used to implement custom decoders.  If
+-   *object_hook* is also defined, the *object_pairs_hook* takes priority.
++.. function:: load(fp, *, cls=None, object_hook=None, parse_float=None, \
++                   parse_int=None, parse_constant=None, \
++                   object_pairs_hook=None, **kw)
++
++   Deserialize *fp* to a Python object
++   using the :ref:`JSON-to-Python conversion table <json-to-py-table>`.
++
++   :param fp:
++      A ``.read()``-supporting :term:`text file` or :term:`binary file`
++      containing the JSON document to be deserialized.
++   :type fp: :term:`file-like object`
++
++   :param cls:
++      If set, a custom JSON decoder.
++      Additional keyword arguments to :func:`!load`
++      will be passed to the constructor of *cls*.
++      If ``None`` (the default), :class:`!JSONDecoder` is used.
++   :type cls: a :class:`JSONDecoder` subclass
++
++   :param object_hook:
++      If set, a function that is called with the result of
++      any object literal decoded (a :class:`dict`).
++      The return value of this function will be used
++      instead of the :class:`dict`.
++      This feature can be used to implement custom decoders,
++      for example `JSON-RPC <https://www.jsonrpc.org>`_ class hinting.
++      Default ``None``.
++   :type object_hook: :term:`callable` | None
++
++   :param object_pairs_hook:
++      If set, a function that is called with the result of
++      any object literal decoded with an ordered list of pairs.
++      The return value of this function will be used
++      instead of the :class:`dict`.
++      This feature can be used to implement custom decoders.
++      If *object_hook* is also set, *object_pairs_hook* takes priority.
++      Default ``None``.
++   :type object_pairs_hook: :term:`callable` | None
++
++   :param parse_float:
++      If set, a function that is called with
++      the string of every JSON float to be decoded.
++      If ``None`` (the default), it is equivalent to ``float(num_str)``.
++      This can be used to parse JSON floats into custom datatypes,
++      for example :class:`decimal.Decimal`.
++   :type parse_float: :term:`callable` | None
++
++   :param parse_int:
++      If set, a function that is called with
++      the string of every JSON int to be decoded.
++      If ``None`` (the default), it is equivalent to ``int(num_str)``.
++      This can be used to parse JSON integers into custom datatypes,
++      for example :class:`float`.
++   :type parse_int: :term:`callable` | None
++
++   :param parse_constant:
++      If set, a function that is called with one of the following strings:
++      ``'-Infinity'``, ``'Infinity'``, or ``'NaN'``.
++      This can be used to raise an exception
++      if invalid JSON numbers are encountered.
++      Default ``None``.
++   :type parse_constant: :term:`callable` | None
++
++   :raises JSONDecodeError:
++      When the data being deserialized is not a valid JSON document.
++
++   :raises UnicodeDecodeError:
++      When the data being deserialized does not contain
++      UTF-8, UTF-16 or UTF-32 encoded data.
+ 
+    .. versionchanged:: 3.1
+-      Added support for *object_pairs_hook*.
+ 
+-   *parse_float* is an optional function that will be called with the string of
+-   every JSON float to be decoded.  By default, this is equivalent to
+-   ``float(num_str)``.  This can be used to use another datatype or parser for
+-   JSON floats (e.g. :class:`decimal.Decimal`).
++      * Added the optional *object_pairs_hook* parameter.
++      * *parse_constant* doesn't get called on 'null', 'true', 'false' anymore.
+ 
+-   *parse_int* is an optional function that will be called with the string of
+-   every JSON int to be decoded.  By default, this is equivalent to
+-   ``int(num_str)``.  This can be used to use another datatype or parser for
+-   JSON integers (e.g. :class:`float`).
++   .. versionchanged:: 3.6
++
++      * All optional parameters are now :ref:`keyword-only <keyword-only_parameter>`.
++      * *fp* can now be a :term:`binary file`.
++        The input encoding should be UTF-8, UTF-16 or UTF-32.
+ 
+    .. versionchanged:: 3.11
+       The default *parse_int* of :func:`int` now limits the maximum length of
+@@ -259,38 +334,13 @@ Basic Usage
+       conversion length limitation <int_max_str_digits>` to help avoid denial
+       of service attacks.
+ 
+-   *parse_constant* is an optional function that will be called with one of the
+-   following strings: ``'-Infinity'``, ``'Infinity'``, ``'NaN'``.  This can be
+-   used to raise an exception if invalid JSON numbers are encountered.
+-
+-   .. versionchanged:: 3.1
+-      *parse_constant* doesn't get called on 'null', 'true', 'false' anymore.
+-
+-   To use a custom :class:`JSONDecoder` subclass, specify it with the ``cls``
+-   kwarg; otherwise :class:`JSONDecoder` is used.  Additional keyword arguments
+-   will be passed to the constructor of the class.
+-
+-   If the data being deserialized is not a valid JSON document, a
+-   :exc:`JSONDecodeError` will be raised.
+-
+-   .. versionchanged:: 3.6
+-      All optional parameters are now :ref:`keyword-only <keyword-only_parameter>`.
+-
+-   .. versionchanged:: 3.6
+-      *fp* can now be a :term:`binary file`. The input encoding should be
+-      UTF-8, UTF-16 or UTF-32.
+-
+ .. function:: loads(s, *, cls=None, object_hook=None, parse_float=None, parse_int=None, parse_constant=None, object_pairs_hook=None, **kw)
+ 
+-   Deserialize *s* (a :class:`str`, :class:`bytes` or :class:`bytearray`
++   Identical to :func:`load`, but instead of a file-like object,
++   deserialize *s* (a :class:`str`, :class:`bytes` or :class:`bytearray`
+    instance containing a JSON document) to a Python object using this
+    :ref:`conversion table <json-to-py-table>`.
+ 
+-   The other arguments have the same meaning as in :func:`load`.
+-
+-   If the data being deserialized is not a valid JSON document, a
+-   :exc:`JSONDecodeError` will be raised.
+-
+    .. versionchanged:: 3.6
+       *s* can now be of type :class:`bytes` or :class:`bytearray`. The
+       input encoding should be UTF-8, UTF-16 or UTF-32.
+diff --git a/Doc/library/math.rst b/Doc/library/math.rst
+index fb8527128a2..0648293bfa7 100644
+--- a/Doc/library/math.rst
++++ b/Doc/library/math.rst
+@@ -84,7 +84,8 @@ Number-theoretic and representation functions
+ 
+ .. function:: fmod(x, y)
+ 
+-   Return ``fmod(x, y)``, as defined by the platform C library. Note that the
++   Return the floating-point remainder of ``x / y``,
++   as defined by the platform C library function ``fmod(x, y)``. Note that the
+    Python expression ``x % y`` may not return the same result.  The intent of the C
+    standard is that ``fmod(x, y)`` be exactly (mathematically; to infinite
+    precision) equal to ``x - n*y`` for some integer *n* such that the result has
+diff --git a/Doc/library/ssl.rst b/Doc/library/ssl.rst
+index f78ab7b1fdf..a154b4df7fe 100644
+--- a/Doc/library/ssl.rst
++++ b/Doc/library/ssl.rst
+@@ -2369,8 +2369,8 @@ thus several things you need to be aware of:
+ .. seealso::
+ 
+    The :mod:`asyncio` module supports :ref:`non-blocking SSL sockets
+-   <ssl-nonblocking>` and provides a
+-   higher level API. It polls for events using the :mod:`selectors` module and
++   <ssl-nonblocking>` and provides a higher level :ref:`Streams API <asyncio-streams>`.
++   It polls for events using the :mod:`selectors` module and
+    handles :exc:`SSLWantWriteError`, :exc:`SSLWantReadError` and
+    :exc:`BlockingIOError` exceptions. It runs the SSL handshake asynchronously
+    as well.
+diff --git a/Doc/library/string.rst b/Doc/library/string.rst
+index a000bb49f14..913672a3ff2 100644
+--- a/Doc/library/string.rst
++++ b/Doc/library/string.rst
+@@ -409,7 +409,9 @@ conversions, trailing zeros are not removed from the result.
+ 
+ .. index:: single: , (comma); in string formatting
+ 
+-The ``','`` option signals the use of a comma for a thousands separator.
++The ``','`` option signals the use of a comma for a thousands separator for
++floating-point presentation types and for integer presentation type ``'d'``.
++For other presentation types, this option is an error.
+ For a locale aware separator, use the ``'n'`` integer presentation type
+ instead.
  
 diff --git a/Doc/library/traceback.rst b/Doc/library/traceback.rst
 index 9d57c354523..0a2b9c5cfb1 100644
@@ -209,11 +970,75 @@ index 5f0a2cf68d0..a93d08f78cf 100644
  XML-RPC is a Remote Procedure Call method that uses XML passed via HTTP as a
  transport.  With it, a client can call methods with parameters on a remote
  server (the server is named by a URI) and get back structured data.
+diff --git a/Doc/reference/compound_stmts.rst b/Doc/reference/compound_stmts.rst
+index ddb1337f949..81399901c9c 100644
+--- a/Doc/reference/compound_stmts.rst
++++ b/Doc/reference/compound_stmts.rst
+@@ -534,15 +534,18 @@ is semantically equivalent to::
+     enter = type(manager).__enter__
+     exit = type(manager).__exit__
+     value = enter(manager)
++    hit_except = False
+ 
+     try:
+         TARGET = value
+         SUITE
+     except:
++        hit_except = True
+         if not exit(manager, *sys.exc_info()):
+             raise
+-    else:
+-        exit(manager, None, None, None)
++    finally:
++        if not hit_except:
++            exit(manager, None, None, None)
+ 
+ With more than one item, the context managers are processed as if multiple
+ :keyword:`with` statements were nested::
+diff --git a/Doc/requirements-oldest-sphinx.txt b/Doc/requirements-oldest-sphinx.txt
+index 3483faea6b5..c8027a05706 100644
+--- a/Doc/requirements-oldest-sphinx.txt
++++ b/Doc/requirements-oldest-sphinx.txt
+@@ -13,15 +13,15 @@ python-docs-theme>=2022.1
+ # Sphinx 7.2.6 comes from ``needs_sphinx = '7.2.6'`` in ``Doc/conf.py``.
+ 
+ alabaster==0.7.16
+-Babel==2.16.0
+-certifi==2024.8.30
++babel==2.16.0
++certifi==2024.12.14
+ charset-normalizer==3.4.0
+ docutils==0.20.1
+ idna==3.10
+ imagesize==1.4.1
+-Jinja2==3.1.4
+-MarkupSafe==3.0.1
+-packaging==24.1
++Jinja2==3.1.5
++MarkupSafe==3.0.2
++packaging==24.2
+ Pygments==2.18.0
+ requests==2.32.3
+ snowballstemmer==2.2.0
+@@ -32,4 +32,4 @@ sphinxcontrib-htmlhelp==2.1.0
+ sphinxcontrib-jsmath==1.0.1
+ sphinxcontrib-qthelp==2.0.0
+ sphinxcontrib-serializinghtml==2.0.0
+-urllib3==2.2.3
++urllib3==2.3.0
 diff --git a/Doc/tools/.nitignore b/Doc/tools/.nitignore
-index c665ddd1bb9..e69e6100945 100644
+index c665ddd1bb9..a721b494d75 100644
 --- a/Doc/tools/.nitignore
 +++ b/Doc/tools/.nitignore
-@@ -94,7 +94,6 @@ Doc/whatsnew/2.4.rst
+@@ -31,7 +31,6 @@ Doc/library/email.charset.rst
+ Doc/library/email.compat32-message.rst
+ Doc/library/email.errors.rst
+ Doc/library/email.parser.rst
+-Doc/library/email.policy.rst
+ Doc/library/exceptions.rst
+ Doc/library/functools.rst
+ Doc/library/getopt.rst
+@@ -94,7 +93,6 @@ Doc/whatsnew/2.4.rst
  Doc/whatsnew/2.5.rst
  Doc/whatsnew/2.6.rst
  Doc/whatsnew/2.7.rst
@@ -221,6 +1046,29 @@ index c665ddd1bb9..e69e6100945 100644
  Doc/whatsnew/3.3.rst
  Doc/whatsnew/3.4.rst
  Doc/whatsnew/3.5.rst
+diff --git a/Doc/tools/extensions/pyspecific.py b/Doc/tools/extensions/pyspecific.py
+index 615c7f1f30f..f09574d1ad3 100644
+--- a/Doc/tools/extensions/pyspecific.py
++++ b/Doc/tools/extensions/pyspecific.py
+@@ -435,6 +435,5 @@ def setup(app):
+     app.add_directive_to_domain('py', 'awaitablemethod', PyAwaitableMethod)
+     app.add_directive_to_domain('py', 'abstractmethod', PyAbstractMethod)
+     app.add_directive('miscnews', MiscNews)
+-    app.add_css_file('sidebar-wrap.css')
+     app.connect('env-check-consistency', patch_pairindextypes)
+     return {'version': '1.0', 'parallel_read_safe': True}
+diff --git a/Doc/tools/static/sidebar-wrap.css b/Doc/tools/static/sidebar-wrap.css
+deleted file mode 100644
+index 0a80f516f28..00000000000
+--- a/Doc/tools/static/sidebar-wrap.css
++++ /dev/null
+@@ -1,6 +0,0 @@
+-div.sphinxsidebarwrapper {
+-    overflow-x: scroll;
+-}
+-div.sphinxsidebarwrapper li code {
+-    overflow-wrap: normal;
+-}
 diff --git a/Doc/tutorial/datastructures.rst b/Doc/tutorial/datastructures.rst
 index 263b0c2e281..cbe780e075b 100644
 --- a/Doc/tutorial/datastructures.rst
@@ -559,6 +1407,21 @@ index 766db5ecc67..7cd2ffd39c9 100644
    instead.
  
  .. ======================================================================
+diff --git a/Doc/whatsnew/3.3.rst b/Doc/whatsnew/3.3.rst
+index 92656090885..f386e05db36 100644
+--- a/Doc/whatsnew/3.3.rst
++++ b/Doc/whatsnew/3.3.rst
+@@ -1147,8 +1147,8 @@ API changes
+    | :const:`MIN_EMIN` | ``-425000000`` | ``-999999999999999999`` |
+    +-------------------+----------------+-------------------------+
+ 
+-* In the context templates (:class:`~decimal.DefaultContext`,
+-  :class:`~decimal.BasicContext` and :class:`~decimal.ExtendedContext`)
++* In the context templates (:const:`~decimal.DefaultContext`,
++  :const:`~decimal.BasicContext` and :const:`~decimal.ExtendedContext`)
+   the magnitude of :attr:`~decimal.Context.Emax` and
+   :attr:`~decimal.Context.Emin` has changed to ``999999``.
+ 
 diff --git a/Include/cpython/pytime.h b/Include/cpython/pytime.h
 index 16d88d191e9..46cc97bd7cf 100644
 --- a/Include/cpython/pytime.h
@@ -572,6 +1435,29 @@ index 16d88d191e9..46cc97bd7cf 100644
  struct timeval;
  #endif
  
+diff --git a/Include/internal/pycore_pyerrors.h b/Include/internal/pycore_pyerrors.h
+index 4620a269644..dab41405b92 100644
+--- a/Include/internal/pycore_pyerrors.h
++++ b/Include/internal/pycore_pyerrors.h
+@@ -75,6 +75,18 @@ PyAPI_FUNC(void) _PyErr_SetString(
+     PyObject *exception,
+     const char *string);
+ 
++/*
++ * Set an exception with the error message decoded from the current locale
++ * encoding (LC_CTYPE).
++ *
++ * Exceptions occurring in decoding take priority over the desired exception.
++ *
++ * Exported for '_ctypes' shared extensions.
++ */
++PyAPI_FUNC(void) _PyErr_SetLocaleString(
++    PyObject *exception,
++    const char *string);
++
+ PyAPI_FUNC(PyObject *) _PyErr_Format(
+     PyThreadState *tstate,
+     PyObject *exception,
 diff --git a/Include/patchlevel.h b/Include/patchlevel.h
 index 6c597837da0..2fa45090034 100644
 --- a/Include/patchlevel.h
@@ -631,6 +1517,18 @@ index 580027a8e36..4db34b9509e 100644
 -
 +#endif /* !Py_LIMITED_API */
  #endif /* !Py_TRACEMALLOC_H */
+diff --git a/Lib/_pydatetime.py b/Lib/_pydatetime.py
+index ad6292e1e41..fc43cf0bba3 100644
+--- a/Lib/_pydatetime.py
++++ b/Lib/_pydatetime.py
+@@ -2313,7 +2313,6 @@ def __reduce__(self):
+ 
+ def _isoweek1monday(year):
+     # Helper to calculate the day number of the Monday starting week 1
+-    # XXX This could be done more efficiently
+     THURSDAY = 3
+     firstday = _ymd2ord(year, 1, 1)
+     firstweekday = (firstday + 6) % 7  # See weekday() above
 diff --git a/Lib/_pydecimal.py b/Lib/_pydecimal.py
 index 75df3db2624..ff80180a79e 100644
 --- a/Lib/_pydecimal.py
@@ -666,6 +1564,18 @@ index dfd2bc5d8b4..5d9df2b12f8 100644
              'Y': r"(?P<Y>\d\d\d\d)",
              'z': r"(?P<z>[+-]\d\d:?[0-5]\d(:?[0-5]\d(\.\d{1,6})?)?|(?-i:Z))",
              'A': self.__seqToRE(self.locale_time.f_weekday, 'A'),
+diff --git a/Lib/asyncio/runners.py b/Lib/asyncio/runners.py
+index 1b89236599a..102ae78021b 100644
+--- a/Lib/asyncio/runners.py
++++ b/Lib/asyncio/runners.py
+@@ -168,6 +168,7 @@ def run(main, *, debug=None, loop_factory=None):
+     running in the same thread.
+ 
+     If debug is True, the event loop will be run in debug mode.
++    If loop_factory is passed, it is used for new event loop creation.
+ 
+     This function always creates a new event loop and closes it at the end.
+     It should be used as a main entry point for asyncio programs, and should
 diff --git a/Lib/asyncio/selector_events.py b/Lib/asyncio/selector_events.py
 index 790711f8340..dd79ad18df3 100644
 --- a/Lib/asyncio/selector_events.py
@@ -678,6 +1588,39 @@ index 790711f8340..dd79ad18df3 100644
  
      def can_write_eof(self):
          return True
+diff --git a/Lib/email/message.py b/Lib/email/message.py
+index 46bb8c21942..6b7c3a23777 100644
+--- a/Lib/email/message.py
++++ b/Lib/email/message.py
+@@ -286,8 +286,12 @@ def get_payload(self, i=None, decode=False):
+         if i is not None and not isinstance(self._payload, list):
+             raise TypeError('Expected list, got %s' % type(self._payload))
+         payload = self._payload
+-        # cte might be a Header, so for now stringify it.
+-        cte = str(self.get('content-transfer-encoding', '')).lower()
++        cte = self.get('content-transfer-encoding', '')
++        if hasattr(cte, 'cte'):
++            cte = cte.cte
++        else:
++            # cte might be a Header, so for now stringify it.
++            cte = str(cte).strip().lower()
+         # payload may be bytes here.
+         if not decode:
+             if isinstance(payload, str) and utils._has_surrogates(payload):
+diff --git a/Lib/functools.py b/Lib/functools.py
+index f6849899e75..6025032bfaa 100644
+--- a/Lib/functools.py
++++ b/Lib/functools.py
+@@ -340,6 +340,9 @@ def __setstate__(self, state):
+         self.args = args
+         self.keywords = kwds
+ 
++    __class_getitem__ = classmethod(GenericAlias)
++
++
+ try:
+     from _functools import partial
+ except ImportError:
 diff --git a/Lib/http/cookies.py b/Lib/http/cookies.py
 index 6b9ed24ad8e..57791c6ab08 100644
 --- a/Lib/http/cookies.py
@@ -696,6 +1639,26 @@ index 6b9ed24ad8e..57791c6ab08 100644
      |                                  # or
      [""" + _LegalValueChars + r"""]*      # Any word or empty string
      )                                # End of group 'val'
+diff --git a/Lib/importlib/resources/_common.py b/Lib/importlib/resources/_common.py
+index a3902535342..a85df4b399f 100644
+--- a/Lib/importlib/resources/_common.py
++++ b/Lib/importlib/resources/_common.py
+@@ -93,12 +93,13 @@ def _infer_caller():
+     """
+ 
+     def is_this_file(frame_info):
+-        return frame_info.filename == __file__
++        return frame_info.filename == stack[0].filename
+ 
+     def is_wrapper(frame_info):
+         return frame_info.function == 'wrapper'
+ 
+-    not_this_file = itertools.filterfalse(is_this_file, inspect.stack())
++    stack = inspect.stack()
++    not_this_file = itertools.filterfalse(is_this_file, stack)
+     # also exclude 'wrapper' due to singledispatch in the call stack
+     callers = itertools.filterfalse(is_wrapper, not_this_file)
+     return next(callers).frame
 diff --git a/Lib/linecache.py b/Lib/linecache.py
 index 248cba93874..b6453fe2f31 100644
 --- a/Lib/linecache.py
@@ -723,6 +1686,28 @@ index 248cba93874..b6453fe2f31 100644
          if len(entry) == 1:
              # lazy cache entry, leave it lazy.
              continue
+diff --git a/Lib/multiprocessing/resource_tracker.py b/Lib/multiprocessing/resource_tracker.py
+index 79e96ecf324..23fea295c35 100644
+--- a/Lib/multiprocessing/resource_tracker.py
++++ b/Lib/multiprocessing/resource_tracker.py
+@@ -142,13 +142,14 @@ def ensure_running(self):
+                 # that can make the child die before it registers signal handlers
+                 # for SIGINT and SIGTERM. The mask is unregistered after spawning
+                 # the child.
++                prev_sigmask = None
+                 try:
+                     if _HAVE_SIGMASK:
+-                        signal.pthread_sigmask(signal.SIG_BLOCK, _IGNORED_SIGNALS)
++                        prev_sigmask = signal.pthread_sigmask(signal.SIG_BLOCK, _IGNORED_SIGNALS)
+                     pid = util.spawnv_passfds(exe, args, fds_to_pass)
+                 finally:
+-                    if _HAVE_SIGMASK:
+-                        signal.pthread_sigmask(signal.SIG_UNBLOCK, _IGNORED_SIGNALS)
++                    if prev_sigmask is not None:
++                        signal.pthread_sigmask(signal.SIG_SETMASK, prev_sigmask)
+             except:
+                 os.close(w)
+                 raise
 diff --git a/Lib/platform.py b/Lib/platform.py
 index c5b60480369..b86e6834911 100755
 --- a/Lib/platform.py
@@ -750,6 +1735,119 @@ index 9a5ef03c983..81b01385987 100644
          return self._shortcmd('RPOP %s' % user)
  
  
+diff --git a/Lib/pydoc.py b/Lib/pydoc.py
+index e3745e5453b..9dfa87b2a82 100755
+--- a/Lib/pydoc.py
++++ b/Lib/pydoc.py
+@@ -54,6 +54,7 @@ class or function within a module or module in a package.  If the
+ #     the current directory is changed with os.chdir(), an incorrect
+ #     path will be displayed.
+ 
++import ast
+ import __future__
+ import builtins
+ import importlib._bootstrap
+@@ -346,21 +347,29 @@ def ispackage(path):
+     return False
+ 
+ def source_synopsis(file):
+-    line = file.readline()
+-    while line[:1] == '#' or not line.strip():
+-        line = file.readline()
+-        if not line: break
+-    line = line.strip()
+-    if line[:4] == 'r"""': line = line[1:]
+-    if line[:3] == '"""':
+-        line = line[3:]
+-        if line[-1:] == '\\': line = line[:-1]
+-        while not line.strip():
+-            line = file.readline()
+-            if not line: break
+-        result = line.split('"""')[0].strip()
+-    else: result = None
+-    return result
++    """Return the one-line summary of a file object, if present"""
++
++    string = ''
++    try:
++        tokens = tokenize.generate_tokens(file.readline)
++        for tok_type, tok_string, _, _, _ in tokens:
++            if tok_type == tokenize.STRING:
++                string += tok_string
++            elif tok_type == tokenize.NEWLINE:
++                with warnings.catch_warnings():
++                    # Ignore the "invalid escape sequence" warning.
++                    warnings.simplefilter("ignore", SyntaxWarning)
++                    docstring = ast.literal_eval(string)
++                if not isinstance(docstring, str):
++                    return None
++                return docstring.strip().split('\n')[0].strip()
++            elif tok_type == tokenize.OP and tok_string in ('(', ')'):
++                string += tok_string
++            elif tok_type not in (tokenize.COMMENT, tokenize.NL, tokenize.ENCODING):
++                return None
++    except (tokenize.TokenError, UnicodeDecodeError, SyntaxError):
++        return None
++    return None
+ 
+ def synopsis(filename, cache={}):
+     """Get the one-line summary out of a module file."""
+diff --git a/Lib/subprocess.py b/Lib/subprocess.py
+index 1d17ae3608a..881a9ce800a 100644
+--- a/Lib/subprocess.py
++++ b/Lib/subprocess.py
+@@ -380,7 +380,7 @@ def _text_encoding():
+ 
+ def call(*popenargs, timeout=None, **kwargs):
+     """Run command with arguments.  Wait for command to complete or
+-    timeout, then return the returncode attribute.
++    for timeout seconds, then return the returncode attribute.
+ 
+     The arguments are the same as for the Popen constructor.  Example:
+ 
+@@ -517,8 +517,8 @@ def run(*popenargs,
+     in the returncode attribute, and output & stderr attributes if those streams
+     were captured.
+ 
+-    If timeout is given, and the process takes too long, a TimeoutExpired
+-    exception will be raised.
++    If timeout (seconds) is given and the process takes too long,
++     a TimeoutExpired exception will be raised.
+ 
+     There is an optional argument "input", allowing you to
+     pass bytes or a string to the subprocess's stdin.  If you use this argument
+diff --git a/Lib/test/_test_multiprocessing.py b/Lib/test/_test_multiprocessing.py
+index 3b4415b50ae..85b7290b5a5 100644
+--- a/Lib/test/_test_multiprocessing.py
++++ b/Lib/test/_test_multiprocessing.py
+@@ -5826,6 +5826,27 @@ def test_too_long_name_resource(self):
+             resource_tracker.register(too_long_name_resource, rtype)
+ 
+ 
++    @unittest.skipUnless(hasattr(signal, "pthread_sigmask"), "pthread_sigmask is not available")
++    def test_resource_tracker_blocked_signals(self):
++        #
++        # gh-127586: Check that resource_tracker does not override blocked signals of caller.
++        #
++        from multiprocessing.resource_tracker import ResourceTracker
++        orig_sigmask = signal.pthread_sigmask(signal.SIG_BLOCK, set())
++        signals = {signal.SIGTERM, signal.SIGINT, signal.SIGUSR1}
++
++        try:
++            for sig in signals:
++                signal.pthread_sigmask(signal.SIG_SETMASK, {sig})
++                self.assertEqual(signal.pthread_sigmask(signal.SIG_BLOCK, set()), {sig})
++                tracker = ResourceTracker()
++                tracker.ensure_running()
++                self.assertEqual(signal.pthread_sigmask(signal.SIG_BLOCK, set()), {sig})
++                tracker._stop()
++        finally:
++            # restore sigmask to what it was before executing test
++            signal.pthread_sigmask(signal.SIG_SETMASK, orig_sigmask)
++
+ class TestSimpleQueue(unittest.TestCase):
+ 
+     @classmethod
 diff --git a/Lib/test/test__locale.py b/Lib/test/test__locale.py
 index 89c20325055..606dd297452 100644
 --- a/Lib/test/test__locale.py
@@ -789,27 +1887,356 @@ index 47693ea4d3c..736c19796ef 100644
      @unittest.skipUnless(selector_events._HAS_SENDMSG, 'no sendmsg')
      def test_write_sendmsg_full(self):
          data = memoryview(b'data')
+diff --git a/Lib/test/test_cext/__init__.py b/Lib/test/test_cext/__init__.py
+new file mode 100644
+index 00000000000..d5ea1dc6603
+--- /dev/null
++++ b/Lib/test/test_cext/__init__.py
+@@ -0,0 +1,114 @@
++# gh-116869: Build a basic C test extension to check that the Python C API
++# does not emit C compiler warnings.
++#
++# The Python C API must be compatible with building
++# with the -Werror=declaration-after-statement compiler flag.
++
++import os.path
++import shlex
++import shutil
++import subprocess
++import sys
++import unittest
++from test import support
++
++
++SOURCE = os.path.join(os.path.dirname(__file__), 'extension.c')
++SETUP = os.path.join(os.path.dirname(__file__), 'setup.py')
++Py_TRACE_REFS = hasattr(sys, 'getobjects')
++
++
++# With MSVC on a debug build, the linker fails with: cannot open file
++# 'python311.lib', it should look 'python311_d.lib'.
++@unittest.skipIf(support.MS_WINDOWS and support.Py_DEBUG,
++                 'test fails on Windows debug build')
++# Building and running an extension in clang sanitizing mode is not
++# straightforward
++@support.skip_if_sanitizer('test does not work with analyzing builds',
++                           address=True, memory=True, ub=True, thread=True)
++# the test uses venv+pip: skip if it's not available
++@support.requires_venv_with_pip()
++@support.requires_subprocess()
++@support.requires_resource('cpu')
++class TestExt(unittest.TestCase):
++    # Default build with no options
++    def test_build(self):
++        self.check_build('_test_cext')
++
++    def test_build_c11(self):
++        self.check_build('_test_c11_cext', std='c11')
++
++    @unittest.skipIf(support.MS_WINDOWS, "MSVC doesn't support /std:c99")
++    def test_build_c99(self):
++        self.check_build('_test_c99_cext', std='c99')
++
++    def test_build_limited(self):
++        self.check_build('_test_limited_cext', limited=True)
++
++    def test_build_limited_c11(self):
++        self.check_build('_test_limited_c11_cext', limited=True, std='c11')
++
++    def check_build(self, extension_name, std=None, limited=False):
++        if limited and Py_TRACE_REFS:
++            self.skipTest('Py_LIMITED_API is incompatible with Py_TRACE_REFS')
++
++        venv_dir = 'env'
++        with support.setup_venv_with_pip_setuptools_wheel(venv_dir) as python_exe:
++            self._check_build(extension_name, python_exe,
++                              std=std, limited=limited)
++
++    def _check_build(self, extension_name, python_exe, std, limited):
++        pkg_dir = 'pkg'
++        os.mkdir(pkg_dir)
++        shutil.copy(SETUP, os.path.join(pkg_dir, os.path.basename(SETUP)))
++        shutil.copy(SOURCE, os.path.join(pkg_dir, os.path.basename(SOURCE)))
++
++        def run_cmd(operation, cmd):
++            env = os.environ.copy()
++            if std:
++                env['CPYTHON_TEST_STD'] = std
++            if limited:
++                env['CPYTHON_TEST_LIMITED'] = '1'
++            env['CPYTHON_TEST_EXT_NAME'] = extension_name
++            if support.verbose:
++                print('Run:', ' '.join(map(shlex.quote, cmd)))
++                subprocess.run(cmd, check=True, env=env)
++            else:
++                proc = subprocess.run(cmd,
++                                      env=env,
++                                      stdout=subprocess.PIPE,
++                                      stderr=subprocess.STDOUT,
++                                      text=True)
++                if proc.returncode:
++                    print('Run:', ' '.join(map(shlex.quote, cmd)))
++                    print(proc.stdout, end='')
++                    self.fail(
++                        f"{operation} failed with exit code {proc.returncode}")
++
++        # Build and install the C extension
++        cmd = [python_exe, '-X', 'dev',
++               '-m', 'pip', 'install', '--no-build-isolation',
++               os.path.abspath(pkg_dir)]
++        if support.verbose:
++            cmd.append('-v')
++        run_cmd('Install', cmd)
++
++        # Do a reference run. Until we test that running python
++        # doesn't leak references (gh-94755), run it so one can manually check
++        # -X showrefcount results against this baseline.
++        cmd = [python_exe,
++               '-X', 'dev',
++               '-X', 'showrefcount',
++               '-c', 'pass']
++        run_cmd('Reference run', cmd)
++
++        # Import the C extension
++        cmd = [python_exe,
++               '-X', 'dev',
++               '-X', 'showrefcount',
++               '-c', f"import {extension_name}"]
++        run_cmd('Import', cmd)
++
++
++if __name__ == "__main__":
++    unittest.main()
+diff --git a/Lib/test/test_cext/extension.c b/Lib/test/test_cext/extension.c
+new file mode 100644
+index 00000000000..b76abe1d74c
+--- /dev/null
++++ b/Lib/test/test_cext/extension.c
+@@ -0,0 +1,89 @@
++// gh-116869: Basic C test extension to check that the Python C API
++// does not emit C compiler warnings.
++
++// Always enable assertions
++#undef NDEBUG
++
++#include "Python.h"
++
++#ifndef MODULE_NAME
++#  error "MODULE_NAME macro must be defined"
++#endif
++
++#define _STR(NAME) #NAME
++#define STR(NAME) _STR(NAME)
++
++PyDoc_STRVAR(_testcext_add_doc,
++"add(x, y)\n"
++"\n"
++"Return the sum of two integers: x + y.");
++
++static PyObject *
++_testcext_add(PyObject *Py_UNUSED(module), PyObject *args)
++{
++    long i, j, res;
++    if (!PyArg_ParseTuple(args, "ll:foo", &i, &j)) {
++        return NULL;
++    }
++    res = i + j;
++    return PyLong_FromLong(res);
++}
++
++
++static PyMethodDef _testcext_methods[] = {
++    {"add", _testcext_add, METH_VARARGS, _testcext_add_doc},
++    {NULL, NULL, 0, NULL}  // sentinel
++};
++
++
++static int
++_testcext_exec(
++#ifdef __STDC_VERSION__
++    PyObject *module
++#else
++    PyObject *Py_UNUSED(module)
++#endif
++    )
++{
++#ifdef __STDC_VERSION__
++    if (PyModule_AddIntMacro(module, __STDC_VERSION__) < 0) {
++        return -1;
++    }
++#endif
++
++    // test Py_BUILD_ASSERT() and Py_BUILD_ASSERT_EXPR()
++    Py_BUILD_ASSERT(sizeof(int) == sizeof(unsigned int));
++    assert(Py_BUILD_ASSERT_EXPR(sizeof(int) == sizeof(unsigned int)) == 0);
++
++    return 0;
++}
++
++static PyModuleDef_Slot _testcext_slots[] = {
++    {Py_mod_exec, (void*)_testcext_exec},
++    {0, NULL}
++};
++
++
++PyDoc_STRVAR(_testcext_doc, "C test extension.");
++
++static struct PyModuleDef _testcext_module = {
++    PyModuleDef_HEAD_INIT,  // m_base
++    STR(MODULE_NAME),  // m_name
++    _testcext_doc,  // m_doc
++    0,  // m_size
++    _testcext_methods,  // m_methods
++    _testcext_slots,  // m_slots
++    NULL,  // m_traverse
++    NULL,  // m_clear
++    NULL,  // m_free
++};
++
++
++#define _FUNC_NAME(NAME) PyInit_ ## NAME
++#define FUNC_NAME(NAME) _FUNC_NAME(NAME)
++
++PyMODINIT_FUNC
++FUNC_NAME(MODULE_NAME)(void)
++{
++    return PyModuleDef_Init(&_testcext_module);
++}
+diff --git a/Lib/test/test_cext/setup.py b/Lib/test/test_cext/setup.py
+new file mode 100644
+index 00000000000..90dd51d4cd8
+--- /dev/null
++++ b/Lib/test/test_cext/setup.py
+@@ -0,0 +1,107 @@
++# gh-91321: Build a basic C test extension to check that the Python C API is
++# compatible with C and does not emit C compiler warnings.
++import os
++import platform
++import shlex
++import sys
++import sysconfig
++from test import support
++
++from setuptools import setup, Extension
++
++
++SOURCE = 'extension.c'
++
++if not support.MS_WINDOWS:
++    # C compiler flags for GCC and clang
++    CFLAGS = [
++        # The purpose of test_cext extension is to check that building a C
++        # extension using the Python C API does not emit C compiler warnings.
++        '-Werror',
++
++        # gh-120593: Check the 'const' qualifier
++        '-Wcast-qual',
++
++        # gh-116869: The Python C API must be compatible with building
++        # with the -Werror=declaration-after-statement compiler flag.
++        '-Werror=declaration-after-statement',
++    ]
++else:
++    # MSVC compiler flags
++    CFLAGS = [
++        # Display warnings level 1 to 4
++        '/W4',
++        # Treat all compiler warnings as compiler errors
++        '/WX',
++    ]
++
++
++def main():
++    std = os.environ.get("CPYTHON_TEST_STD", "")
++    module_name = os.environ["CPYTHON_TEST_EXT_NAME"]
++    limited = bool(os.environ.get("CPYTHON_TEST_LIMITED", ""))
++
++    cflags = list(CFLAGS)
++    cflags.append(f'-DMODULE_NAME={module_name}')
++
++    # Add -std=STD or /std:STD (MSVC) compiler flag
++    if std:
++        if support.MS_WINDOWS:
++            cflags.append(f'/std:{std}')
++        else:
++            cflags.append(f'-std={std}')
++
++    # Remove existing -std or /std options from CC command line.
++    # Python adds -std=c11 option.
++    cmd = (sysconfig.get_config_var('CC') or '')
++    if cmd is not None:
++        if support.MS_WINDOWS:
++            std_prefix = '/std'
++        else:
++            std_prefix = '-std'
++        cmd = shlex.split(cmd)
++        cmd = [arg for arg in cmd if not arg.startswith(std_prefix)]
++        cmd = shlex.join(cmd)
++        # CC env var overrides sysconfig CC variable in setuptools
++        os.environ['CC'] = cmd
++
++    # Define Py_LIMITED_API macro
++    if limited:
++        version = sys.hexversion
++        cflags.append(f'-DPy_LIMITED_API={version:#x}')
++
++    # On Windows, add PCbuild\amd64\ to include and library directories
++    include_dirs = []
++    library_dirs = []
++    if support.MS_WINDOWS:
++        srcdir = sysconfig.get_config_var('srcdir')
++        machine = platform.uname().machine
++        pcbuild = os.path.join(srcdir, 'PCbuild', machine)
++        if os.path.exists(pcbuild):
++            # pyconfig.h is generated in PCbuild\amd64\
++            include_dirs.append(pcbuild)
++            # python313.lib is generated in PCbuild\amd64\
++            library_dirs.append(pcbuild)
++            print(f"Add PCbuild directory: {pcbuild}")
++
++    # Display information to help debugging
++    for env_name in ('CC', 'CFLAGS'):
++        if env_name in os.environ:
++            print(f"{env_name} env var: {os.environ[env_name]!r}")
++        else:
++            print(f"{env_name} env var: <missing>")
++    print(f"extra_compile_args: {cflags!r}")
++
++    ext = Extension(
++        module_name,
++        sources=[SOURCE],
++        extra_compile_args=cflags,
++        include_dirs=include_dirs,
++        library_dirs=library_dirs)
++    setup(name=f'internal_{module_name}',
++          version='0.0',
++          ext_modules=[ext])
++
++
++if __name__ == "__main__":
++    main()
 diff --git a/Lib/test/test_cppext/__init__.py b/Lib/test/test_cppext/__init__.py
-index f02a823bd22..efd79448c66 100644
+index f02a823bd22..2198b7b2c0b 100644
 --- a/Lib/test/test_cppext/__init__.py
 +++ b/Lib/test/test_cppext/__init__.py
-@@ -1,45 +1,52 @@
+@@ -1,45 +1,61 @@
  # gh-91321: Build a basic C++ test extension to check that the Python C API is
  # compatible with C++ and does not emit C++ compiler warnings.
  import os.path
 +import shlex
  import shutil
--import sys
--import unittest
- import subprocess
++import subprocess
+ import sys
+ import unittest
+-import subprocess
 -import sysconfig
-+import unittest
  from test import support
 -from test.support import os_helper
  
  
  SOURCE = os.path.join(os.path.dirname(__file__), 'extension.cpp')
  SETUP = os.path.join(os.path.dirname(__file__), 'setup.py')
++Py_TRACE_REFS = hasattr(sys, 'getobjects')
  
  
 +# With MSVC on a debug build, the linker fails with: cannot open file
@@ -834,18 +2261,7 @@ index f02a823bd22..efd79448c66 100644
 -    @support.requires_resource('cpu')
      def test_build_cpp03(self):
 -        self.check_build(True, '_testcpp03ext')
-+        self.check_build('_testcpp03ext', std='c++03')
-+
-+    @unittest.skipIf(support.MS_WINDOWS, "MSVC doesn't support /std:c++11")
-+    def test_build_cpp11(self):
-+        self.check_build('_testcpp11ext', std='c++11')
-+
-+    # Only test C++14 on MSVC.
-+    # On s390x RHEL7, GCC 4.8.5 doesn't support C++14.
-+    @unittest.skipIf(not support.MS_WINDOWS, "need Windows")
-+    def test_build_cpp14(self):
-+        self.check_build('_testcpp14ext', std='c++14')
- 
+-
 -    # With MSVC, the linker fails with: cannot open file 'python311.lib'
 -    # https://github.com/python/cpython/pull/32175#issuecomment-1111175897
 -    @unittest.skipIf(support.MS_WINDOWS, 'test fails on Windows')
@@ -857,24 +2273,45 @@ index f02a823bd22..efd79448c66 100644
 -    # the test uses venv+pip: skip if it's not available
 -    @support.requires_venv_with_pip()
 -    def check_build(self, std_cpp03, extension_name):
-+    def check_build(self, extension_name, std=None):
++        self.check_build('_testcpp03ext', std='c++03')
++
++    @unittest.skipIf(support.MS_WINDOWS, "MSVC doesn't support /std:c++11")
++    def test_build_cpp11(self):
++        self.check_build('_testcpp11ext', std='c++11')
++
++    # Only test C++14 on MSVC.
++    # On s390x RHEL7, GCC 4.8.5 doesn't support C++14.
++    @unittest.skipIf(not support.MS_WINDOWS, "need Windows")
++    def test_build_cpp14(self):
++        self.check_build('_testcpp14ext', std='c++14')
++
++    def test_build_limited(self):
++        self.check_build('_testcppext_limited', limited=True)
++
++    def check_build(self, extension_name, std=None, limited=False):
++        if limited and Py_TRACE_REFS:
++            self.skipTest('Py_LIMITED_API is incompatible with Py_TRACE_REFS')
++
          venv_dir = 'env'
          with support.setup_venv_with_pip_setuptools_wheel(venv_dir) as python_exe:
 -            self._check_build(std_cpp03, extension_name, python_exe)
-+            self._check_build(extension_name, python_exe, std=std)
++            self._check_build(extension_name, python_exe,
++                              std=std, limited=limited)
  
 -    def _check_build(self, std_cpp03, extension_name, python_exe):
-+    def _check_build(self, extension_name, python_exe, std):
++    def _check_build(self, extension_name, python_exe, std, limited):
          pkg_dir = 'pkg'
          os.mkdir(pkg_dir)
          shutil.copy(SETUP, os.path.join(pkg_dir, os.path.basename(SETUP)))
-@@ -47,10 +54,11 @@ def _check_build(self, std_cpp03, extension_name, python_exe):
+@@ -47,10 +63,13 @@ def _check_build(self, std_cpp03, extension_name, python_exe):
  
          def run_cmd(operation, cmd):
              env = os.environ.copy()
 -            env['CPYTHON_TEST_CPP_STD'] = 'c++03' if std_cpp03 else 'c++11'
 +            if std:
 +                env['CPYTHON_TEST_CPP_STD'] = std
++            if limited:
++                env['CPYTHON_TEST_LIMITED'] = '1'
              env['CPYTHON_TEST_EXT_NAME'] = extension_name
              if support.verbose:
 -                print('Run:', ' '.join(cmd))
@@ -882,7 +2319,7 @@ index f02a823bd22..efd79448c66 100644
                  subprocess.run(cmd, check=True, env=env)
              else:
                  proc = subprocess.run(cmd,
-@@ -59,6 +67,7 @@ def run_cmd(operation, cmd):
+@@ -59,6 +78,7 @@ def run_cmd(operation, cmd):
                                        stderr=subprocess.STDOUT,
                                        text=True)
                  if proc.returncode:
@@ -890,7 +2327,7 @@ index f02a823bd22..efd79448c66 100644
                      print(proc.stdout, end='')
                      self.fail(
                          f"{operation} failed with exit code {proc.returncode}")
-@@ -67,6 +76,8 @@ def run_cmd(operation, cmd):
+@@ -67,6 +87,8 @@ def run_cmd(operation, cmd):
          cmd = [python_exe, '-X', 'dev',
                 '-m', 'pip', 'install', '--no-build-isolation',
                 os.path.abspath(pkg_dir)]
@@ -900,7 +2337,7 @@ index f02a823bd22..efd79448c66 100644
  
          # Do a reference run. Until we test that running python
 diff --git a/Lib/test/test_cppext/extension.cpp b/Lib/test/test_cppext/extension.cpp
-index 90669b10cb2..ab485b629b7 100644
+index 90669b10cb2..500d5918145 100644
 --- a/Lib/test/test_cppext/extension.cpp
 +++ b/Lib/test/test_cppext/extension.cpp
 @@ -8,10 +8,8 @@
@@ -916,7 +2353,44 @@ index 90669b10cb2..ab485b629b7 100644
  #endif
  
  #define _STR(NAME) #NAME
-@@ -160,7 +158,7 @@ PyType_Slot VirtualPyObject_Slots[] = {
+@@ -64,6 +62,7 @@ test_api_casts(PyObject *Py_UNUSED(module), PyObject *Py_UNUSED(args))
+     Py_ssize_t refcnt = Py_REFCNT(obj);
+     assert(refcnt >= 1);
+ 
++#ifndef Py_LIMITED_API
+     // gh-92138: For backward compatibility, functions of Python C API accepts
+     // "const PyObject*". Check that using it does not emit C++ compiler
+     // warnings.
+@@ -76,6 +75,7 @@ test_api_casts(PyObject *Py_UNUSED(module), PyObject *Py_UNUSED(args))
+     assert(PyTuple_GET_SIZE(const_obj) == 2);
+     PyObject *one = PyTuple_GET_ITEM(const_obj, 0);
+     assert(PyLong_AsLong(one) == 1);
++#endif
+ 
+     // gh-92898: StrongRef doesn't inherit from PyObject but has an operator to
+     // cast to PyObject*.
+@@ -108,6 +108,12 @@ test_unicode(PyObject *Py_UNUSED(module), PyObject *Py_UNUSED(args))
+     }
+ 
+     assert(PyUnicode_Check(str));
++
++    assert(PyUnicode_GetLength(str) == 3);
++    assert(PyUnicode_ReadChar(str, 0) == 'a');
++    assert(PyUnicode_ReadChar(str, 1) == 'b');
++
++#ifndef Py_LIMITED_API
+     assert(PyUnicode_GET_LENGTH(str) == 3);
+ 
+     // gh-92800: test PyUnicode_READ()
+@@ -123,6 +129,7 @@ test_unicode(PyObject *Py_UNUSED(module), PyObject *Py_UNUSED(args))
+     assert(PyUnicode_READ(ukind, const_data, 2) == 'c');
+ 
+     assert(PyUnicode_READ_CHAR(str, 1) == 'b');
++#endif
+ 
+     Py_DECREF(str);
+     Py_RETURN_NONE;
+@@ -160,7 +167,7 @@ PyType_Slot VirtualPyObject_Slots[] = {
  };
  
  PyType_Spec VirtualPyObject_Spec = {
@@ -925,7 +2399,7 @@ index 90669b10cb2..ab485b629b7 100644
      /* .basicsize */ sizeof(VirtualPyObject),
      /* .itemsize */ 0,
      /* .flags */ Py_TPFLAGS_DEFAULT,
-@@ -227,6 +225,10 @@ _testcppext_exec(PyObject *module)
+@@ -227,6 +234,10 @@ _testcppext_exec(PyObject *module)
      if (!result) return -1;
      Py_DECREF(result);
  
@@ -936,7 +2410,7 @@ index 90669b10cb2..ab485b629b7 100644
      return 0;
  }
  
-@@ -240,7 +242,7 @@ PyDoc_STRVAR(_testcppext_doc, "C++ test extension.");
+@@ -240,7 +251,7 @@ PyDoc_STRVAR(_testcppext_doc, "C++ test extension.");
  
  static struct PyModuleDef _testcppext_module = {
      PyModuleDef_HEAD_INIT,  // m_base
@@ -945,7 +2419,7 @@ index 90669b10cb2..ab485b629b7 100644
      _testcppext_doc,  // m_doc
      0,  // m_size
      _testcppext_methods,  // m_methods
-@@ -254,7 +256,7 @@ static struct PyModuleDef _testcppext_module = {
+@@ -254,7 +265,7 @@ static struct PyModuleDef _testcppext_module = {
  #define FUNC_NAME(NAME) _FUNC_NAME(NAME)
  
  PyMODINIT_FUNC
@@ -955,7 +2429,7 @@ index 90669b10cb2..ab485b629b7 100644
      return PyModuleDef_Init(&_testcppext_module);
  }
 diff --git a/Lib/test/test_cppext/setup.py b/Lib/test/test_cppext/setup.py
-index c7ba1efb4dd..d97b238b8d1 100644
+index c7ba1efb4dd..019ff18446a 100644
 --- a/Lib/test/test_cppext/setup.py
 +++ b/Lib/test/test_cppext/setup.py
 @@ -1,8 +1,8 @@
@@ -976,7 +2450,7 @@ index c7ba1efb4dd..d97b238b8d1 100644
  if not support.MS_WINDOWS:
      # C++ compiler flags for GCC and clang
      CPPFLAGS = [
-@@ -19,34 +20,77 @@
+@@ -19,34 +20,83 @@
          '-Werror',
      ]
  else:
@@ -997,11 +2471,12 @@ index c7ba1efb4dd..d97b238b8d1 100644
 -    name = os.environ["CPYTHON_TEST_EXT_NAME"]
 +    std = os.environ.get("CPYTHON_TEST_CPP_STD", "")
 +    module_name = os.environ["CPYTHON_TEST_EXT_NAME"]
- 
--    cppflags = [*CPPFLAGS, f'-std={std}']
++    limited = bool(os.environ.get("CPYTHON_TEST_LIMITED", ""))
++
 +    cppflags = list(CPPFLAGS)
 +    cppflags.append(f'-DMODULE_NAME={module_name}')
-+
+ 
+-    cppflags = [*CPPFLAGS, f'-std={std}']
 +    # Add -std=STD or /std:STD (MSVC) compiler flag
 +    if std:
 +        if support.MS_WINDOWS:
@@ -1027,6 +2502,11 @@ index c7ba1efb4dd..d97b238b8d1 100644
  
 -    cpp_ext = Extension(
 -        name,
++    # Define Py_LIMITED_API macro
++    if limited:
++        version = sys.hexversion
++        cppflags.append(f'-DPy_LIMITED_API={version:#x}')
++
 +    # On Windows, add PCbuild\amd64\ to include and library directories
 +    include_dirs = []
 +    library_dirs = []
@@ -1064,6 +2544,432 @@ index c7ba1efb4dd..d97b238b8d1 100644
  
  
  if __name__ == "__main__":
+diff --git a/Lib/test/test_ctypes/test_as_parameter.py b/Lib/test/test_ctypes/test_as_parameter.py
+index 27a5d3ac064..ec51c68f6c0 100644
+--- a/Lib/test/test_ctypes/test_as_parameter.py
++++ b/Lib/test/test_ctypes/test_as_parameter.py
+@@ -1,3 +1,4 @@
++import ctypes
+ import unittest
+ from ctypes import *
+ from test.test_ctypes import need_symbol
+@@ -192,15 +193,21 @@ class S8I(Structure):
+                              (9*2, 8*3, 7*4, 6*5, 5*6, 4*7, 3*8, 2*9))
+ 
+     def test_recursive_as_param(self):
+-        from ctypes import c_int
+-
+         class A:
+             pass
+ 
+         a = A()
+         a._as_parameter_ = a
+-        with self.assertRaises(RecursionError):
+-            c_int.from_param(a)
++        for c_type in (
++            ctypes.c_wchar_p,
++            ctypes.c_char_p,
++            ctypes.c_void_p,
++            ctypes.c_int,  # PyCSimpleType
++            POINT,  # CDataType
++        ):
++            with self.subTest(c_type=c_type):
++                with self.assertRaises(RecursionError):
++                    c_type.from_param(a)
+ 
+ 
+ #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+diff --git a/Lib/test/test_ctypes/test_dlerror.py b/Lib/test/test_ctypes/test_dlerror.py
+new file mode 100644
+index 00000000000..6bf492399cb
+--- /dev/null
++++ b/Lib/test/test_ctypes/test_dlerror.py
+@@ -0,0 +1,176 @@
++import _ctypes
++import os
++import platform
++import sys
++import test.support
++import unittest
++from ctypes import CDLL, c_int
++from ctypes.util import find_library
++
++
++FOO_C = r"""
++#include <unistd.h>
++
++/* This is a 'GNU indirect function' (IFUNC) that will be called by
++   dlsym() to resolve the symbol "foo" to an address. Typically, such
++   a function would return the address of an actual function, but it
++   can also just return NULL.  For some background on IFUNCs, see
++   https://willnewton.name/uncategorized/using-gnu-indirect-functions.
++
++   Adapted from Michael Kerrisk's answer: https://stackoverflow.com/a/53590014.
++*/
++
++asm (".type foo STT_GNU_IFUNC");
++
++void *foo(void)
++{
++    write($DESCRIPTOR, "OK", 2);
++    return NULL;
++}
++"""
++
++
++@unittest.skipUnless(sys.platform.startswith('linux'),
++                     'test requires GNU IFUNC support')
++class TestNullDlsym(unittest.TestCase):
++    """GH-126554: Ensure that we catch NULL dlsym return values
++
++    In rare cases, such as when using GNU IFUNCs, dlsym(),
++    the C function that ctypes' CDLL uses to get the address
++    of symbols, can return NULL.
++
++    The objective way of telling if an error during symbol
++    lookup happened is to call glibc's dlerror() and check
++    for a non-NULL return value.
++
++    However, there can be cases where dlsym() returns NULL
++    and dlerror() is also NULL, meaning that glibc did not
++    encounter any error.
++
++    In the case of ctypes, we subjectively treat that as
++    an error, and throw a relevant exception.
++
++    This test case ensures that we correctly enforce
++    this 'dlsym returned NULL -> throw Error' rule.
++    """
++
++    def test_null_dlsym(self):
++        import subprocess
++        import tempfile
++
++        retcode = subprocess.call(["gcc", "--version"],
++                                  stdout=subprocess.DEVNULL,
++                                  stderr=subprocess.DEVNULL)
++        if retcode != 0:
++            self.skipTest("gcc is missing")
++
++        pipe_r, pipe_w = os.pipe()
++        self.addCleanup(os.close, pipe_r)
++        self.addCleanup(os.close, pipe_w)
++
++        with tempfile.TemporaryDirectory() as d:
++            # Create a C file with a GNU Indirect Function (FOO_C)
++            # and compile it into a shared library.
++            srcname = os.path.join(d, 'foo.c')
++            dstname = os.path.join(d, 'libfoo.so')
++            with open(srcname, 'w') as f:
++                f.write(FOO_C.replace('$DESCRIPTOR', str(pipe_w)))
++            args = ['gcc', '-fPIC', '-shared', '-o', dstname, srcname]
++            p = subprocess.run(args, capture_output=True)
++
++            if p.returncode != 0:
++                # IFUNC is not supported on all architectures.
++                if platform.machine() == 'x86_64':
++                    # It should be supported here. Something else went wrong.
++                    p.check_returncode()
++                else:
++                    # IFUNC might not be supported on this machine.
++                    self.skipTest(f"could not compile indirect function: {p}")
++
++            # Case #1: Test 'PyCFuncPtr_FromDll' from Modules/_ctypes/_ctypes.c
++            L = CDLL(dstname)
++            with self.assertRaisesRegex(AttributeError, "function 'foo' not found"):
++                # Try accessing the 'foo' symbol.
++                # It should resolve via dlsym() to NULL,
++                # and since we subjectively treat NULL
++                # addresses as errors, we should get
++                # an error.
++                L.foo
++
++            # Assert that the IFUNC was called
++            self.assertEqual(os.read(pipe_r, 2), b'OK')
++
++            # Case #2: Test 'CDataType_in_dll_impl' from Modules/_ctypes/_ctypes.c
++            with self.assertRaisesRegex(ValueError, "symbol 'foo' not found"):
++                c_int.in_dll(L, "foo")
++
++            # Assert that the IFUNC was called
++            self.assertEqual(os.read(pipe_r, 2), b'OK')
++
++            # Case #3: Test 'py_dl_sym' from Modules/_ctypes/callproc.c
++            dlopen = test.support.get_attribute(_ctypes, 'dlopen')
++            dlsym = test.support.get_attribute(_ctypes, 'dlsym')
++            L = dlopen(dstname)
++            with self.assertRaisesRegex(OSError, "symbol 'foo' not found"):
++                dlsym(L, "foo")
++
++            # Assert that the IFUNC was called
++            self.assertEqual(os.read(pipe_r, 2), b'OK')
++
++
++@unittest.skipUnless(os.name != 'nt', 'test requires dlerror() calls')
++class TestLocalization(unittest.TestCase):
++
++    @staticmethod
++    def configure_locales(func):
++        return test.support.run_with_locale(
++            'LC_ALL',
++            'fr_FR.iso88591', 'ja_JP.sjis', 'zh_CN.gbk',
++            'fr_FR.utf8', 'en_US.utf8',
++            '',
++        )(func)
++
++    @classmethod
++    def setUpClass(cls):
++        cls.libc_filename = find_library("c")
++        if cls.libc_filename is None:
++            raise unittest.SkipTest('cannot find libc')
++
++    @configure_locales
++    def test_localized_error_from_dll(self):
++        dll = CDLL(self.libc_filename)
++        with self.assertRaises(AttributeError):
++            dll.this_name_does_not_exist
++
++    @configure_locales
++    def test_localized_error_in_dll(self):
++        dll = CDLL(self.libc_filename)
++        with self.assertRaises(ValueError):
++            c_int.in_dll(dll, 'this_name_does_not_exist')
++
++    @unittest.skipUnless(hasattr(_ctypes, 'dlopen'),
++                         'test requires _ctypes.dlopen()')
++    @configure_locales
++    def test_localized_error_dlopen(self):
++        missing_filename = b'missing\xff.so'
++        # Depending whether the locale, we may encode '\xff' differently
++        # but we are only interested in avoiding a UnicodeDecodeError
++        # when reporting the dlerror() error message which contains
++        # the localized filename.
++        filename_pattern = r'missing.*?\.so'
++        with self.assertRaisesRegex(OSError, filename_pattern):
++            _ctypes.dlopen(missing_filename, 2)
++
++    @unittest.skipUnless(hasattr(_ctypes, 'dlopen'),
++                         'test requires _ctypes.dlopen()')
++    @unittest.skipUnless(hasattr(_ctypes, 'dlsym'),
++                         'test requires _ctypes.dlsym()')
++    @configure_locales
++    def test_localized_error_dlsym(self):
++        dll = _ctypes.dlopen(self.libc_filename)
++        with self.assertRaises(OSError):
++            _ctypes.dlsym(dll, 'this_name_does_not_exist')
++
++
++if __name__ == "__main__":
++    unittest.main()
+diff --git a/Lib/test/test_ctypes/test_struct_fields.py b/Lib/test/test_ctypes/test_struct_fields.py
+index e444f5e1f77..2e7cd511886 100644
+--- a/Lib/test/test_ctypes/test_struct_fields.py
++++ b/Lib/test/test_ctypes/test_struct_fields.py
+@@ -1,4 +1,5 @@
+ import unittest
++import sys
+ from ctypes import *
+ 
+ class StructFieldsTestCase(unittest.TestCase):
+@@ -69,6 +70,27 @@ def __init_subclass__(cls, **kwargs):
+                                     'ctypes state is not initialized'):
+             class Subclass(BrokenStructure): ...
+ 
++    def test_max_field_size_gh126937(self):
++        # Classes for big structs should be created successfully.
++        # (But they most likely can't be instantiated.)
++        # The size must fit in Py_ssize_t.
++
++        class X(Structure):
++            _fields_ = [('char', c_char),]
++        max_field_size = sys.maxsize
++
++        class Y(Structure):
++            _fields_ = [('largeField', X * max_field_size)]
++        class Z(Structure):
++            _fields_ = [('largeField', c_char * max_field_size)]
++
++        with self.assertRaises(OverflowError):
++            class TooBig(Structure):
++                _fields_ = [('largeField', X * (max_field_size + 1))]
++        with self.assertRaises(OverflowError):
++            class TooBig(Structure):
++                _fields_ = [('largeField', c_char * (max_field_size + 1))]
++
+     # __set__ and __get__ should raise a TypeError in case their self
+     # argument is not a ctype instance.
+     def test___set__(self):
+diff --git a/Lib/test/test_dbm_gnu.py b/Lib/test/test_dbm_gnu.py
+index 73602cab518..f1ad4a3a9cb 100644
+--- a/Lib/test/test_dbm_gnu.py
++++ b/Lib/test/test_dbm_gnu.py
+@@ -1,10 +1,11 @@
+-from test import support
+-from test.support import import_helper, cpython_only
+-gdbm = import_helper.import_module("dbm.gnu") #skip if not supported
+-import unittest
+ import os
+-from test.support.os_helper import TESTFN, TESTFN_NONASCII, unlink, FakePath
++import unittest
++from test import support
++from test.support import cpython_only, import_helper
++from test.support.os_helper import (TESTFN, TESTFN_NONASCII, FakePath,
++                                    create_empty_file, temp_dir, unlink)
+ 
++gdbm = import_helper.import_module("dbm.gnu")  # skip if not supported
+ 
+ filename = TESTFN
+ 
+@@ -192,6 +193,17 @@ def test_open_with_bytes_path(self):
+     def test_open_with_pathlib_bytes_path(self):
+         gdbm.open(FakePath(os.fsencode(filename)), "c").close()
+ 
++    @support.run_with_locale(
++        'LC_ALL',
++        'fr_FR.iso88591', 'ja_JP.sjis', 'zh_CN.gbk',
++        'fr_FR.utf8', 'en_US.utf8',
++        '',
++    )
++    def test_localized_error(self):
++        with temp_dir() as d:
++            create_empty_file(os.path.join(d, 'test'))
++            self.assertRaises(gdbm.error, gdbm.open, filename, 'r')
++
+ 
+ if __name__ == '__main__':
+     unittest.main()
+diff --git a/Lib/test/test_email/test_email.py b/Lib/test/test_email/test_email.py
+index ef8aa0d53c5..e33946de350 100644
+--- a/Lib/test/test_email/test_email.py
++++ b/Lib/test/test_email/test_email.py
+@@ -810,6 +810,16 @@ def test_unicode_body_defaults_to_utf8_encoding(self):
+             w4kgdGVzdGFiYwo=
+             """))
+ 
++    def test_string_payload_with_base64_cte(self):
++        msg = email.message_from_string(textwrap.dedent("""\
++        Content-Transfer-Encoding: base64
++
++        SGVsbG8uIFRlc3Rpbmc=
++        """), policy=email.policy.default)
++        self.assertEqual(msg.get_payload(decode=True), b"Hello. Testing")
++        self.assertDefectsEqual(msg['content-transfer-encoding'].defects, [])
++
++
+ 
+ # Test the email.encoders module
+ class TestEncoders(unittest.TestCase):
+@@ -2352,6 +2362,40 @@ def test_missing_header_body_separator(self):
+         self.assertDefectsEqual(msg.defects,
+                                 [errors.MissingHeaderBodySeparatorDefect])
+ 
++    def test_string_payload_with_extra_space_after_cte(self):
++        # https://github.com/python/cpython/issues/98188
++        cte = "base64 "
++        msg = email.message_from_string(textwrap.dedent(f"""\
++        Content-Transfer-Encoding: {cte}
++
++        SGVsbG8uIFRlc3Rpbmc=
++        """), policy=email.policy.default)
++        self.assertEqual(msg.get_payload(decode=True), b"Hello. Testing")
++        self.assertDefectsEqual(msg['content-transfer-encoding'].defects, [])
++
++    def test_string_payload_with_extra_text_after_cte(self):
++        msg = email.message_from_string(textwrap.dedent("""\
++        Content-Transfer-Encoding: base64 some text
++
++        SGVsbG8uIFRlc3Rpbmc=
++        """), policy=email.policy.default)
++        self.assertEqual(msg.get_payload(decode=True), b"Hello. Testing")
++        cte = msg['content-transfer-encoding']
++        self.assertDefectsEqual(cte.defects, [email.errors.InvalidHeaderDefect])
++
++    def test_string_payload_with_extra_space_after_cte_compat32(self):
++        cte = "base64 "
++        msg = email.message_from_string(textwrap.dedent(f"""\
++        Content-Transfer-Encoding: {cte}
++
++        SGVsbG8uIFRlc3Rpbmc=
++        """), policy=email.policy.compat32)
++        pasted_cte = msg['content-transfer-encoding']
++        self.assertEqual(pasted_cte, cte)
++        self.assertEqual(msg.get_payload(decode=True), b"Hello. Testing")
++        self.assertDefectsEqual(msg.defects, [])
++
++
+ 
+ # Test RFC 2047 header encoding and decoding
+ class TestRFC2047(TestEmailBase):
+diff --git a/Lib/test/test_email/test_headerregistry.py b/Lib/test/test_email/test_headerregistry.py
+index 5a608a033c7..a579f9eeb7f 100644
+--- a/Lib/test/test_email/test_headerregistry.py
++++ b/Lib/test/test_email/test_headerregistry.py
+@@ -838,6 +838,11 @@ def cte_as_value(self,
+             '7bit',
+             [errors.InvalidHeaderDefect]),
+ 
++        'extra_space_after_cte': (
++            'base64 ',
++            'base64',
++            []),
++
+     }
+ 
+ 
+diff --git a/Lib/test/test_except_star.py b/Lib/test/test_except_star.py
+index c49c6008e08..284907f6121 100644
+--- a/Lib/test/test_except_star.py
++++ b/Lib/test/test_except_star.py
+@@ -952,6 +952,49 @@ def derive(self, excs):
+         self.assertExceptionIsLike(tes, FalsyEG("eg", [TypeError(1)]))
+         self.assertExceptionIsLike(ves, FalsyEG("eg", [ValueError(2)]))
+ 
++    def test_exception_group_subclass_with_bad_split_func(self):
++        # see gh-128049.
++        class BadEG1(ExceptionGroup):
++            def split(self, *args):
++                return "NOT A 2-TUPLE!"
++
++        class BadEG2(ExceptionGroup):
++            def split(self, *args):
++                return ("NOT A 2-TUPLE!",)
++
++        eg_list = [
++            (BadEG1("eg", [OSError(123), ValueError(456)]),
++             r"split must return a tuple, not str"),
++            (BadEG2("eg", [OSError(123), ValueError(456)]),
++             r"split must return a 2-tuple, got tuple of size 1")
++        ]
++
++        for eg_class, msg in eg_list:
++            with self.assertRaisesRegex(TypeError, msg) as m:
++                try:
++                    raise eg_class
++                except* ValueError:
++                    pass
++                except* OSError:
++                    pass
++
++            self.assertExceptionIsLike(m.exception.__context__, eg_class)
++
++        # we allow tuples of length > 2 for backwards compatibility
++        class WeirdEG(ExceptionGroup):
++            def split(self, *args):
++                return super().split(*args) + ("anything", 123456, None)
++
++        try:
++            raise WeirdEG("eg", [OSError(123), ValueError(456)])
++        except* OSError as e:
++            oeg = e
++        except* ValueError as e:
++            veg = e
++
++        self.assertExceptionIsLike(oeg, WeirdEG("eg", [OSError(123)]))
++        self.assertExceptionIsLike(veg, WeirdEG("eg", [ValueError(456)]))
++
+ 
+ class TestExceptStarCleanup(ExceptStarTest):
+     def test_sys_exception_restored(self):
 diff --git a/Lib/test/test_exceptions.py b/Lib/test/test_exceptions.py
 index 72c86eecae2..f4f2011a51a 100644
 --- a/Lib/test/test_exceptions.py
@@ -1091,6 +2997,24 @@ index 72c86eecae2..f4f2011a51a 100644
      def test_encodings(self):
          self.addCleanup(unlink, TESTFN)
          source = (
+diff --git a/Lib/test/test_functools.py b/Lib/test/test_functools.py
+index ff71fd53c08..dadcd04394b 100644
+--- a/Lib/test/test_functools.py
++++ b/Lib/test/test_functools.py
+@@ -390,6 +390,13 @@ def __getitem__(self, key):
+         f = self.partial(object)
+         self.assertRaises(TypeError, f.__setstate__, BadSequence())
+ 
++    def test_partial_genericalias(self):
++        alias = self.partial[int]
++        self.assertIs(alias.__origin__, self.partial)
++        self.assertEqual(alias.__args__, (int,))
++        self.assertEqual(alias.__parameters__, ())
++
++
+ @unittest.skipUnless(c_functools, 'requires the C _functools module')
+ class TestPartialC(TestPartial, unittest.TestCase):
+     if c_functools:
 diff --git a/Lib/test/test_http_cookies.py b/Lib/test/test_http_cookies.py
 index 8879902a6e2..7b3dc0fdaed 100644
 --- a/Lib/test/test_http_cookies.py
@@ -1148,6 +3072,82 @@ index 8879902a6e2..7b3dc0fdaed 100644
      def test_unquote(self):
          cases = [
              (r'a="b=\""', 'b="'),
+diff --git a/Lib/test/test_importlib/resources/test_files.py b/Lib/test/test_importlib/resources/test_files.py
+index 038aac0a3fe..fe597d72422 100644
+--- a/Lib/test/test_importlib/resources/test_files.py
++++ b/Lib/test/test_importlib/resources/test_files.py
+@@ -1,4 +1,8 @@
+ import typing
++import os
++import pathlib
++import py_compile
++import shutil
+ import textwrap
+ import unittest
+ import warnings
+@@ -10,8 +14,7 @@
+ from . import data01
+ from . import util
+ from . import _path
+-from test.support import os_helper
+-from test.support import import_helper
++from test.support import os_helper, import_helper
+ 
+ 
+ @contextlib.contextmanager
+@@ -112,7 +115,6 @@ def test_implicit_files_zip_submodule(self):
+         """
+         Special test for gh-121735 for Python 3.12.
+         """
+-        import os
+         import zipfile
+ 
+         def create_zip_from_directory(source_dir, zip_filename):
+@@ -144,6 +146,44 @@ def create_zip_from_directory(source_dir, zip_filename):
+         self.fixtures.enter_context(import_helper.DirsOnSysPath(zip_file))
+         assert importlib.import_module('somepkg.submod').val == 'resources are the best'
+ 
++    def _compile_importlib(self):
++        """
++        Make a compiled-only copy of the importlib resources package.
++
++        Currently only code is copied, as importlib resources doesn't itself
++        have any resources.
++        """
++        bin_site = self.fixtures.enter_context(os_helper.temp_dir())
++        c_resources = pathlib.Path(bin_site, 'c_resources')
++        sources = pathlib.Path(resources.__file__).parent
++
++        for source_path in sources.glob('**/*.py'):
++            c_path = c_resources.joinpath(source_path.relative_to(sources)).with_suffix('.pyc')
++            py_compile.compile(source_path, c_path)
++        self.fixtures.enter_context(import_helper.DirsOnSysPath(bin_site))
++
++    def test_implicit_files_with_compiled_importlib(self):
++        """
++        Caller detection works for compiled-only resources module.
++
++        python/cpython#123085
++        """
++        set_val = textwrap.dedent(
++            f"""
++            import {resources.__name__} as res
++            val = res.files().joinpath('res.txt').read_text(encoding='utf-8')
++            """
++        )
++        spec = {
++            'frozenpkg': {
++                '__init__.py': set_val.replace(resources.__name__, 'c_resources'),
++                'res.txt': 'resources are the best',
++            },
++        }
++        _path.build(spec, self.site_dir)
++        self._compile_importlib()
++        assert importlib.import_module('frozenpkg').val == 'resources are the best'
++
+ 
+ if __name__ == '__main__':
+     unittest.main()
 diff --git a/Lib/test/test_long.py b/Lib/test/test_long.py
 index d299c34cec0..41b973da2c7 100644
 --- a/Lib/test/test_long.py
@@ -1161,6 +3161,101 @@ index d299c34cec0..41b973da2c7 100644
  
  if __name__ == "__main__":
      unittest.main()
+diff --git a/Lib/test/test_pydoc/test_pydoc.py b/Lib/test/test_pydoc/test_pydoc.py
+index 6e80b54335b..8261c8561a1 100644
+--- a/Lib/test/test_pydoc/test_pydoc.py
++++ b/Lib/test/test_pydoc/test_pydoc.py
+@@ -3,6 +3,7 @@
+ import contextlib
+ import importlib.util
+ import inspect
++import io
+ import pydoc
+ import py_compile
+ import keyword
+@@ -841,6 +842,82 @@ def test_synopsis(self):
+             synopsis = pydoc.synopsis(TESTFN, {})
+             self.assertEqual(synopsis, 'line 1: h\xe9')
+ 
++    def test_source_synopsis(self):
++        def check(source, expected, encoding=None):
++            if isinstance(source, str):
++                source_file = StringIO(source)
++            else:
++                source_file = io.TextIOWrapper(io.BytesIO(source), encoding=encoding)
++            with source_file:
++                result = pydoc.source_synopsis(source_file)
++                self.assertEqual(result, expected)
++
++        check('"""Single line docstring."""',
++              'Single line docstring.')
++        check('"""First line of docstring.\nSecond line.\nThird line."""',
++              'First line of docstring.')
++        check('"""First line of docstring.\\nSecond line.\\nThird line."""',
++              'First line of docstring.')
++        check('"""  Whitespace around docstring.  """',
++              'Whitespace around docstring.')
++        check('import sys\n"""No docstring"""',
++              None)
++        check('  \n"""Docstring after empty line."""',
++              'Docstring after empty line.')
++        check('# Comment\n"""Docstring after comment."""',
++              'Docstring after comment.')
++        check('  # Indented comment\n"""Docstring after comment."""',
++              'Docstring after comment.')
++        check('""""""', # Empty docstring
++              '')
++        check('', # Empty file
++              None)
++        check('"""Embedded\0null byte"""',
++              None)
++        check('"""Embedded null byte"""\0',
++              None)
++        check('"""Café and résumé."""',
++              'Café and résumé.')
++        check("'''Triple single quotes'''",
++              'Triple single quotes')
++        check('"Single double quotes"',
++              'Single double quotes')
++        check("'Single single quotes'",
++              'Single single quotes')
++        check('"""split\\\nline"""',
++              'splitline')
++        check('"""Unrecognized escape \\sequence"""',
++              'Unrecognized escape \\sequence')
++        check('"""Invalid escape seq\\uence"""',
++              None)
++        check('r"""Raw \\stri\\ng"""',
++              'Raw \\stri\\ng')
++        check('b"""Bytes literal"""',
++              None)
++        check('f"""f-string"""',
++              None)
++        check('"""Concatenated""" \\\n"string" \'literals\'',
++              'Concatenatedstringliterals')
++        check('"""String""" + """expression"""',
++              None)
++        check('("""In parentheses""")',
++              'In parentheses')
++        check('("""Multiple lines """\n"""in parentheses""")',
++              'Multiple lines in parentheses')
++        check('()', # tuple
++              None)
++        check(b'# coding: iso-8859-15\n"""\xa4uro sign"""',
++              '€uro sign', encoding='iso-8859-15')
++        check(b'"""\xa4"""', # Decoding error
++              None, encoding='utf-8')
++
++        with tempfile.NamedTemporaryFile(mode='w+', encoding='utf-8') as temp_file:
++            temp_file.write('"""Real file test."""\n')
++            temp_file.flush()
++            temp_file.seek(0)
++            result = pydoc.source_synopsis(temp_file)
++            self.assertEqual(result, "Real file test.")
++
+     @requires_docstrings
+     def test_synopsis_sourceless(self):
+         os = import_helper.import_fresh_module('os')
 diff --git a/Lib/test/test_readline.py b/Lib/test/test_readline.py
 index fab124ae4ad..e8a92f2b912 100644
 --- a/Lib/test/test_readline.py
@@ -1180,6 +3275,323 @@ index fab124ae4ad..e8a92f2b912 100644
      def test_nonascii_history(self):
          readline.clear_history()
          try:
+diff --git a/Lib/test/test_socket.py b/Lib/test/test_socket.py
+index b40ad28f7a7..8fda0d7f8ba 100644
+--- a/Lib/test/test_socket.py
++++ b/Lib/test/test_socket.py
+@@ -513,7 +513,10 @@ def clientSetUp(self):
+         self.cli.connect((cid, VSOCKPORT))
+ 
+     def testStream(self):
+-        msg = self.conn.recv(1024)
++        try:
++            msg = self.conn.recv(1024)
++        except PermissionError as exc:
++            self.skipTest(repr(exc))
+         self.assertEqual(msg, MSG)
+ 
+     def _testStream(self):
+diff --git a/Lib/test/test_tkinter/test_misc.py b/Lib/test/test_tkinter/test_misc.py
+index 81866993435..bb6f7824ea7 100644
+--- a/Lib/test/test_tkinter/test_misc.py
++++ b/Lib/test/test_tkinter/test_misc.py
+@@ -3,7 +3,8 @@
+ import tkinter
+ import enum
+ from test import support
+-from test.test_tkinter.support import AbstractTkTest, AbstractDefaultRootTest
++from test.test_tkinter.support import (AbstractTkTest, AbstractDefaultRootTest,
++                                       requires_tk, get_tk_patchlevel)
+ 
+ support.requires('gui')
+ 
+@@ -392,6 +393,34 @@ def test_embedded_null(self):
+         self.assertEqual(widget.selection_get(), '\u20ac\0abc\x00def')
+ 
+ 
++class WmTest(AbstractTkTest, unittest.TestCase):
++
++    def test_wm_iconbitmap(self):
++        t = tkinter.Toplevel(self.root)
++        self.assertEqual(t.wm_iconbitmap(), '')
++        t.wm_iconbitmap('hourglass')
++        bug = False
++        if t._windowingsystem == 'aqua':
++            # Tk bug 13ac26b35dc55f7c37f70b39d59d7ef3e63017c8.
++            patchlevel = get_tk_patchlevel(t)
++            if patchlevel < (8, 6, 17) or (9, 0) <= patchlevel < (9, 0, 2):
++                bug = True
++        if not bug:
++            self.assertEqual(t.wm_iconbitmap(), 'hourglass')
++        self.assertEqual(self.root.wm_iconbitmap(), '')
++        t.wm_iconbitmap('')
++        self.assertEqual(t.wm_iconbitmap(), '')
++
++        if t._windowingsystem == 'win32':
++            t.wm_iconbitmap(default='hourglass')
++            self.assertEqual(t.wm_iconbitmap(), 'hourglass')
++            self.assertEqual(self.root.wm_iconbitmap(), '')
++            t.wm_iconbitmap(default='')
++            self.assertEqual(t.wm_iconbitmap(), '')
++
++        t.destroy()
++
++
+ class EventTest(AbstractTkTest, unittest.TestCase):
+ 
+     def test_focus(self):
+diff --git a/Lib/test/test_typing.py b/Lib/test/test_typing.py
+index 0e533757982..c5f4d775f22 100644
+--- a/Lib/test/test_typing.py
++++ b/Lib/test/test_typing.py
+@@ -121,7 +121,7 @@ class Sub(Any): pass
+ 
+     def test_errors(self):
+         with self.assertRaises(TypeError):
+-            issubclass(42, Any)
++            isinstance(42, Any)
+         with self.assertRaises(TypeError):
+             Any[int]  # Any is not a generic type.
+ 
+@@ -136,6 +136,9 @@ class Something: pass
+ 
+         class MockSomething(Something, Mock): pass
+         self.assertTrue(issubclass(MockSomething, Any))
++        self.assertTrue(issubclass(MockSomething, MockSomething))
++        self.assertTrue(issubclass(MockSomething, Something))
++        self.assertTrue(issubclass(MockSomething, Mock))
+         ms = MockSomething()
+         self.assertIsInstance(ms, MockSomething)
+         self.assertIsInstance(ms, Something)
+@@ -1810,13 +1813,81 @@ def test_basics(self):
+         u = Union[int, float]
+         self.assertNotEqual(u, Union)
+ 
+-    def test_subclass_error(self):
++    def test_union_isinstance(self):
++        self.assertTrue(isinstance(42, Union[int, str]))
++        self.assertTrue(isinstance('abc', Union[int, str]))
++        self.assertFalse(isinstance(3.14, Union[int, str]))
++        self.assertTrue(isinstance(42, Union[int, list[int]]))
++        self.assertTrue(isinstance(42, Union[int, Any]))
++
++    def test_union_isinstance_type_error(self):
++        with self.assertRaises(TypeError):
++            isinstance(42, Union[str, list[int]])
++        with self.assertRaises(TypeError):
++            isinstance(42, Union[list[int], int])
++        with self.assertRaises(TypeError):
++            isinstance(42, Union[list[int], str])
++        with self.assertRaises(TypeError):
++            isinstance(42, Union[str, Any])
++        with self.assertRaises(TypeError):
++            isinstance(42, Union[Any, int])
++        with self.assertRaises(TypeError):
++            isinstance(42, Union[Any, str])
++
++    def test_optional_isinstance(self):
++        self.assertTrue(isinstance(42, Optional[int]))
++        self.assertTrue(isinstance(None, Optional[int]))
++        self.assertFalse(isinstance('abc', Optional[int]))
++
++    def test_optional_isinstance_type_error(self):
++        with self.assertRaises(TypeError):
++            isinstance(42, Optional[list[int]])
++        with self.assertRaises(TypeError):
++            isinstance(None, Optional[list[int]])
++        with self.assertRaises(TypeError):
++            isinstance(42, Optional[Any])
++        with self.assertRaises(TypeError):
++            isinstance(None, Optional[Any])
++
++    def test_union_issubclass(self):
++        self.assertTrue(issubclass(int, Union[int, str]))
++        self.assertTrue(issubclass(str, Union[int, str]))
++        self.assertFalse(issubclass(float, Union[int, str]))
++        self.assertTrue(issubclass(int, Union[int, list[int]]))
++        self.assertTrue(issubclass(int, Union[int, Any]))
++        self.assertFalse(issubclass(int, Union[str, Any]))
++        self.assertTrue(issubclass(int, Union[Any, int]))
++        self.assertFalse(issubclass(int, Union[Any, str]))
++
++    def test_union_issubclass_type_error(self):
+         with self.assertRaises(TypeError):
+             issubclass(int, Union)
+         with self.assertRaises(TypeError):
+             issubclass(Union, int)
+         with self.assertRaises(TypeError):
+             issubclass(Union[int, str], int)
++        with self.assertRaises(TypeError):
++            issubclass(int, Union[str, list[int]])
++        with self.assertRaises(TypeError):
++            issubclass(int, Union[list[int], int])
++        with self.assertRaises(TypeError):
++            issubclass(int, Union[list[int], str])
++
++    def test_optional_issubclass(self):
++        self.assertTrue(issubclass(int, Optional[int]))
++        self.assertTrue(issubclass(type(None), Optional[int]))
++        self.assertFalse(issubclass(str, Optional[int]))
++        self.assertTrue(issubclass(Any, Optional[Any]))
++        self.assertTrue(issubclass(type(None), Optional[Any]))
++        self.assertFalse(issubclass(int, Optional[Any]))
++
++    def test_optional_issubclass_type_error(self):
++        with self.assertRaises(TypeError):
++            issubclass(list[int], Optional[list[int]])
++        with self.assertRaises(TypeError):
++            issubclass(type(None), Optional[list[int]])
++        with self.assertRaises(TypeError):
++            issubclass(int, Optional[list[int]])
+ 
+     def test_union_any(self):
+         u = Union[Any]
+@@ -4767,6 +4838,18 @@ class C(B[int]):
+                 x = pickle.loads(z)
+                 self.assertEqual(s, x)
+ 
++        # Test ParamSpec args and kwargs
++        global PP
++        PP = ParamSpec('PP')
++        for thing in [PP.args, PP.kwargs]:
++            for proto in range(pickle.HIGHEST_PROTOCOL + 1):
++                with self.subTest(thing=thing, proto=proto):
++                    self.assertEqual(
++                        pickle.loads(pickle.dumps(thing, proto)),
++                        thing,
++                    )
++        del PP
++
+     def test_copy_and_deepcopy(self):
+         T = TypeVar('T')
+         class Node(Generic[T]): ...
+@@ -9244,6 +9327,18 @@ def test_valid_uses(self):
+         self.assertEqual(C4.__args__, (Concatenate[int, T, P], T))
+         self.assertEqual(C4.__parameters__, (T, P))
+ 
++    def test_invalid_uses(self):
++        with self.assertRaisesRegex(TypeError, 'Concatenate of no types'):
++            Concatenate[()]
++        with self.assertRaisesRegex(
++            TypeError,
++            (
++                'The last parameter to Concatenate should be a '
++                'ParamSpec variable or ellipsis'
++            ),
++        ):
++            Concatenate[int]
++
+     def test_var_substitution(self):
+         T = TypeVar('T')
+         P = ParamSpec('P')
+diff --git a/Lib/test/test_unicode.py b/Lib/test/test_unicode.py
+index 19556eecc3c..a24acb7af2f 100644
+--- a/Lib/test/test_unicode.py
++++ b/Lib/test/test_unicode.py
+@@ -7,6 +7,7 @@
+ """
+ import _string
+ import codecs
++import datetime
+ import itertools
+ import operator
+ import pickle
+@@ -1921,6 +1922,12 @@ def test_utf8_decode_invalid_sequences(self):
+             self.assertRaises(UnicodeDecodeError,
+                               (b'\xF4'+cb+b'\xBF\xBF').decode, 'utf-8')
+ 
++    def test_issue127903(self):
++        # gh-127903: ``_copy_characters`` crashes on DEBUG builds when
++        # there is nothing to copy.
++        d = datetime.datetime(2013, 11, 10, 14, 20, 59)
++        self.assertEqual(d.strftime('%z'), '')
++
+     def test_issue8271(self):
+         # Issue #8271: during the decoding of an invalid UTF-8 byte sequence,
+         # only the start byte and the continuation byte(s) are now considered
+diff --git a/Lib/test/test_zipfile/test_core.py b/Lib/test/test_zipfile/test_core.py
+index 86efccd2676..adb74345486 100644
+--- a/Lib/test/test_zipfile/test_core.py
++++ b/Lib/test/test_zipfile/test_core.py
+@@ -2324,6 +2324,18 @@ def test_read_after_seek(self):
+                 fp.seek(1, os.SEEK_CUR)
+                 self.assertEqual(fp.read(-1), b'men!')
+ 
++    def test_uncompressed_interleaved_seek_read(self):
++        # gh-127847: Make sure the position in the archive is correct
++        # in the special case of seeking in a ZIP_STORED entry.
++        with zipfile.ZipFile(TESTFN, "w") as zipf:
++            zipf.writestr("a.txt", "123")
++            zipf.writestr("b.txt", "456")
++        with zipfile.ZipFile(TESTFN, "r") as zipf:
++            with zipf.open("a.txt", "r") as a, zipf.open("b.txt", "r") as b:
++                self.assertEqual(a.read(1), b"1")
++                self.assertEqual(b.seek(1), 1)
++                self.assertEqual(b.read(1), b"5")
++
+     @requires_bz2()
+     def test_decompress_without_3rd_party_library(self):
+         data = b'PK\x05\x06\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+diff --git a/Lib/tkinter/__init__.py b/Lib/tkinter/__init__.py
+index ac70d965f30..ac78c04efc5 100644
+--- a/Lib/tkinter/__init__.py
++++ b/Lib/tkinter/__init__.py
+@@ -2150,7 +2150,7 @@ def wm_iconbitmap(self, bitmap=None, default=None):
+         explicitly.  DEFAULT can be the relative path to a .ico file
+         (example: root.iconbitmap(default='myicon.ico') ).  See Tk
+         documentation for more information."""
+-        if default:
++        if default is not None:
+             return self.tk.call('wm', 'iconbitmap', self._w, '-default', default)
+         else:
+             return self.tk.call('wm', 'iconbitmap', self._w, bitmap)
+diff --git a/Lib/tokenize.py b/Lib/tokenize.py
+index b2dff8e6967..553c1ca4388 100644
+--- a/Lib/tokenize.py
++++ b/Lib/tokenize.py
+@@ -320,16 +320,10 @@ def untokenize(iterable):
+     with at least two elements, a token number and token value.  If
+     only two tokens are passed, the resulting output is poor.
+ 
+-    Round-trip invariant for full input:
+-        Untokenized source will match input source exactly
+-
+-    Round-trip invariant for limited input:
+-        # Output bytes will tokenize back to the input
+-        t1 = [tok[:2] for tok in tokenize(f.readline)]
+-        newcode = untokenize(t1)
+-        readline = BytesIO(newcode).readline
+-        t2 = [tok[:2] for tok in tokenize(readline)]
+-        assert t1 == t2
++    The result is guaranteed to tokenize back to match the input so
++    that the conversion is lossless and round-trips are assured.
++    The guarantee applies only to the token type and token string as
++    the spacing between tokens (column positions) may change.
+     """
+     ut = Untokenizer()
+     out = ut.untokenize(iterable)
+diff --git a/Lib/typing.py b/Lib/typing.py
+index a271416d46c..d7f96b60f03 100644
+--- a/Lib/typing.py
++++ b/Lib/typing.py
+@@ -1610,12 +1610,16 @@ def __repr__(self):
+         return super().__repr__()
+ 
+     def __instancecheck__(self, obj):
+-        return self.__subclasscheck__(type(obj))
++        for arg in self.__args__:
++            if isinstance(obj, arg):
++                return True
++        return False
+ 
+     def __subclasscheck__(self, cls):
+         for arg in self.__args__:
+             if issubclass(cls, arg):
+                 return True
++        return False
+ 
+     def __reduce__(self):
+         func, (origin, args) = super().__reduce__()
 diff --git a/Lib/urllib/request.py b/Lib/urllib/request.py
 index 9a559f44152..c7ded0f67fc 100644
 --- a/Lib/urllib/request.py
@@ -1196,8 +3608,551 @@ index 9a559f44152..c7ded0f67fc 100644
  
      def add_password(self, realm, uri, user, passwd, is_authenticated=False):
          self.update_authenticated(uri, is_authenticated)
+diff --git a/Lib/zipfile/__init__.py b/Lib/zipfile/__init__.py
+index cf71c6dba2b..3e1cca47286 100644
+--- a/Lib/zipfile/__init__.py
++++ b/Lib/zipfile/__init__.py
+@@ -794,7 +794,10 @@ def seek(self, offset, whence=0):
+                 raise ValueError("Can't reposition in the ZIP file while "
+                         "there is an open writing handle on it. "
+                         "Close the writing handle before trying to read.")
+-            self._file.seek(offset, whence)
++            if whence == os.SEEK_CUR:
++                self._file.seek(self._pos + offset)
++            else:
++                self._file.seek(offset, whence)
+             self._pos = self._file.tell()
+             return self._pos
+ 
+diff --git a/Makefile.pre.in b/Makefile.pre.in
+index 083f4c750a0..689f33d8ffe 100644
+--- a/Makefile.pre.in
++++ b/Makefile.pre.in
+@@ -2143,6 +2143,7 @@ TESTSUBDIRS=	idlelib/idle_test \
+ 		test/support/_hypothesis_stubs \
+ 		test/test_asyncio \
+ 		test/test_capi \
++		test/test_cext \
+ 		test/test_cppext \
+ 		test/test_ctypes \
+ 		test/test_dataclasses \
+diff --git a/Misc/ACKS b/Misc/ACKS
+index 0f8b79f26fb..14450325647 100644
+--- a/Misc/ACKS
++++ b/Misc/ACKS
+@@ -1112,6 +1112,7 @@ Gregor Lingl
+ Everett Lipman
+ Mirko Liss
+ Alexander Liu
++Hui Liu
+ Yuan Liu
+ Nick Lockwood
+ Stephanie Lockwood
+diff --git a/Modules/_ctypes/_ctypes.c b/Modules/_ctypes/_ctypes.c
+index b6d45e92647..96a05755496 100644
+--- a/Modules/_ctypes/_ctypes.c
++++ b/Modules/_ctypes/_ctypes.c
+@@ -125,6 +125,7 @@ bytes(cdata)
+ #include "ctypes.h"
+ 
+ #include "pycore_long.h"          // _PyLong_GetZero()
++#include "pycore_pyerrors.h"      // _PyErr_SetLocaleString()
+ 
+ ctypes_state global_state;
+ 
+@@ -778,31 +779,38 @@ CDataType_in_dll(PyObject *type, PyObject *args)
+         return NULL;
+     }
+ 
++#undef USE_DLERROR
+ #ifdef MS_WIN32
+     Py_BEGIN_ALLOW_THREADS
+     address = (void *)GetProcAddress(handle, name);
+     Py_END_ALLOW_THREADS
+-    if (!address) {
+-        PyErr_Format(PyExc_ValueError,
+-                     "symbol '%s' not found",
+-                     name);
+-        return NULL;
+-    }
+ #else
++    #ifdef __CYGWIN__
++        // dlerror() isn't very helpful on cygwin
++    #else
++        #define USE_DLERROR
++        /* dlerror() always returns the latest error.
++         *
++         * Clear the previous value before calling dlsym(),
++         * to ensure we can tell if our call resulted in an error.
++         */
++        (void)dlerror();
++    #endif
+     address = (void *)dlsym(handle, name);
+-    if (!address) {
+-#ifdef __CYGWIN__
+-/* dlerror() isn't very helpful on cygwin */
+-        PyErr_Format(PyExc_ValueError,
+-                     "symbol '%s' not found",
+-                     name);
+-#else
+-        PyErr_SetString(PyExc_ValueError, dlerror());
+ #endif
++    if (address) {
++        return PyCData_AtAddress(type, address);
++    }
++    #ifdef USE_DLERROR
++    const char *dlerr = dlerror();
++    if (dlerr) {
++        _PyErr_SetLocaleString(PyExc_ValueError, dlerr);
+         return NULL;
+     }
+-#endif
+-    return PyCData_AtAddress(type, address);
++    #endif
++#undef USE_DLERROR
++    PyErr_Format(PyExc_ValueError, "symbol '%s' not found", name);
++    return NULL;
+ }
+ 
+ PyDoc_STRVAR(from_param_doc,
+@@ -847,8 +855,13 @@ CDataType_from_param(PyObject *type, PyObject *value)
+         return NULL;
+     }
+     if (as_parameter) {
++        if (_Py_EnterRecursiveCall(" while processing _as_parameter_")) {
++            Py_DECREF(as_parameter);
++            return NULL;
++        }
+         value = CDataType_from_param(type, as_parameter);
+         Py_DECREF(as_parameter);
++        _Py_LeaveRecursiveCall();
+         return value;
+     }
+     PyErr_Format(PyExc_TypeError,
+@@ -1716,8 +1729,13 @@ c_wchar_p_from_param(PyObject *type, PyObject *value)
+         return NULL;
+     }
+     if (as_parameter) {
++        if (_Py_EnterRecursiveCall(" while processing _as_parameter_")) {
++            Py_DECREF(as_parameter);
++            return NULL;
++        }
+         value = c_wchar_p_from_param(type, as_parameter);
+         Py_DECREF(as_parameter);
++        _Py_LeaveRecursiveCall();
+         return value;
+     }
+     /* XXX better message */
+@@ -1780,8 +1798,13 @@ c_char_p_from_param(PyObject *type, PyObject *value)
+         return NULL;
+     }
+     if (as_parameter) {
++        if (_Py_EnterRecursiveCall(" while processing _as_parameter_")) {
++            Py_DECREF(as_parameter);
++            return NULL;
++        }
+         value = c_char_p_from_param(type, as_parameter);
+         Py_DECREF(as_parameter);
++        _Py_LeaveRecursiveCall();
+         return value;
+     }
+     /* XXX better message */
+@@ -1915,8 +1938,13 @@ c_void_p_from_param(PyObject *type, PyObject *value)
+         return NULL;
+     }
+     if (as_parameter) {
++        if (_Py_EnterRecursiveCall(" while processing _as_parameter_")) {
++            Py_DECREF(as_parameter);
++            return NULL;
++        }
+         value = c_void_p_from_param(type, as_parameter);
+         Py_DECREF(as_parameter);
++        _Py_LeaveRecursiveCall();
+         return value;
+     }
+     /* XXX better message */
+@@ -2275,9 +2303,9 @@ PyCSimpleType_from_param(PyObject *type, PyObject *value)
+             return NULL;
+         }
+         value = PyCSimpleType_from_param(type, as_parameter);
+-        _Py_LeaveRecursiveCall();
+         Py_DECREF(as_parameter);
+         Py_XDECREF(exc);
++        _Py_LeaveRecursiveCall();
+         return value;
+     }
+     if (exc) {
+@@ -3583,6 +3611,7 @@ PyCFuncPtr_FromDll(PyTypeObject *type, PyObject *args, PyObject *kwds)
+         return NULL;
+     }
+ 
++#undef USE_DLERROR
+ #ifdef MS_WIN32
+     address = FindAddress(handle, name, (PyObject *)type);
+     if (!address) {
+@@ -3598,20 +3627,33 @@ PyCFuncPtr_FromDll(PyTypeObject *type, PyObject *args, PyObject *kwds)
+         return NULL;
+     }
+ #else
++    #ifdef __CYGWIN__
++        //dlerror() isn't very helpful on cygwin */
++    #else
++        #define USE_DLERROR
++        /* dlerror() always returns the latest error.
++         *
++         * Clear the previous value before calling dlsym(),
++         * to ensure we can tell if our call resulted in an error.
++         */
++        (void)dlerror();
++    #endif
+     address = (PPROC)dlsym(handle, name);
+     if (!address) {
+-#ifdef __CYGWIN__
+-/* dlerror() isn't very helpful on cygwin */
+-        PyErr_Format(PyExc_AttributeError,
+-                     "function '%s' not found",
+-                     name);
+-#else
+-        PyErr_SetString(PyExc_AttributeError, dlerror());
+-#endif
++    #ifdef USE_DLERROR
++        const char *dlerr = dlerror();
++        if (dlerr) {
++            _PyErr_SetLocaleString(PyExc_AttributeError, dlerr);
++            Py_DECREF(ftuple);
++            return NULL;
++        }
++    #endif
++        PyErr_Format(PyExc_AttributeError, "function '%s' not found", name);
+         Py_DECREF(ftuple);
+         return NULL;
+     }
+ #endif
++#undef USE_DLERROR
+     if (!_validate_paramflags(type, paramflags)) {
+         Py_DECREF(ftuple);
+         return NULL;
+diff --git a/Modules/_ctypes/callproc.c b/Modules/_ctypes/callproc.c
+index d2fe525dd4d..f98479ee85f 100644
+--- a/Modules/_ctypes/callproc.c
++++ b/Modules/_ctypes/callproc.c
+@@ -96,6 +96,7 @@
+ #define DONT_USE_SEH
+ #endif
+ 
++#include "pycore_pyerrors.h"        // _PyErr_SetLocaleString()
+ #include "pycore_runtime.h"         // _PyRuntime
+ #include "pycore_global_objects.h"  // _Py_ID()
+ 
+@@ -1550,10 +1551,11 @@ static PyObject *py_dl_open(PyObject *self, PyObject *args)
+     Py_XDECREF(name2);
+     if (!handle) {
+         const char *errmsg = dlerror();
+-        if (!errmsg)
+-            errmsg = "dlopen() error";
+-        PyErr_SetString(PyExc_OSError,
+-                               errmsg);
++        if (errmsg) {
++            _PyErr_SetLocaleString(PyExc_OSError, errmsg);
++            return NULL;
++        }
++        PyErr_SetString(PyExc_OSError, "dlopen() error");
+         return NULL;
+     }
+     return PyLong_FromVoidPtr(handle);
+@@ -1566,8 +1568,12 @@ static PyObject *py_dl_close(PyObject *self, PyObject *args)
+     if (!PyArg_ParseTuple(args, "O&:dlclose", &_parse_voidp, &handle))
+         return NULL;
+     if (dlclose(handle)) {
+-        PyErr_SetString(PyExc_OSError,
+-                               dlerror());
++        const char *errmsg = dlerror();
++        if (errmsg) {
++            _PyErr_SetLocaleString(PyExc_OSError, errmsg);
++            return NULL;
++        }
++        PyErr_SetString(PyExc_OSError, "dlclose() error");
+         return NULL;
+     }
+     Py_RETURN_NONE;
+@@ -1585,13 +1591,32 @@ static PyObject *py_dl_sym(PyObject *self, PyObject *args)
+     if (PySys_Audit("ctypes.dlsym/handle", "O", args) < 0) {
+         return NULL;
+     }
++#undef USE_DLERROR
++    #ifdef __CYGWIN__
++        // dlerror() isn't very helpful on cygwin
++    #else
++        #define USE_DLERROR
++        /* dlerror() always returns the latest error.
++         *
++         * Clear the previous value before calling dlsym(),
++         * to ensure we can tell if our call resulted in an error.
++         */
++        (void)dlerror();
++    #endif
+     ptr = dlsym((void*)handle, name);
+-    if (!ptr) {
+-        PyErr_SetString(PyExc_OSError,
+-                               dlerror());
++    if (ptr) {
++        return PyLong_FromVoidPtr(ptr);
++    }
++    #ifdef USE_DLERROR
++    const char *errmsg = dlerror();
++    if (errmsg) {
++        _PyErr_SetLocaleString(PyExc_OSError, errmsg);
+         return NULL;
+     }
+-    return PyLong_FromVoidPtr(ptr);
++    #endif
++    #undef USE_DLERROR
++    PyErr_Format(PyExc_OSError, "symbol '%s' not found", name);
++    return NULL;
+ }
+ #endif
+ 
+diff --git a/Modules/_cursesmodule.c b/Modules/_cursesmodule.c
+index b099959ea40..3fc7f88c61e 100644
+--- a/Modules/_cursesmodule.c
++++ b/Modules/_cursesmodule.c
+@@ -139,7 +139,7 @@ typedef chtype attr_t;           /* No attr_t type is available */
+ #define STRICT_SYSV_CURSES
+ #endif
+ 
+-#if NCURSES_EXT_FUNCS+0 >= 20170401 && NCURSES_EXT_COLORS+0 >= 20170401
++#if defined(HAVE_NCURSESW) && NCURSES_EXT_FUNCS+0 >= 20170401 && NCURSES_EXT_COLORS+0 >= 20170401
+ #define _NCURSES_EXTENDED_COLOR_FUNCS   1
+ #else
+ #define _NCURSES_EXTENDED_COLOR_FUNCS   0
+diff --git a/Modules/_gdbmmodule.c b/Modules/_gdbmmodule.c
+index 4dbb5741b2e..ffd7b642089 100644
+--- a/Modules/_gdbmmodule.c
++++ b/Modules/_gdbmmodule.c
+@@ -3,12 +3,18 @@
+ /* Author: Anthony Baxter, after dbmmodule.c */
+ /* Doc strings: Mitch Chapman */
+ 
++// required for pycore_pyerrors.h
++#ifndef Py_BUILD_CORE_BUILTIN
++#  define Py_BUILD_CORE_MODULE 1
++#endif
++
+ #define PY_SSIZE_T_CLEAN
+ #include "Python.h"
++#include "pycore_pyerrors.h"        // _PyErr_SetLocaleString()
+ #include "gdbm.h"
+ 
+ #include <fcntl.h>
+-#include <stdlib.h>               // free()
++#include <stdlib.h>                 // free()
+ #include <sys/stat.h>
+ #include <sys/types.h>
+ 
+@@ -30,6 +36,24 @@ get_gdbm_state(PyObject *module)
+     return (_gdbm_state *)state;
+ }
+ 
++/*
++ * Set the gdbm error obtained by gdbm_strerror(gdbm_errno).
++ *
++ * If no error message exists, a generic (UTF-8) error message
++ * is used instead.
++ */
++static void
++set_gdbm_error(_gdbm_state *state, const char *generic_error)
++{
++    const char *gdbm_errmsg = gdbm_strerror(gdbm_errno);
++    if (gdbm_errmsg) {
++        _PyErr_SetLocaleString(state->gdbm_error, gdbm_errmsg);
++    }
++    else {
++        PyErr_SetString(state->gdbm_error, generic_error);
++    }
++}
++
+ /*[clinic input]
+ module _gdbm
+ class _gdbm.gdbm "gdbmobject *" "&Gdbmtype"
+@@ -88,7 +112,7 @@ newgdbmobject(_gdbm_state *state, const char *file, int flags, int mode)
+             PyErr_SetFromErrnoWithFilename(state->gdbm_error, file);
+         }
+         else {
+-            PyErr_SetString(state->gdbm_error, gdbm_strerror(gdbm_errno));
++            set_gdbm_error(state, "gdbm_open() error");
+         }
+         Py_DECREF(dp);
+         return NULL;
+@@ -133,7 +157,7 @@ gdbm_length(gdbmobject *dp)
+                 PyErr_SetFromErrno(state->gdbm_error);
+             }
+             else {
+-                PyErr_SetString(state->gdbm_error, gdbm_strerror(gdbm_errno));
++                set_gdbm_error(state, "gdbm_count() error");
+             }
+             return -1;
+         }
+@@ -283,7 +307,7 @@ gdbm_ass_sub(gdbmobject *dp, PyObject *v, PyObject *w)
+                 PyErr_SetObject(PyExc_KeyError, v);
+             }
+             else {
+-                PyErr_SetString(state->gdbm_error, gdbm_strerror(gdbm_errno));
++                set_gdbm_error(state, "gdbm_delete() error");
+             }
+             return -1;
+         }
+@@ -294,11 +318,12 @@ gdbm_ass_sub(gdbmobject *dp, PyObject *v, PyObject *w)
+         }
+         errno = 0;
+         if (gdbm_store(dp->di_dbm, krec, drec, GDBM_REPLACE) < 0) {
+-            if (errno != 0)
++            if (errno != 0) {
+                 PyErr_SetFromErrno(state->gdbm_error);
+-            else
+-                PyErr_SetString(state->gdbm_error,
+-                                gdbm_strerror(gdbm_errno));
++            }
++            else {
++                set_gdbm_error(state, "gdbm_store() error");
++            }
+             return -1;
+         }
+     }
+@@ -531,10 +556,12 @@ _gdbm_gdbm_reorganize_impl(gdbmobject *self, PyTypeObject *cls)
+     check_gdbmobject_open(self, state->gdbm_error);
+     errno = 0;
+     if (gdbm_reorganize(self->di_dbm) < 0) {
+-        if (errno != 0)
++        if (errno != 0) {
+             PyErr_SetFromErrno(state->gdbm_error);
+-        else
+-            PyErr_SetString(state->gdbm_error, gdbm_strerror(gdbm_errno));
++        }
++        else {
++            set_gdbm_error(state, "gdbm_reorganize() error");
++        }
+         return NULL;
+     }
+     Py_RETURN_NONE;
+diff --git a/Modules/_hashopenssl.c b/Modules/_hashopenssl.c
+index 2998820953b..3cc7d6f50e8 100644
+--- a/Modules/_hashopenssl.c
++++ b/Modules/_hashopenssl.c
+@@ -320,6 +320,7 @@ _setException(PyObject *exc, const char* altmsg, ...)
+     va_end(vargs);
+     ERR_clear_error();
+ 
++    /* ERR_ERROR_STRING(3) ensures that the messages below are ASCII */
+     lib = ERR_lib_error_string(errcode);
+     func = ERR_func_error_string(errcode);
+     reason = ERR_reason_error_string(errcode);
+diff --git a/Modules/_sqlite/util.c b/Modules/_sqlite/util.c
+index 2b3bbfefa3c..c521fc5ad6b 100644
+--- a/Modules/_sqlite/util.c
++++ b/Modules/_sqlite/util.c
+@@ -129,6 +129,7 @@ _pysqlite_seterror(pysqlite_state *state, sqlite3 *db)
+ 
+     /* Create and set the exception. */
+     int extended_errcode = sqlite3_extended_errcode(db);
++    // sqlite3_errmsg() always returns an UTF-8 encoded message
+     const char *errmsg = sqlite3_errmsg(db);
+     raise_exception(exc_class, extended_errcode, errmsg);
+     return extended_errcode;
+diff --git a/Modules/_ssl.c b/Modules/_ssl.c
+index 7a9f2c87239..f5113ddf7b2 100644
+--- a/Modules/_ssl.c
++++ b/Modules/_ssl.c
+@@ -651,6 +651,11 @@ PySSL_SetError(PySSLSocket *sslsock, int ret, const char *filename, int lineno)
+                         ERR_GET_REASON(e) == SSL_R_CERTIFICATE_VERIFY_FAILED) {
+                     type = state->PySSLCertVerificationErrorObject;
+                 }
++                if (ERR_GET_LIB(e) == ERR_LIB_SYS) {
++                    // A system error is being reported; reason is set to errno
++                    errno = ERR_GET_REASON(e);
++                    return PyErr_SetFromErrno(PyExc_OSError);
++                }
+                 p = PY_SSL_ERROR_SYSCALL;
+             }
+             break;
+@@ -676,6 +681,11 @@ PySSL_SetError(PySSLSocket *sslsock, int ret, const char *filename, int lineno)
+                 errstr = "EOF occurred in violation of protocol";
+             }
+ #endif
++            if (ERR_GET_LIB(e) == ERR_LIB_SYS) {
++                // A system error is being reported; reason is set to errno
++                errno = ERR_GET_REASON(e);
++                return PyErr_SetFromErrno(PyExc_OSError);
++            }
+             break;
+         }
+         default:
+diff --git a/Modules/_testcapi/exceptions.c b/Modules/_testcapi/exceptions.c
+index 4e02f5bec1a..3e7d14f3b88 100644
+--- a/Modules/_testcapi/exceptions.c
++++ b/Modules/_testcapi/exceptions.c
+@@ -1,6 +1,7 @@
+ #define PY_SSIZE_T_CLEAN
+ #include "parts.h"
+ #include "util.h"
++
+ #include "clinic/exceptions.c.h"
+ 
+ 
+diff --git a/Modules/_winapi.c b/Modules/_winapi.c
+index 76f18c71a07..ac3ee113ffd 100644
+--- a/Modules/_winapi.c
++++ b/Modules/_winapi.c
+@@ -946,7 +946,7 @@ getenvironment(PyObject* environment)
+     }
+ 
+     normalized_environment = normalize_environment(environment);
+-    if (normalize_environment == NULL) {
++    if (normalized_environment == NULL) {
+         return NULL;
+     }
+ 
+diff --git a/Modules/clinic/posixmodule.c.h b/Modules/clinic/posixmodule.c.h
+index a33461dc560..57121e1e890 100644
+--- a/Modules/clinic/posixmodule.c.h
++++ b/Modules/clinic/posixmodule.c.h
+@@ -304,7 +304,7 @@ exit:
+     return return_value;
+ }
+ 
+-#if defined(HAVE_TTYNAME)
++#if defined(HAVE_TTYNAME_R)
+ 
+ PyDoc_STRVAR(os_ttyname__doc__,
+ "ttyname($module, fd, /)\n"
+@@ -337,7 +337,7 @@ exit:
+     return return_value;
+ }
+ 
+-#endif /* defined(HAVE_TTYNAME) */
++#endif /* defined(HAVE_TTYNAME_R) */
+ 
+ #if defined(HAVE_CTERMID)
+ 
+@@ -12032,4 +12032,4 @@ exit:
+ #ifndef OS_WAITSTATUS_TO_EXITCODE_METHODDEF
+     #define OS_WAITSTATUS_TO_EXITCODE_METHODDEF
+ #endif /* !defined(OS_WAITSTATUS_TO_EXITCODE_METHODDEF) */
+-/*[clinic end generated code: output=6d34c4564aca7725 input=a9049054013a1b77]*/
++/*[clinic end generated code: output=efe45f93561db8d3 input=a9049054013a1b77]*/
+diff --git a/Modules/main.c b/Modules/main.c
+index b602272b78b..f4e4018212f 100644
+--- a/Modules/main.c
++++ b/Modules/main.c
+@@ -325,6 +325,7 @@ pymain_run_file_obj(PyObject *program_name, PyObject *filename,
+     if (fp == NULL) {
+         // Ignore the OSError
+         PyErr_Clear();
++        // TODO(picnixz): strerror() is locale dependent but not PySys_FormatStderr().
+         PySys_FormatStderr("%S: can't open file %R: [Errno %d] %s\n",
+                            program_name, filename, errno, strerror(errno));
+         return 2;
 diff --git a/Modules/posixmodule.c b/Modules/posixmodule.c
-index d5298519b58..82078a56988 100644
+index d5298519b58..deabc103056 100644
 --- a/Modules/posixmodule.c
 +++ b/Modules/posixmodule.c
 @@ -61,6 +61,9 @@
@@ -1210,6 +4165,33 @@ index d5298519b58..82078a56988 100644
  
  /*
   * A number of APIs are available on macOS from a certain macOS version.
+@@ -3234,7 +3237,7 @@ os_access_impl(PyObject *module, path_t *path, int mode, int dir_fd,
+ #endif
+ 
+ 
+-#ifdef HAVE_TTYNAME
++#ifdef HAVE_TTYNAME_R
+ /*[clinic input]
+ os.ttyname
+ 
+diff --git a/Modules/pyexpat.c b/Modules/pyexpat.c
+index be31c637fcc..b354a86e7f9 100644
+--- a/Modules/pyexpat.c
++++ b/Modules/pyexpat.c
+@@ -1784,7 +1784,12 @@ add_error(PyObject *errors_module, PyObject *codes_dict,
+      *       with the other uses of the XML_ErrorString function
+      *       elsewhere within this file.  pyexpat's copy of the messages
+      *       only acts as a fallback in case of outdated runtime libexpat,
+-     *       where it returns NULL. */
++     *       where it returns NULL.
++     *
++     *       In addition, XML_ErrorString is assumed to return UTF-8 encoded
++     *       strings (in conv_string_to_unicode, we decode them using 'strict'
++     *       error handling).
++     */
+     const char *error_string = XML_ErrorString(error_code);
+     if (error_string == NULL) {
+         error_string = error_info_of[error_index].description;
 diff --git a/Modules/readline.c b/Modules/readline.c
 index 0b6f96fdbfd..db2e7e35a49 100644
 --- a/Modules/readline.c
@@ -1247,6 +4229,21 @@ index 4e965314945..7337e290e89 100644
          DICT_KEYS_UNICODE, /* dk_kind */
          1, /* dk_version */
          0, /* dk_usable (immutable) */
+diff --git a/Objects/namespaceobject.c b/Objects/namespaceobject.c
+index 2cc4ddd3c91..7082c6fd465 100644
+--- a/Objects/namespaceobject.c
++++ b/Objects/namespaceobject.c
+@@ -121,6 +121,10 @@ namespace_repr(PyObject *ns)
+             goto error;
+     }
+ 
++    if (PyErr_Occurred()) {
++        goto error;
++    }
++
+     separator = PyUnicode_FromString(", ");
+     if (separator == NULL)
+         goto error;
 diff --git a/Objects/typeobject.c b/Objects/typeobject.c
 index 5bca4b4e788..06857e36857 100644
 --- a/Objects/typeobject.c
@@ -1265,6 +4262,80 @@ index 5bca4b4e788..06857e36857 100644
      res += Py_TYPE(self)->tp_basicsize;
  
      return PyLong_FromSsize_t(res);
+diff --git a/Objects/unicodeobject.c b/Objects/unicodeobject.c
+index c885be5b668..3e5b5d03241 100644
+--- a/Objects/unicodeobject.c
++++ b/Objects/unicodeobject.c
+@@ -1472,11 +1472,14 @@ _copy_characters(PyObject *to, Py_ssize_t to_start,
+     assert(PyUnicode_Check(from));
+     assert(from_start + how_many <= PyUnicode_GET_LENGTH(from));
+ 
+-    assert(PyUnicode_Check(to));
+-    assert(to_start + how_many <= PyUnicode_GET_LENGTH(to));
++    assert(to == NULL || PyUnicode_Check(to));
+ 
+-    if (how_many == 0)
++    if (how_many == 0) {
+         return 0;
++    }
++
++    assert(to != NULL);
++    assert(to_start + how_many <= PyUnicode_GET_LENGTH(to));
+ 
+     from_kind = PyUnicode_KIND(from);
+     from_data = PyUnicode_DATA(from);
+diff --git a/Python/ceval.c b/Python/ceval.c
+index 6110883ca0e..b979294b20f 100644
+--- a/Python/ceval.c
++++ b/Python/ceval.c
+@@ -1898,8 +1898,25 @@ exception_group_match(PyObject* exc_value, PyObject *match_type,
+         if (pair == NULL) {
+             return -1;
+         }
+-        assert(PyTuple_CheckExact(pair));
+-        assert(PyTuple_GET_SIZE(pair) == 2);
++
++        if (!PyTuple_CheckExact(pair)) {
++            PyErr_Format(PyExc_TypeError,
++                         "%.200s.split must return a tuple, not %.200s",
++                         Py_TYPE(exc_value)->tp_name, Py_TYPE(pair)->tp_name);
++            Py_DECREF(pair);
++            return -1;
++        }
++
++        // allow tuples of length > 2 for backwards compatibility
++        if (PyTuple_GET_SIZE(pair) < 2) {
++            PyErr_Format(PyExc_TypeError,
++                         "%.200s.split must return a 2-tuple, "
++                         "got tuple of size %zd",
++                         Py_TYPE(exc_value)->tp_name, PyTuple_GET_SIZE(pair));
++            Py_DECREF(pair);
++            return -1;
++        }
++
+         *match = Py_NewRef(PyTuple_GET_ITEM(pair, 0));
+         *rest = Py_NewRef(PyTuple_GET_ITEM(pair, 1));
+         Py_DECREF(pair);
+diff --git a/Python/errors.c b/Python/errors.c
+index cbfc2faf8bb..bfc37f3dbb6 100644
+--- a/Python/errors.c
++++ b/Python/errors.c
+@@ -305,6 +305,15 @@ PyErr_SetString(PyObject *exception, const char *string)
+     _PyErr_SetString(tstate, exception, string);
+ }
+ 
++void
++_PyErr_SetLocaleString(PyObject *exception, const char *string)
++{
++    PyObject *value = PyUnicode_DecodeLocale(string, "surrogateescape");
++    if (value != NULL) {
++        PyErr_SetObject(exception, value);
++        Py_DECREF(value);
++    }
++}
+ 
+ PyObject* _Py_HOT_FUNCTION
+ PyErr_Occurred(void)
 diff --git a/Python/pythonrun.c b/Python/pythonrun.c
 index 5f3d249df45..cf84573a8e6 100644
 --- a/Python/pythonrun.c
@@ -1342,10 +4413,59 @@ index 5f3d249df45..cf84573a8e6 100644
      v = PyObject_GetAttr(err, &_Py_ID(text));
      if (!v)
 diff --git a/configure.ac b/configure.ac
-index 9270b5f7172..de9d7f56ffb 100644
+index 9270b5f7172..1a02d19f1b2 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -2874,7 +2874,7 @@ AC_CHECK_HEADERS([ \
+@@ -2104,6 +2104,27 @@ AS_VAR_IF([enable_shared], [yes], [
+   BOLT_BINARIES="${BOLT_BINARIES} \$(INSTSONAME)"
+ ])
+ 
++AC_ARG_VAR(
++  [BOLT_COMMON_FLAGS],
++  [Common arguments to llvm-bolt when instrumenting and applying]
++)
++
++AC_MSG_CHECKING([BOLT_COMMON_FLAGS])
++if test -z "${BOLT_COMMON_FLAGS}"
++then
++  AS_VAR_SET(
++    [BOLT_COMMON_FLAGS],
++    [m4_normalize("
++      [-update-debug-sections]
++
++      dnl At least LLVM 19.x doesn't support computed gotos in PIC compiled code.
++      dnl Exclude functions containing computed gotos.
++      dnl TODO this may be fixed in LLVM 20.x via https://github.com/llvm/llvm-project/pull/120267.
++      [-skip-funcs=_PyEval_EvalFrameDefault,sre_ucs1_match/1,sre_ucs2_match/1,sre_ucs4_match/1]
++    ")]
++  )
++fi
++
+ AC_ARG_VAR(
+   [BOLT_INSTRUMENT_FLAGS],
+   [Arguments to llvm-bolt when instrumenting binaries]
+@@ -2111,7 +2132,7 @@ AC_ARG_VAR(
+ AC_MSG_CHECKING([BOLT_INSTRUMENT_FLAGS])
+ if test -z "${BOLT_INSTRUMENT_FLAGS}"
+ then
+-  BOLT_INSTRUMENT_FLAGS=
++  BOLT_INSTRUMENT_FLAGS="${BOLT_COMMON_FLAGS}"
+ fi
+ AC_MSG_RESULT([$BOLT_INSTRUMENT_FLAGS])
+ 
+@@ -2125,9 +2146,9 @@ then
+   AS_VAR_SET(
+     [BOLT_APPLY_FLAGS],
+     [m4_normalize("
+-     -update-debug-sections
++     ${BOLT_COMMON_FLAGS}
+      -reorder-blocks=ext-tsp
+-     -reorder-functions=hfsort+
++     -reorder-functions=cdsort
+      -split-functions
+      -icf=1
+      -inline-all
+@@ -2874,7 +2895,7 @@ AC_CHECK_HEADERS([ \
    linux/tipc.h linux/wait.h netdb.h net/ethernet.h netinet/in.h netpacket/packet.h poll.h process.h pthread.h pty.h \
    sched.h setjmp.h shadow.h signal.h spawn.h stropts.h sys/audioio.h sys/bsdtty.h sys/devpoll.h \
    sys/endian.h sys/epoll.h sys/event.h sys/eventfd.h sys/file.h sys/ioctl.h sys/kern_control.h \
@@ -1354,8 +4474,127 @@ index 9270b5f7172..de9d7f56ffb 100644
    sys/random.h sys/resource.h sys/select.h sys/sendfile.h sys/socket.h sys/soundcard.h sys/stat.h \
    sys/statvfs.h sys/sys_domain.h sys/syscall.h sys/sysmacros.h sys/termio.h sys/time.h sys/times.h \
    sys/types.h sys/uio.h sys/un.h sys/utsname.h sys/wait.h sys/xattr.h sysexits.h syslog.h \
+@@ -3630,7 +3651,7 @@ AS_VAR_IF([have_uuid], [missing], [
+     ], [
+       WITH_SAVE_ENV([
+         CPPFLAGS="$CPPFLAGS $LIBUUID_CFLAGS"
+-        LDFLAGS="$LDFLAGS $LIBUUID_LIBS"
++        LIBS="$LIBS $LIBUUID_LIBS"
+         AC_CHECK_HEADERS([uuid/uuid.h], [
+           PY_CHECK_LIB([uuid], [uuid_generate_time], [have_uuid=yes])
+           PY_CHECK_LIB([uuid], [uuid_generate_time_safe],
+@@ -3857,7 +3878,7 @@ AS_VAR_IF([have_libffi], [missing], [
+   PKG_CHECK_MODULES([LIBFFI], [libffi], [have_libffi=yes], [
+     WITH_SAVE_ENV([
+       CPPFLAGS="$CPPFLAGS $LIBFFI_CFLAGS"
+-      LDFLAGS="$LDFLAGS $LIBFFI_LIBS"
++      LIBS="$LIBS $LIBFFI_LIBS"
+       AC_CHECK_HEADER([ffi.h], [
+         AC_CHECK_LIB([ffi], [ffi_call], [
+           have_libffi=yes
+@@ -3888,8 +3909,8 @@ AS_VAR_IF([have_libffi], [yes], [
+   AS_VAR_IF([ac_cv_lib_dl_dlopen], [yes], [AS_VAR_APPEND([LIBFFI_LIBS], [" -ldl"])])
+ 
+   WITH_SAVE_ENV([
+-    CFLAGS="$LIBFFI_CFLAGS $CFLAGS"
+-    LDFLAGS="$LIBFFI_LIBS $LDFLAGS"
++    CFLAGS="$CFLAGS $LIBFFI_CFLAGS"
++    LIBS="$LIBS $LIBFFI_LIBS"
+ 
+     PY_CHECK_FUNC([ffi_prep_cif_var], [@%:@include <ffi.h>])
+     PY_CHECK_FUNC([ffi_prep_closure_loc], [@%:@include <ffi.h>])
+@@ -4056,7 +4077,7 @@ WITH_SAVE_ENV([
+ dnl bpo-45774/GH-29507: The CPP check in AC_CHECK_HEADER can fail on FreeBSD,
+ dnl hence CPPFLAGS instead of CFLAGS.
+   CPPFLAGS="$CPPFLAGS $LIBSQLITE3_CFLAGS"
+-  LDFLAGS="$LIBSQLITE3_LIBS $LDFLAGS"
++  LIBS="$LIBS $LIBSQLITE3_LIBS"
+ 
+   AC_CHECK_HEADER([sqlite3.h], [
+     have_sqlite3=yes
+@@ -4159,7 +4180,7 @@ AS_CASE([$ac_sys_system],
+ 
+ WITH_SAVE_ENV([
+   CPPFLAGS="$CPPFLAGS $TCLTK_CFLAGS"
+-  LIBS="$TCLTK_LIBS $LDFLAGS"
++  LIBS="$LIBS $TCLTK_LIBS"
+ 
+   AC_LINK_IFELSE([
+     AC_LANG_PROGRAM([
+@@ -4201,7 +4222,7 @@ AC_ARG_VAR([GDBM_CFLAGS], [C compiler flags for gdbm])
+ AC_ARG_VAR([GDBM_LIBS], [additional linker flags for gdbm])
+ WITH_SAVE_ENV([
+   CPPFLAGS="$CPPFLAGS $GDBM_CFLAGS"
+-  LDFLAGS="$GDBM_LIBS $LDFLAGS"
++  LIBS="$LIBS $GDBM_LIBS"
+   AC_CHECK_HEADERS([gdbm.h], [
+     AC_CHECK_LIB([gdbm], [gdbm_open], [
+       have_gdbm=yes
+@@ -4920,7 +4941,7 @@ AC_CHECK_FUNCS([ \
+   sigfillset siginterrupt sigpending sigrelse sigtimedwait sigwait \
+   sigwaitinfo snprintf splice strftime strlcpy strsignal symlinkat sync \
+   sysconf system tcgetpgrp tcsetpgrp tempnam timegm times tmpfile \
+-  tmpnam tmpnam_r truncate ttyname umask uname unlinkat utimensat utimes vfork \
++  tmpnam tmpnam_r truncate ttyname_r umask uname unlinkat utimensat utimes vfork \
+   wait wait3 wait4 waitid waitpid wcscoll wcsftime wcsxfrm wmemcmp writev \
+ ])
+ 
+@@ -5080,7 +5101,7 @@ PKG_CHECK_MODULES([ZLIB], [zlib >= 1.2.0], [
+ ], [
+   WITH_SAVE_ENV([
+     CPPFLAGS="$CPPFLAGS $ZLIB_CFLAGS"
+-    LDFLAGS="$LDFLAGS $ZLIB_LIBS"
++    LIBS="$LIBS $ZLIB_LIBS"
+     AC_CHECK_HEADERS([zlib.h], [
+       PY_CHECK_LIB([z], [gzread], [have_zlib=yes], [have_zlib=no])
+     ], [have_zlib=no])
+@@ -5104,7 +5125,7 @@ PY_CHECK_EMSCRIPTEN_PORT([BZIP2], [-sUSE_BZIP2])
+ PKG_CHECK_MODULES([BZIP2], [bzip2], [have_bzip2=yes], [
+   WITH_SAVE_ENV([
+     CPPFLAGS="$CPPFLAGS $BZIP2_CFLAGS"
+-    LDFLAGS="$LDFLAGS $BZIP2_LIBS"
++    LIBS="$LIBS $BZIP2_LIBS"
+     AC_CHECK_HEADERS([bzlib.h], [
+       AC_CHECK_LIB([bz2], [BZ2_bzCompress], [have_bzip2=yes], [have_bzip2=no])
+     ], [have_bzip2=no])
+@@ -5118,7 +5139,7 @@ PKG_CHECK_MODULES([BZIP2], [bzip2], [have_bzip2=yes], [
+ PKG_CHECK_MODULES([LIBLZMA], [liblzma], [have_liblzma=yes], [
+   WITH_SAVE_ENV([
+     CPPFLAGS="$CPPFLAGS $LIBLZMA_CFLAGS"
+-    LDFLAGS="$LDFLAGS $LIBLZMA_LIBS"
++    LIBS="$LIBS $LIBLZMA_LIBS"
+     AC_CHECK_HEADERS([lzma.h], [
+       AC_CHECK_LIB([lzma], [lzma_easy_encoder], [have_liblzma=yes], [have_liblzma=no])
+     ], [have_liblzma=no])
+@@ -6127,7 +6148,7 @@ AS_VAR_IF([with_readline], [readline], [
+   ], [
+     WITH_SAVE_ENV([
+       CPPFLAGS="$CPPFLAGS $LIBREADLINE_CFLAGS"
+-      LDFLAGS="$LDFLAGS $LIBREADLINE_LIBS"
++      LIBS="$LIBS $LIBREADLINE_LIBS"
+       AC_CHECK_HEADERS([readline/readline.h], [
+         AC_CHECK_LIB([readline], [readline], [
+           LIBREADLINE=readline
+@@ -6148,7 +6169,7 @@ AS_VAR_IF([with_readline], [edit], [
+   ], [
+     WITH_SAVE_ENV([
+       CPPFLAGS="$CPPFLAGS $LIBEDIT_CFLAGS"
+-      LDFLAGS="$LDFLAGS $LIBEDIT_LIBS"
++      LIBS="$LIBS $LIBEDIT_LIBS"
+       AC_CHECK_HEADERS([editline/readline.h], [
+         AC_CHECK_LIB([edit], [readline], [
+           LIBREADLINE=edit
+@@ -6172,7 +6193,7 @@ AS_VAR_IF([with_readline], [no], [
+ 
+   WITH_SAVE_ENV([
+     CPPFLAGS="$CPPFLAGS $READLINE_CFLAGS"
+-    LIBS="$READLINE_LIBS $LIBS"
++    LIBS="$LIBS $READLINE_LIBS"
+     LIBS_SAVE=$LIBS
+ 
+     m4_define([readline_includes], [
 diff --git a/pyconfig.h.in b/pyconfig.h.in
-index 7d3537e5dd8..167c6a11411 100644
+index 7d3537e5dd8..df4d29fe549 100644
 --- a/pyconfig.h.in
 +++ b/pyconfig.h.in
 @@ -1332,6 +1332,9 @@
@@ -1368,3 +4607,14 @@ index 7d3537e5dd8..167c6a11411 100644
  /* Define to 1 if you have the <sys/poll.h> header file. */
  #undef HAVE_SYS_POLL_H
  
+@@ -1432,8 +1435,8 @@
+ /* Define to 1 if you have the `truncate' function. */
+ #undef HAVE_TRUNCATE
+ 
+-/* Define to 1 if you have the `ttyname' function. */
+-#undef HAVE_TTYNAME
++/* Define to 1 if you have the `ttyname_r' function. */
++#undef HAVE_TTYNAME_R
+ 
+ /* Define to 1 if you don't have `tm_zone' but do have the external array
+    `tzname'. */

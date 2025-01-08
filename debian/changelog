@@ -1,3 +1,11 @@
+python3.12 (3.12.8-4) unstable; urgency=medium
+
+  * Update to the 3.12 branch 2024-12-13.
+    - Match openssl 3.4 error code for syscall errors (Adrien Nader).
+      LP: #2092298.
+
+ -- Matthias Klose <doko@debian.org>  Wed, 08 Jan 2025 21:30:34 +0100
+
 python3.12 (3.12.8-3) unstable; urgency=medium
 
   * Update to the 3.12 branch 2024-12-13.
