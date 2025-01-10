@@ -1,3 +1,9 @@
+python3.13 (3.13.1-4) UNRELEASED; urgency=medium
+
+  * Raise a more helpful ImportError in the turtle module. LP: #2093393.
+
+ -- Stefano Rivera <stefanor@debian.org>  Fri, 10 Jan 2025 10:44:16 -0400
+
 python3.13 (3.13.1-3) unstable; urgency=medium
 
   [ Stefano Rivera ]

@@ -22,6 +22,7 @@ min-argparse-no-shutil.diff
 min-ntpath-import.diff
 min-compileall.diff
 min-pyrepl-import.dff
+min-turtle.diff
 makefile-bootstrap.diff
 test-freeze-strip-libdir.diff
 stable-abi-multiarch.diff
