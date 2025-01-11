@@ -1,9 +1,9 @@
-python3.12 (3.12.8-5) UNRELEASED; urgency=medium
+python3.12 (3.12.8-5) unstable; urgency=medium
 
   * Don't run test_cext during the build.
   * Add python3-wheel-whl to the autopkg testsuite dependencies.
 
- -- Matthias Klose <doko@debian.org>  Fri, 10 Jan 2025 12:50:43 +0100
+ -- Matthias Klose <doko@debian.org>  Sat, 11 Jan 2025 10:42:09 +0100
 
 python3.12 (3.12.8-4) unstable; urgency=medium
 
