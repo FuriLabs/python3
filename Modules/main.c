@@ -374,6 +374,7 @@ pymain_run_file_obj(PyObject *program_name, PyObject *filename,
     if (fp == NULL) {
         // Ignore the OSError
         PyErr_Clear();
+        // TODO(picnixz): strerror() is locale dependent but not PySys_FormatStderr().
         PySys_FormatStderr("%S: can't open file %R: [Errno %d] %s\n",
                            program_name, filename, errno, strerror(errno));
         return 2;
@@ -566,7 +567,8 @@ pymain_run_stdin(PyConfig *config)
     }
 
     if (!isatty(fileno(stdin))
-        || _Py_GetEnv(config->use_environment, "PYTHON_BASIC_REPL")) {
+        || _Py_GetEnv(config->use_environment, "PYTHON_BASIC_REPL")
+        || PyImport_ImportModule("_pyrepl") == NULL) {
         PyCompilerFlags cf = _PyCompilerFlags_INIT;
         int run = PyRun_AnyFileExFlags(stdin, "<stdin>", 0, &cf);
         return (run != 0);

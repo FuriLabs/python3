@@ -35,7 +35,10 @@ import enum
 import sys
 import types
 
-import _tkinter # If this fails your Python may not be configured for Tk
+try:
+    import _tkinter
+except ImportError as msg:
+    raise ImportError(str(msg) + ', please install the python3-tk package')
 TclError = _tkinter.TclError
 from tkinter.constants import *
 import re
@@ -2263,7 +2266,7 @@ class Wm:
         explicitly.  DEFAULT can be the relative path to a .ico file
         (example: root.iconbitmap(default='myicon.ico') ).  See Tk
         documentation for more information."""
-        if default:
+        if default is not None:
             return self.tk.call('wm', 'iconbitmap', self._w, '-default', default)
         else:
             return self.tk.call('wm', 'iconbitmap', self._w, bitmap)

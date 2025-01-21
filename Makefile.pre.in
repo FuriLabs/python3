@@ -97,7 +97,7 @@ CONFIGURE_LDFLAGS_NODIST=@LDFLAGS_NODIST@
 # of _bootstrap_python and _freeze_module tools, which don't need LTO.
 CONFIGURE_LDFLAGS_NOLTO=@LDFLAGS_NOLTO@
 CONFIGURE_CPPFLAGS=	@CPPFLAGS@
-CONFIGURE_LDFLAGS=	@LDFLAGS@
+CONFIGURE_LDFLAGS=	@LDFLAGS_NODIST@
 # Avoid assigning CFLAGS, LDFLAGS, etc. so users can use them on the
 # command line to append to these values without stomping the pre-set
 # values.
@@ -169,7 +169,7 @@ EXT_SUFFIX=	@EXT_SUFFIX@
 LDSHARED=	@LDSHARED@ $(PY_LDFLAGS)
 BLDSHARED=	@BLDSHARED@ $(PY_CORE_LDFLAGS)
 LDCXXSHARED=	@LDCXXSHARED@ $(PY_LDFLAGS)
-DESTSHARED=	$(BINLIBDEST)/lib-dynload
+DESTSHARED=	$(LIBDEST)/lib-dynload
 
 # List of exported symbols for AIX
 EXPORTSYMS=	@EXPORTSYMS@
@@ -752,7 +752,16 @@ profile-run-stamp:
 	$(MAKE) profile-gen-stamp
 	# Next, run the profile task to generate the profile information.
 	@ # FIXME: can't run for a cross build
-	$(LLVM_PROF_FILE) $(RUNSHARED) ./$(BUILDPYTHON) $(PROFILE_TASK)
+	task="$(PROFILE_TASK)"; \
+	case "$$task" in \
+	*-s\ *) \
+	  $(LLVM_PROF_FILE) $(RUNSHARED) ./$(BUILDPYTHON) $$task; \
+	  while [ -f $(abs_builddir)/build/pynexttest ]; do \
+	    $(LLVM_PROF_FILE) $(RUNSHARED) ./$(BUILDPYTHON) $$task; \
+	  done;; \
+	*) \
+	  $(LLVM_PROF_FILE) $(RUNSHARED) ./$(BUILDPYTHON) $$task; \
+	esac || true
 	$(LLVM_PROF_MERGER)
 	# Remove profile generation binary since we are done with it.
 	$(MAKE) clean-retain-profile
@@ -1724,7 +1733,9 @@ Python/interpconfig.o: $(srcdir)/Python/interpconfig.c $(srcdir)/Python/config_c
 
 Python/dynload_shlib.o: $(srcdir)/Python/dynload_shlib.c Makefile
 	$(CC) -c $(PY_CORE_CFLAGS) \
+		$(if $(MULTIARCH),-DMULTIARCH='"$(MULTIARCH)"') \
 		-DSOABI='"$(SOABI)"' \
+		$(MULTIARCH_CPPFLAGS) \
 		-o $@ $(srcdir)/Python/dynload_shlib.c
 
 Python/dynload_hpux.o: $(srcdir)/Python/dynload_hpux.c Makefile
@@ -2061,7 +2072,6 @@ testuniversal: all
 # This must be run *after* a `make install` has completed the build. The
 # `--with-framework-name` argument *cannot* be used when configuring the build.
 XCFOLDER:=iOSTestbed.$(MULTIARCH).$(shell date +%s)
-XCRESULT=$(XCFOLDER)/$(MULTIARCH).xcresult
 .PHONY: testios
 testios:
 	@if test "$(MACHDEP)" != "ios"; then \
@@ -2080,29 +2090,12 @@ testios:
 		echo "Cannot find a finalized iOS Python.framework. Have you run 'make install' to finalize the framework build?"; \
 		exit 1;\
 	fi
-	# Copy the testbed project into the build folder
-	cp -r $(srcdir)/iOS/testbed $(XCFOLDER)
-	# Copy the framework from the install location to the testbed project.
-	cp -r $(PYTHONFRAMEWORKPREFIX)/* $(XCFOLDER)/Python.xcframework/ios-arm64_x86_64-simulator
 
-	# Run the test suite for the Xcode project, targeting the iOS simulator.
-	# If the suite fails, touch a file in the test folder as a marker
-	if ! xcodebuild test -project $(XCFOLDER)/iOSTestbed.xcodeproj -scheme "iOSTestbed" -destination "platform=iOS Simulator,name=iPhone SE (3rd Generation)" -resultBundlePath $(XCRESULT) -derivedDataPath $(XCFOLDER)/DerivedData ; then \
-	 	touch $(XCFOLDER)/failed; \
-	fi
+	# Clone the testbed project into the XCFOLDER
+	$(PYTHON_FOR_BUILD) $(srcdir)/iOS/testbed clone --framework $(PYTHONFRAMEWORKPREFIX) "$(XCFOLDER)"
 
-	# Regardless of success or failure, extract and print the test output
-	xcrun xcresulttool get --path $(XCRESULT) \
-		--id $$( \
-			xcrun xcresulttool get --path $(XCRESULT) --format json | \
-			$(PYTHON_FOR_BUILD) -c "import sys, json; result = json.load(sys.stdin); print(result['actions']['_values'][0]['actionResult']['logRef']['id']['_value'])" \
-		) \
-		--format json | \
-		$(PYTHON_FOR_BUILD) -c "import sys, json; result = json.load(sys.stdin); print(result['subsections']['_values'][1]['subsections']['_values'][0]['emittedOutput']['_value'])"
-
-	@if test -e $(XCFOLDER)/failed ; then \
-		exit 1; \
-	fi
+	# Run the testbed project
+	$(PYTHON_FOR_BUILD) "$(XCFOLDER)" run --verbose -- test -uall --single-process --rerun -W
 
 # Like test, but using --slow-ci which enables all test resources and use
 # longer timeout. Run an optional pybuildbot.identify script to include

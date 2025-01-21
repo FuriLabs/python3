@@ -2985,7 +2985,7 @@ AC_CHECK_HEADERS([ \
   linux/tipc.h linux/wait.h netdb.h net/ethernet.h netinet/in.h netpacket/packet.h poll.h process.h pthread.h pty.h \
   sched.h setjmp.h shadow.h signal.h spawn.h stropts.h sys/audioio.h sys/bsdtty.h sys/devpoll.h \
   sys/endian.h sys/epoll.h sys/event.h sys/eventfd.h sys/file.h sys/ioctl.h sys/kern_control.h \
-  sys/loadavg.h sys/lock.h sys/memfd.h sys/mkdev.h sys/mman.h sys/modem.h sys/param.h sys/poll.h \
+  sys/loadavg.h sys/lock.h sys/memfd.h sys/mkdev.h sys/mman.h sys/modem.h sys/param.h sys/pidfd.h sys/poll.h \
   sys/random.h sys/resource.h sys/select.h sys/sendfile.h sys/socket.h sys/soundcard.h sys/stat.h \
   sys/statvfs.h sys/sys_domain.h sys/syscall.h sys/sysmacros.h sys/termio.h sys/time.h sys/times.h sys/timerfd.h \
   sys/types.h sys/uio.h sys/un.h sys/utsname.h sys/wait.h sys/xattr.h sysexits.h syslog.h \
@@ -3474,8 +3474,8 @@ then
 		LDSHARED='$(CC) -shared'
 		LDCXXSHARED='$(CXX) -shared';;
 	Linux*|GNU*|QNX*|VxWorks*|Haiku*)
-		LDSHARED='$(CC) -shared'
-		LDCXXSHARED='$(CXX) -shared';;
+		LDSHARED='$(CC) -shared -Wl,-O1 -Wl,-Bsymbolic-functions'
+		LDCXXSHARED='$(CXX) -shared -Wl,-O1 -Wl,-Bsymbolic-functions';;
 	FreeBSD*)
 		if [[ "`$CC -dM -E - </dev/null | grep __ELF__`" != "" ]]
 		then
@@ -3587,7 +3587,7 @@ then
 	    LINKFORSHARED="-Wl,-E -Wl,+s";;
 #	    LINKFORSHARED="-Wl,-E -Wl,+s -Wl,+b\$(BINLIBDEST)/lib-dynload";;
 	Linux-android*) LINKFORSHARED="-pie -Xlinker -export-dynamic";;
-	Linux*|GNU*) LINKFORSHARED="-Xlinker -export-dynamic";;
+	Linux*|GNU*) LINKFORSHARED="-Xlinker -export-dynamic -Wl,-O1 -Wl,-Bsymbolic-functions";;
 	# -u libsys_s pulls in all symbols in libsys
 	Darwin/*|iOS/*)
 		LINKFORSHARED="$extra_undefs -framework CoreFoundation"
@@ -4185,7 +4185,7 @@ WITH_SAVE_ENV([
 dnl bpo-45774/GH-29507: The CPP check in AC_CHECK_HEADER can fail on FreeBSD,
 dnl hence CPPFLAGS instead of CFLAGS.
   CPPFLAGS="$CPPFLAGS $LIBSQLITE3_CFLAGS"
-  LDFLAGS="$LIBSQLITE3_LIBS $LDFLAGS"
+  LIBS="$LIBSQLITE3_LIBS $LIBS"
 
   AC_CHECK_HEADER([sqlite3.h], [
     have_sqlite3=yes
@@ -5996,10 +5996,15 @@ AC_CACHE_CHECK([whether POSIX semaphores are enabled], [ac_cv_posix_semaphores_e
   [ac_cv_posix_semaphores_enabled=yes])
 )
 AS_VAR_IF([ac_cv_posix_semaphores_enabled], [no], [
-  AC_DEFINE(
-    [POSIX_SEMAPHORES_NOT_ENABLED], [1],
-    [Define if POSIX semaphores aren't enabled on your system]
-  )
+  case $ac_sys_system in
+    Linux*) # assume yes, see https://launchpad.net/bugs/630511
+      ;;
+    *)
+      AC_DEFINE(
+        [POSIX_SEMAPHORES_NOT_ENABLED], [1],
+        [Define if POSIX semaphores aren't enabled on your system]
+      )
+  esac
 ])
 
 dnl Multiprocessing check for broken sem_getvalue

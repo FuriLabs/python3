@@ -120,8 +120,9 @@ static void _PySSLFixErrno(void) {
 #endif
 
 /* Include generated data (error codes) */
+/* See make_ssl_data.h for notes on adding a new version. */
 #if (OPENSSL_VERSION_NUMBER >= 0x30100000L)
-#include "_ssl_data_31.h"
+#include "_ssl_data_34.h"
 #elif (OPENSSL_VERSION_NUMBER >= 0x30000000L)
 #include "_ssl_data_300.h"
 #elif (OPENSSL_VERSION_NUMBER >= 0x10101000L)
@@ -661,6 +662,11 @@ PySSL_SetError(PySSLSocket *sslsock, const char *filename, int lineno)
                         ERR_GET_REASON(e) == SSL_R_CERTIFICATE_VERIFY_FAILED) {
                     type = state->PySSLCertVerificationErrorObject;
                 }
+                if (ERR_GET_LIB(e) == ERR_LIB_SYS) {
+                    // A system error is being reported; reason is set to errno
+                    errno = ERR_GET_REASON(e);
+                    return PyErr_SetFromErrno(PyExc_OSError);
+                }
                 p = PY_SSL_ERROR_SYSCALL;
             }
             break;
@@ -686,6 +692,11 @@ PySSL_SetError(PySSLSocket *sslsock, const char *filename, int lineno)
                 errstr = "EOF occurred in violation of protocol";
             }
 #endif
+            if (ERR_GET_LIB(e) == ERR_LIB_SYS) {
+                // A system error is being reported; reason is set to errno
+                errno = ERR_GET_REASON(e);
+                return PyErr_SetFromErrno(PyExc_OSError);
+            }
             break;
         }
         default:
