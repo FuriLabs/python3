@@ -65,15 +65,6 @@ derivative      := $(shell \
 	elif dpkg-vendor --derives-from Debian; then echo Debian; \
 	else echo Unknown; fi)
 
-# we inject our own lto flags
-DPKG_OPTIMIZE = optimize=-lto
-dpkg_buildflags = DEB_BUILD_MAINT_OPTIONS="hardening=-pie $(DPKG_OPTIMIZE)" dpkg-buildflags
-dpkg_pieflags = DEB_BUILD_MAINT_OPTIONS="hardening=-pie $(DPKG_OPTIMIZE)"dpkg-buildflags
-ifeq (,$(filter $(distrelease),stretch buster bullseye trusty xenial bionic focal impish))
-  with_nopie := yes
-  dpkg_pieflags = DEB_BUILD_MAINT_OPTIONS="hardening=-pie $(DPKG_OPTIMIZE)" dpkg-buildflags
-endif
-
 # FIXME: remove sid when uploading to unstable, after bookworm is released
 #ifneq (,$(filter $(distrelase), jessie stretch buster bullseye bookworm sid precise trusty xenial bionic focal groovy hirsute))
   with_dbmmodule = yes
@@ -173,74 +164,6 @@ export DEB_BUILD_OS_RELEASE_ID
 export DEB_HOST_ARCH
 export DEB_SOURCE
 export DEB_VERSION
-
-DPKG_CPPFLAGS= $(shell $(dpkg_buildflags) --get CPPFLAGS)
-DPKG_CFLAGS  := $(shell $(dpkg_buildflags) --get CFLAGS)
-DPKG_CFLAGS  := $(subst -fstack-protector-strong,-fstack-protector,$(DPKG_CFLAGS))
-DPKG_LDFLAGS = $(shell $(dpkg_buildflags) --get LDFLAGS)
-OPT_CFLAGS   := $(filter-out -O%,$(DPKG_CFLAGS)) # default is -O3
-DEBUG_CFLAGS := $(patsubst -O%,-Og,$(DPKG_CFLAGS))
-
-DPKG_PIE_CPPFLAGS= $(shell $(dpkg_pieflags) --get CPPFLAGS)
-DPKG_PIE_CFLAGS  := $(shell $(dpkg_pieflags) --get CFLAGS)
-DPKG_PIE_CFLAGS  := $(subst -fstack-protector-strong,-fstack-protector,$(DPKG_PIE_CFLAGS))
-DPKG_PIE_LDFLAGS = $(shell $(dpkg_pieflags) --get LDFLAGS)
-OPT_PIE_CFLAGS   := $(filter-out -O%,$(DPKG_PIE_CFLAGS)) # default is -O3
-
-ifeq ($(DEB_HOST_ARCH),ia64)
-    DPKG_CPPFLAGS += -DWITH_PYMALLOC_RADIX_TREE=0
-    DPKG_PIE_CPPFLAGS += -DWITH_PYMALLOC_RADIX_TREE=0
-endif
-# see https://gcc.gnu.org/PR81426
-ifneq (,$(filter $(DEB_HOST_ARCH), sh4))
-    OPT_CFLAGS += $(filter-out -O%,$(DPKG_CFLAGS)) -Os
-    OPT_PIE_CFLAGS += $(filter-out -O%,$(DPKG_PIE_CFLAGS)) -Os
-endif
-ifneq (,$(filter $(DEB_HOST_ARCH), ppc64 ppc64el))
-    OPT_CFLAGS += -fexceptions
-    OPT_PIE_CFLAGS += -fexceptions
-    DEBUG_CFLAGS += -fexceptions
-endif
-
-ifeq ($(DEB_HOST_GNU_TYPE),$(DEB_BUILD_GNU_TYPE))
-  ifeq ($(DEB_HOST_ARCH_OS),linux)
-    ifneq (,$(findstring $(DEB_HOST_ARCH), amd64 armel armhf arm64 i386 powerpc ppc64 ppc64el s390x))
-      with_pgo := yes
-    endif
-  endif
-endif
-
-ifneq (,$(filter $(DEB_HOST_ARCH), amd64 armel armhf arm64 i386 powerpc ppc64 ppc64el s390x))
-  with_lto := yes
-endif
-
-ifneq (,$(findstring nopgo, $(DEB_BUILD_OPTIONS)))
-  with_pgo :=
-endif
-
-ifneq (,$(findstring nolto, $(DEB_BUILD_OPTIONS)))
-  with_lto :=
-endif
-
-ifneq (,$(findstring noopt, $(DEB_BUILD_OPTIONS)))
-    OPT_CFLAGS := $(filter-out -O%, $(OPT_CFLAGS)) -O0
-    with_pgo =
-    with_lto =
-endif
-
-BASE_LTO_CFLAGS = -g -fwrapv -O3
-ifeq ($(with_lto),yes)
-    LTO_CFLAGS = $(BASE_LTO_CFLAGS) -flto -fuse-linker-plugin
-    with_fat_lto := $(shell dpkg --compare-versions $$($(CC) --version \
-			| sed -n '/^$(CC)/s,.* ,,p') ge 4.9 && echo yes)
-    ifeq ($(with_fat_lto),yes)
-      LTO_CFLAGS += -ffat-lto-objects
-    endif
-    OPT_CFLAGS += $(LTO_CFLAGS)
-    OPT_PIE_CFLAGS += $(LTO_CFLAGS)
-    AR=$(DEB_HOST_GNU_TYPE)-gcc-ar
-    RANLIB=$(DEB_HOST_GNU_TYPE)-gcc-ranlib
-endif
 
 sysconfig_substflags = \
 	$(if $(with_lto),$(foreach i,-flto=auto -flto -fuse-linker-plugin -ffat-lto-objects,-e 's/$(i)//g')) \
